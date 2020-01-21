@@ -64,7 +64,7 @@
   <export>
     <!-- Other tools can request additional information be placed here -->
     <gazebo_ros
-        gazebo_plugin_path="${prefix}/lib"
-        gazebo_model_path="${prefix}/.." />
+        gazebo_plugin_path="$(find gazebo_simulation)/lib"
+        gazebo_model_path="$(find gazebo_simulation)/models" />
   </export>
 </package>
