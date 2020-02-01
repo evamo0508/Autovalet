@@ -2,8 +2,8 @@
 <!--
 Software License Agreement (BSD)
 
-\file      husky_playpen.launch
-\authors   Paul Bovbel <pbovbel@clearpathrobotics.com
+\file      description.launch
+\authors   Paul Bovbel <pbovbel@clearpathrobotics.com>, Devon Ash <dash@clearpathrobotics.com>
 \copyright Copyright (c) 2015, Clearpath Robotics, Inc., All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
@@ -25,17 +25,29 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 -->
 <launch>
 
-  <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find gazebo_simulation)/worlds/cmu_parking_lot.world"/>
-    <arg name="paused" value="false"/>
-    <arg name="use_sim_time" value="true"/>
-    <arg name="gui" value="true"/>
-    <arg name="headless" value="false"/>
-    <arg name="debug" value="false"/>
-  </include>
+  <!-- Subbu: Custom launch file to launch our modified autovalet husky
+       This launch file is a replica(almost) of the description.launch
+       found in husky_description. Only modification: launches our modified
+       URDF (see $(find autovalet_description) in the xacro call). It also 
+       calls joint state and robot state publisher.
+  -->
 
+  <arg name="robot_namespace" default="/"/>
+  <arg name="laser_enabled" default="$(optenv HUSKY_LMS1XX_ENABLED false)"/>
+  <arg name="kinect_enabled" default="$(optenv HUSKY_KINECT_ENABLED false)"/>
+  <arg name="urdf_extras" default="$(optenv HUSKY_URDF_EXTRAS)"/>
 
-  <remap from="cmd_vel" to="husky_velocity_controller/cmd_vel"/>
-  <node name="teleop" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" />
-  
+  <param name="robot_description" command="$(find xacro)/xacro '$(find autovalet_description)/urdf/husky.urdf.xacro'
+    --inorder
+    robot_namespace:=$(arg robot_namespace)
+    laser_enabled:=$(arg laser_enabled)
+    kinect_enabled:=$(arg kinect_enabled)
+    urdf_extras:=$(arg urdf_extras)
+    " />
+
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" >
+    <param name="publish_frequency" type="double" value="30.0" />
+  </node>  
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+
 </launch>
