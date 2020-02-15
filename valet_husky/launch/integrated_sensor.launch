@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+
+<launch>
+    <remap from="odometry/filtered" to="my_odom"/>
+    <!-- Husky setup and teleop -->
+	<include file="$(find valet_husky)/launch/valet_bringup.launch" />
+	
+	<arg name="cam_1_serial_number" value="819112073090" />
+	<arg name="cam_2_serial_number" value="909512071908" />
+	
+	<!-- IntelRealsense launching -->
+  	<include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    	<arg name="camera" value="backCamera"/>
+    	<arg name="serial_no" value="$(arg cam_1_serial_number)"/>
+    	<arg name="filters" value="pointcloud"/>
+  	</include>
+
+  	<include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    	<arg name="camera" value="frontCamera"/>
+    	<arg name="serial_no" value="$(arg cam_2_serial_number)"/>
+    	<arg name="filters" value="pointcloud"/>
+	 </include>
+
+	<!-- Velodyne launching -->
+    <include file="$(find velodyne_pointcloud)/launch/VLP16_points.launch" />
+
+    <!-- odom remap for rtab -->
+
+    <!-- RVIZ -->
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find valet_husky)/rviz/config.rviz" />
+    
+</launch>

@@ -25,11 +25,15 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 -->
 
 <launch>
+  <env name="GAZEBO_MODEL_PATH" value="$(find autovalet_gazebo)/models:$(optenv GAZEBO_MODEL_PATH)" />
+	<!-- Include autovalet description with simulation true as this is a gazebo launcher -->
+  <include file="$(find autovalet_description)/launch/autovalet_description.launch">
+    <arg name="simulation" value="true"/>
+  </include>
 
-  <include file="$(find autovalet_description)/launch/huskyValet_urdf.launch"/>
-
+  <!-- Launch CMU parking plane world -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find autovalet_gazebo)/worlds/cmu_parking_lot.world"/>
+    <arg name="world_name" value="$(find autovalet_gazebo)/worlds/cmu_parking_lot.world"/> 
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
     <arg name="gui" value="true"/>
@@ -37,9 +41,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     <arg name="debug" value="false"/>
   </include>
 
-  
-  <arg name="x" default="0.0"/>
-  <arg name="y" default="0.0"/>
+  <!-- Spawn husky in the world -->
+  <arg name="x" default="-18"/>
+  <arg name="y" default="-9"/>
   <arg name="z" default="0.0"/>
   <arg name="yaw" default="0.0"/>
   <arg name="robot_namespace" default="/"/>
@@ -53,12 +57,32 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
               -urdf
               -param robot_description
               -model $(arg robot_namespace)" />
-
-
-  <include file="$(find autovalet_gazebo)/launch/av_gazebo_control.launch"/>
-
-  <remap from="cmd_vel" to="husky_velocity_controller/cmd_vel"/>
-  <node name="teleop" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" />
   
+  <!-- Setup husky's robot state publisher and velocity controller -->
+  <rosparam command="load" file="$(find husky_control)/config/control.yaml" />
+  <!-- Spawn controller : Reference husky_control package-->
+  <node name="base_controller_spawner" pkg="controller_manager" type="spawner" args="husky_joint_publisher husky_velocity_controller"/>
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
 
+  <node pkg="twist_mux" type="twist_mux" name="twist_mux">
+    <rosparam command="load" file="$(find husky_control)/config/twist_mux.yaml" />
+    <remap from="cmd_vel_out" to="husky_velocity_controller/cmd_vel"/>
+  </node>
+  
+  <!-- Launch joystick/keyboard teleop for husky based on command line argument joystick:=[true/false] 
+       if you don't specify the command line parameter, joystick param defaults to false -->
+  <arg name="joystick" default="false"/>
+  <group if="$(arg joystick)">
+    <include file="$(find valet_husky)/launch/teleop.launch" />
+  </group>
+  <group unless="$(arg joystick)">
+    <node name="teleop" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" />
+  </group>
+  <remap from="cmd_vel" to="husky_velocity_controller/cmd_vel"/>
+
+
+  <!-- RVIZ -->
+  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find autovalet_gazebo)/config/husky_gazebo_lot.rviz" />
+  
 </launch>
