@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+<launch>
+    <!-- Husky setup and teleop -->
+	<!-- <include file="$(find valet_husky)/launch/valet_bringup.launch" /> -->
+	
+	<arg name="cam_1_serial_number" value="819112073090" />
+	<arg name="cam_2_serial_number" value="909512071908" />
+	
+	<!-- IntelRealsense launching -->
+  	<include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    	<arg name="camera" value="cam_1"/>
+    	<arg name="serial_no" value="$(arg cam_1_serial_number)"/>
+    	<arg name="filters" value="pointcloud"/>
+  	</include>
+
+  	<include file="$(find realsense2_camera)/launch/rs_camera.launch">
+    	<arg name="camera" value="cam_2"/>
+    	<arg name="serial_no" value="$(arg cam_2_serial_number)"/>
+    	<arg name="filters" value="pointcloud"/>
+	</include>
+    
+    <!-- publish transform between cam_1 and cam_2 -->
+    <node pkg="tf" type="static_transform_publisher" name="cam2_broadcaster" args="-0.247 0 0 -180 0 0 cam_1_link cam_2_link 100" />
+
+    <!-- Velodyne launching -->
+  	<include file="$(find velodyne_pointcloud)/launch/VLP16_points.launch" />
+
+    <!-- publish transform between cam_1 and velodyne -->
+    <node pkg="tf" type="static_transform_publisher" name="velodyne_broadcaster" args="-0.09 0 0.05 0 0 0 cam_1_link velodyne 100" />
+
+    <!-- RVIZ -->
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find valet_husky)/rviz/config.rviz" />
+
+</launch>
