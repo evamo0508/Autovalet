@@ -48,6 +48,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 
   <!-- Subbu: Included VLP-16 xacro file from another package here-->
   <xacro:include filename="$(find autovalet_description)/urdf/accessories/VLP-16.urdf.xacro"/>
+  <!-- Subbu: Inculded d435 xacro file from realsense2 official description-->
+  <xacro:include filename="$(find autovalet_description)/urdf/accessories/_d435.urdf.xacro"/>
 
   <xacro:property name="M_PI" value="3.14159"/>
 
@@ -171,6 +173,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     <origin xyz="0 0 0.4" rpy="0 0 0" />
   </VLP-16>
 
+  <sensor_d435 parent="base_link" name="d435_frontCamera" >
+    <origin xyz="0 0 0.7" rpy="0 0 0" />
+  </sensor_d435>  
+
   <gazebo>
     <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
       <robotNamespace>$(arg robot_namespace)</robotNamespace>
@@ -207,6 +213,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
       <drift>0.0001 0.0001 0.0001</drift>
     </plugin>
   </gazebo>
+
 
   <!-- Optional custom includes. -->
   <xacro:include filename="$(arg urdf_extras)" />
