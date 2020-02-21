@@ -49,6 +49,10 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <!-- Subbu: Included VLP-16 xacro file from another package here-->
   <xacro:include filename="$(find autovalet_description)/urdf/accessories/VLP-16.urdf.xacro"/>
 
+  <!-- Subbu: Inculded d435 xacro file from realsense2 official description-->
+  <xacro:include filename="$(find autovalet_description)/urdf/accessories/_d435.urdf.xacro"/>
+  <xacro:include filename="$(find autovalet_description)/urdf/accessories/backCam_d435.urdf.xacro"/>
+
   <xacro:property name="M_PI" value="3.14159"/>
 
   <!-- Base Size -->
@@ -167,10 +171,23 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   </xacro:if>
 
   <!-- Subbu: Included a rigid fixed link of VLP-16 to the husky along with publish topic -->
-  <VLP-16 parent="base_link" name="velodyne" topic="/velodyne_points" hz="10" samples="440">
-    <origin xyz="0 0 0.4" rpy="0 0 0" />
+  <VLP-16 parent="top_plate_link" name="velodyne" topic="/velodyne_points" hz="10" samples="440">
+    <origin xyz="0 0 0.005" rpy="0 0 0" />
   </VLP-16>
 
+  <sensor_d435 parent="top_plate_link" name="d435_frontCamera" >
+    <origin xyz="0.35 0 0.005" rpy="0 0 0" />
+  </sensor_d435>
+
+  <back_sensor_d435 parent="top_plate_link" name="d435_backCamera" >
+    <origin xyz="-0.35 0 0.005" rpy="0 0 3.1415" />
+  </back_sensor_d435>
+
+<!--   <sensor_d435 parent="top_plate_link" name="d435_backCamera" >
+    <origin xyz="-0.35 0 0.005" rpy="0 0 0" />
+  </sensor_d435>  
+ -->
+ 
   <gazebo>
     <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
       <robotNamespace>$(arg robot_namespace)</robotNamespace>
@@ -205,6 +222,65 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
       <referenceHeading>0</referenceHeading>
       <referenceAltitude>0</referenceAltitude>
       <drift>0.0001 0.0001 0.0001</drift>
+    </plugin>
+  </gazebo>
+
+  <gazebo reference= "d435_frontCamera">
+
+    <sensor type="depth" name="front_camera">
+      <!-- ... sensor parameters ... -->
+      <pose>0 0 0 0 0 0</pose>
+      <update_rate>30.0</update_rate>
+      <camera name="head">
+        <horizontal_fov>1.3962634</horizontal_fov>
+        <image>
+          <width>800</width>
+          <height>800</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.02</near>
+          <far>300</far>
+        </clip>
+        <noise>
+          <type>gaussian</type>
+          <!-- Noise is sampled independently per pixel on each frame.
+               That pixel's noise value is added to each of its color
+               channels, which at that point lie in the range [0,1]. -->
+          <mean>0.0</mean>
+          <stddev>0.007</stddev>
+        </noise>
+      </camera>
+      
+      <always_on>1</always_on>
+      <update_rate>60</update_rate>
+      <visualize>0</visualize>
+    </sensor>
+
+    <plugin name="d435_frontCamera_controller" filename="librealsense_gazebo_plugin.so">
+      <!-- Plugin parameters -->
+      <depthUpdateRate>40</depthUpdateRate>   <!-- Find and set correct value !!! -->
+      <infraredUpdateRate>40</infraredUpdateRate>   <!-- Find and set correct value !!! -->
+      <depthTopicName>/front_camera/depth/image_rect_raw</depthTopicName>
+      <depthCameraInfoTopicName> /front_camera/depth/camera_info</depthCameraInfoTopicName>
+      <colorTopicName>/front_camera/color/image_rect_raw</colorTopicName>
+      <colorCameraInfoTopicName>/front_camera/color/camera_info</colorCameraInfoTopicName>
+      <infrared1TopicName> /front_camera/infra1/image_raw </infrared1TopicName>
+      <infrared1CameraInfoTopicName> /front_camera/infra1/camera_info </infrared1CameraInfoTopicName>
+      <infrared2TopicName> /front_camera/infra2/image_raw </infrared2TopicName>
+      <infrared2CameraInfoTopicName> /front_camera/infra2/camera_info </infrared2CameraInfoTopicName>
+      <colorOpticalframeName> d435_frontCamera_color_optical_frame </colorOpticalframeName>
+      <depthOpticalframeName>  d435_frontCamera_depth_optical_frame </depthOpticalframeName>
+      <infrared1OpticalframeName> d435_frontCamera_infra1_optical_frame </infrared1OpticalframeName>
+      <infrared2OpticalframeName>  d435_frontCamera_infra2_optical_frame </infrared2OpticalframeName>
+      <rangeMinDepth> 0.105 </rangeMinDepth>
+      <rangeMaxDepth>  6 </rangeMaxDepth>
+      <pointCloud> true </pointCloud>
+      <pointCloudTopicName> /front_camera/depth_registered/points</pointCloudTopicName> 
+      <pointCloudCutoff> 0.5 </pointCloudCutoff> <!-- copied from defalt values in tutorial -->
+      <pointCloudCutoffMax> 3 </pointCloudCutoffMax>
+       <!-- <prefix> </prefix> same. what is this? -->
+      <!-- <robotNamespace> $(arg robot_namespace) </robotNamespace> -->
     </plugin>
   </gazebo>
 

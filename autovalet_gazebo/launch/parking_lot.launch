@@ -29,7 +29,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <include file="$(find autovalet_description)/launch/huskyValet_urdf.launch"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find autovalet_gazebo)/worlds/cmu_parking_lot.world"/>
+    <!-- <arg name="world_name" value="$(find autovalet_gazebo)/worlds/cmu_parking_lot.world"/> -->
+    <!-- <arg name="world_name" value="$(find autovalet_gazebo)/worlds/cmu_parking_lot.world"/> -->
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
     <arg name="gui" value="true"/>
@@ -60,5 +61,9 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <remap from="cmd_vel" to="husky_velocity_controller/cmd_vel"/>
   <node name="teleop" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" />
   
+  <!-- <include file="$(find autovalet_gazebo)/launch/av_gazebo_control.launch"/> -->
 
+  <!-- <remap from="cmd_vel" to="husky_velocity_controller/cmd_vel"/> -->
+  <!-- <node name="teleop" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" /> -->
+  
 </launch>
