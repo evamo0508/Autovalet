@@ -19,7 +19,7 @@
     </node>
 
     <!-- Differential controller parameters and basic localization -->
-    <include file="$(find husky_control)/launch/control.launch" />
+    <include file="$(find valet_husky)/launch/valet_control.launch" />
 
     <!--Teleop -->
     <include file="$(find valet_husky)/launch/teleop.launch" />
