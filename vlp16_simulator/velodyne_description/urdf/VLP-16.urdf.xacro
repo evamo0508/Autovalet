@@ -56,7 +56,7 @@
     </link>
 
     <!-- Gazebo requires the velodyne_gazebo_plugins package -->
-    <gazebo reference="${name}">
+<!--     <gazebo reference="${name}">
       <xacro:if value="${gpu}">
         <sensor type="gpu_ray" name="${name}-VLP16">
           <pose>0 0 0 0 0 0</pose>
@@ -137,7 +137,7 @@
           </plugin>
         </sensor>
       </xacro:unless>
-    </gazebo>
+    </gazebo> -->
 
   </xacro:macro>
 </robot>
