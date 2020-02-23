@@ -17,7 +17,7 @@ aluminum peripherial evaluation case.
   <!-- For running with gazebo sim -->
   <xacro:arg name="use_nominal_extrinsics" default="false"/>
 
-  <xacro:macro name="sensor_d435" params="parent *origin name:=camera">
+  <xacro:macro name="sensor_d435" params="parent *origin name:=camera topics_ns:=realsense">
     <xacro:property name="M_PI" value="3.1415926535897931" />
   
     <!-- The following values are approximate, and the camera node
@@ -138,7 +138,7 @@ aluminum peripherial evaluation case.
       </joint>
       <link name="${name}_color_optical_frame"/>
 
-      <!-- <xacro:gazebo_d435 camera_name="${name}" reference_link="${name}_link" topics_ns="${topics_ns}" depth_optical_frame="${name}_depth_optical_frame" color_optical_frame="${name}_color_optical_frame" infrared1_optical_frame="${name}_left_ir_optical_frame" infrared2_optical_frame="${name}_right_ir_optical_frame"/> -->
+      <xacro:gazebo_d435 camera_name="${name}" reference_link="${name}_link" topics_ns="${topics_ns}" depth_optical_frame="${name}_depth_optical_frame" color_optical_frame="${name}_color_optical_frame" infrared1_optical_frame="${name}_left_ir_optical_frame" infrared2_optical_frame="${name}_right_ir_optical_frame"/>
     </xacro:if>
   </xacro:macro>
 </robot>
