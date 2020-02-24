@@ -63,7 +63,6 @@
   <!-- Correct the relative path to model. Not Working yet!! -->
   <export>
   <!-- Other tools can request additional information be placed here -->
-    <gazebo_ros gazebo_model_path="$(find autovalet_gazebo)/models"/>
   </export>
 
 </package>
