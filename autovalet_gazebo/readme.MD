@@ -6,7 +6,7 @@ Launch Files:
 1) parking_lot:	
 	--> launches modified urdf whih passes the robot model onto parameter server (model available as robot_description parameter).
 	-->	opens our world in gazebo
-	-->	spawns husky in gazebo with momdified ursd (looks up the robot_description parameter on the param server)
+	-->	spawns husky in gazebo with modified ursd (looks up the robot_description parameter on the param server)
 	-->	We have our copy of the husky_control launch file. Done because it was launching a state publisher. We have ours in huskyValet_urdf.launch. (TBD: remove state and joint publisher in urdf launch and use standard husky package's husky_control launch file)
 	--> Run teleoptwist keyboard with topic remap.
 
