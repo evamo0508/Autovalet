@@ -70,7 +70,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     <remap from="cmd_vel_out" to="husky_velocity_controller/cmd_vel"/>
   </node>
   
-  <!-- Launch teleop for husky based on command line argument joystick:=[true/false] 
+  <!-- Launch joystick/keyboard teleop for husky based on command line argument joystick:=[true/false] 
        if you don't specify the command line parameter, joystick param defaults to false -->
   <arg name="joystick" default="false"/>
   <group if="$(arg joystick)">
@@ -79,8 +79,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <group unless="$(arg joystick)">
     <node name="teleop" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" />
   </group>
-  
-  
   <remap from="cmd_vel" to="husky_velocity_controller/cmd_vel"/>
 
 
