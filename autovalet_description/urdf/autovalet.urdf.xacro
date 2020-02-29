@@ -7,18 +7,18 @@
 	<xacro:include filename="$(find velodyne_description)/urdf/VLP-16.urdf.xacro"/>
   		
 	<!-- Define the front camera link -->
-	<sensor_d435 parent="top_plate_link" name="frontCamera" >
-	    <origin xyz="0.35 0 0.005" rpy="0 0 0" />
+	<sensor_d435 parent="velodyne" name="backCamera" >
+	    <origin xyz="0 -0.11 -0.05" rpy="0 0 -1.57079" />
 	</sensor_d435>
 
 	<!-- Define the back camera link -->
-	<sensor_d435 parent="top_plate_link" name="backCamera" >
-	    <origin xyz="-0.35 0 0.005" rpy="0 0 3.1415"/>
+	<sensor_d435 parent="velodyne" name="frontCamera" >
+	    <origin xyz="0 0.197 -0.05" rpy="0 0 1.57079"/>
 	</sensor_d435>
 
 	<!-- Define the velodyne link to the husky -->
-	<VLP-16 parent="top_plate_link" name="velodyne" topic="/velodyne_points" hz="10" samples="440">
-    	<origin xyz="0 0 0.005" rpy="0 0 0"/>
+	<VLP-16 parent="base_link" name="velodyne" topic="/velodyne_points" hz="10" samples="440">
+    	<origin xyz="0 -0.015 0.345" rpy="0 0 -1.570796326"/>
   	</VLP-16>
 
 </robot>

@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+
+<launch>
+	<!-- Rtabmap -->
+	<include file="$(find rtabmap_ros)/launch/rgbd_mapping.launch" >
+
+	  <!-- Choose visualization -->
+	  <arg name="rviz"                    default="false" />
+	  <arg name="rtabmapviz"              default="false" /> 
+	  
+	  <!-- Localization-only mode -->
+	  <arg name="localization"            default="false"/>
+	  
+	  <!-- Corresponding config files -->
+	  <arg name="rtabmapviz_cfg"          default="~/.ros/rtabmap_gui.ini" />
+	  <arg name="rviz_cfg"                default="$(find rtabmap_ros)/launch/config/rgbd.rviz" />
+	  
+	  <arg name="frame_id"                default="base_link"/>   <!-- Fixed frame id, you may set "base_link" or "base_footprint" if they are published -->
+	  <arg name="database_path"           default="~/.ros/rtabmap.db"/>
+	  <arg name="rtabmap_args"            default="--delete_db_on_start"/>              <!-- delete_db_on_start, udebug -->
+	  <arg name="launch_prefix"           default=""/>              <!-- for debugging purpose, it fills launch-prefix tag of the nodes -->
+	  <arg name="approx_sync"             default="true"/>         <!-- if timestamps of the input topics are not synchronized -->
+	   
+	  <arg name="rgb_topic"               default="/frontCamera/color/image_raw" />
+	  <arg name="depth_registered_topic"  default="/frontCamera/depth/image_rect_raw" />
+	  <arg name="camera_info_topic"       default="/frontCamera/color/camera_info" />
+	  <arg name="compressed"              default="false"/> <!-- ? -->
+	   
+	  <arg name="subscribe_scan"          default="false"/>         <!-- Assuming 2D scan if set, rtabmap will do 3DoF mapping instead of 6DoF -->
+	  <arg name="scan_topic"              default="/scan"/>
+	  
+	  <arg name="subscribe_scan_cloud"    default="true"/>         <!-- Assuming 3D scan if set -->
+	  <arg name="scan_cloud_topic"        default="/velodyne_points"/>
+	  
+	  <arg name="visual_odometry"         default="false"/>          <!-- Generate visual odometry -->
+	  <arg name="odom_topic"              default="/my_odom"/>         <!-- Odometry topic used if visual_odometry is false -->
+	  <arg name="odom_frame_id"           default=""/>              <!-- If set, TF is used to get odometry instead of the topic -->
+	   
+	  <arg name="namespace"               default="rtabmap"/>
+	  <arg name="wait_for_transform"      default="0.2"/>
+	
+	</include>
+</launch>

@@ -9,13 +9,17 @@
 	
 	<!-- IntelRealsense launching -->
   	<include file="$(find realsense2_camera)/launch/rs_camera.launch">
+      <arg name="color_fps" value="15"/>
+      <arg name="depth_fps" value="15"/>
     	<arg name="camera" value="cam_1_link"/>
     	<arg name="serial_no" value="$(arg cam_1_serial_number)"/>
     	<arg name="filters" value="pointcloud"/>
   	</include>
 
   	<include file="$(find realsense2_camera)/launch/rs_camera.launch">
-    	<arg name="camera" value="cam_2"/>
+    	<arg name="color_fps" value="15"/>
+      <arg name="depth_fps" value="15"/>
+      <arg name="camera" value="cam_2"/>
     	<arg name="serial_no" value="$(arg cam_2_serial_number)"/>
     	<arg name="filters" value="pointcloud"/>
 	</include>
