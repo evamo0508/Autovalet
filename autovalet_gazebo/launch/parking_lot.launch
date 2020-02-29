@@ -73,5 +73,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <!-- Launch keyboard teleop for husky -->
   <remap from="cmd_vel" to="husky_velocity_controller/cmd_vel"/>
   <node name="teleop" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" />
+
+  <!-- RVIZ -->
+  <node type="rviz" name="rviz" pkg="rviz" args="-d $(find autovalet_gazebo)/config/husky_gazebo_lot.rviz" />
   
 </launch>

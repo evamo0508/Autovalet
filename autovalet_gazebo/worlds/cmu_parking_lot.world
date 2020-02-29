@@ -2154,6 +2154,7 @@
       </camera>
     </gui>
     <model name='polaris_ranger_ev'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -3327,6 +3328,7 @@
       <pose frame=''>-1.9402 -2.38685 0 0 -0 0</pose>
     </model>
     <model name='polaris_ranger_ev_clone'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -4500,6 +4502,7 @@
       <pose frame=''>-4.89905 -2.09025 -5.2e-05 -0 4.9e-05 -1.56504</pose>
     </model>
     <model name='polaris_ranger_ev_clone_0'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -5673,6 +5676,7 @@
       <pose frame=''>-7.35755 -2.12255 -4.4e-05 0 5.1e-05 -1.57035</pose>
     </model>
     <model name='polaris_ranger_ev_clone_1'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -6846,6 +6850,7 @@
       <pose frame=''>-9.86752 -1.99955 -4.7e-05 0 5.5e-05 -1.575</pose>
     </model>
     <model name='polaris_ranger_ev_clone_2'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -8019,6 +8024,7 @@
       <pose frame=''>0.141919 -2.0908 -4.7e-05 -0 5.5e-05 -1.61271</pose>
     </model>
     <model name='polaris_ranger_ev_clone_3'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -9192,6 +9198,7 @@
       <pose frame=''>2.86675 -2.14852 -4.4e-05 0 5e-05 -1.61531</pose>
     </model>
     <model name='polaris_ranger_ev_clone_4'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -10365,6 +10372,7 @@
       <pose frame=''>5.30544 -2.02698 -4.4e-05 -0 5.1e-05 -1.6178</pose>
     </model>
     <model name='polaris_ranger_ev_clone_5'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -11538,6 +11546,7 @@
       <pose frame=''>7.85139 -2.30938 -4.4e-05 0 5e-05 -1.62083</pose>
     </model>
     <model name='polaris_ranger_ev_clone_6'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -12711,6 +12720,7 @@
       <pose frame=''>10.3828 -2.03643 -4.4e-05 0 5e-05 -1.623</pose>
     </model>
     <model name='polaris_ranger_ev_clone_1_clone'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -13884,6 +13894,7 @@
       <pose frame=''>2.62881 12.0225 -4.7e-05 0 5.5e-05 -1.62677</pose>
     </model>
     <model name='polaris_ranger_ev_clone_1_clone_clone'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -15057,6 +15068,7 @@
       <pose frame=''>5.32774 12.3785 -4.4e-05 0 5.1e-05 -1.63098</pose>
     </model>
     <model name='polaris_ranger_ev_clone_1_clone_clone_0'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -16230,6 +16242,7 @@
       <pose frame=''>7.92904 12.3469 -4.4e-05 0 5.1e-05 -1.63098</pose>
     </model>
     <model name='polaris_ranger_ev_clone_1_clone_clone_1'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -17403,6 +17416,7 @@
       <pose frame=''>10.3603 12.4125 -4.4e-05 0 5.1e-05 -1.63098</pose>
     </model>
     <model name='polaris_ranger_ev_clone_1_clone_clone_clone'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -18576,6 +18590,7 @@
       <pose frame=''>10.4784 1.58075 -4.4e-05 0 5.1e-05 -1.64638</pose>
     </model>
     <model name='polaris_ranger_ev_clone_1_clone_clone_clone_clone'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -19749,6 +19764,7 @@
       <pose frame=''>7.87744 1.42016 -4.7e-05 -0 5.5e-05 1.54773</pose>
     </model>
     <model name='polaris_ranger_ev_clone_1_clone_clone_clone_clone_0'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -20922,6 +20938,7 @@
       <pose frame=''>-4.98999 1.6319 -4.7e-05 -0 5.5e-05 1.54773</pose>
     </model>
     <model name='polaris_ranger_ev_clone_1_clone_clone_clone_clone_1'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -22095,6 +22112,7 @@
       <pose frame=''>-9.88552 -12.8317 -4.7e-05 -0 5.5e-05 1.54773</pose>
     </model>
     <model name='polaris_ranger_ev_clone_1_clone_clone_clone_clone_2'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -23268,6 +23286,7 @@
       <pose frame=''>-7.25954 -12.8894 -4.7e-05 -0 5.5e-05 1.54773</pose>
     </model>
     <model name='polaris_ranger_ev_clone_1_clone_clone_clone_clone_3'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -24441,6 +24460,7 @@
       <pose frame=''>-4.79042 -13.0228 -4.7e-05 -0 5.5e-05 1.54773</pose>
     </model>
     <model name='polaris_ranger_ev_clone_1_clone_clone_clone_clone_4'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -25614,6 +25634,7 @@
       <pose frame=''>-2.29722 -12.8016 -4.7e-05 -0 5.5e-05 1.54773</pose>
     </model>
     <model name='polaris_ranger_ev_clone_1_clone_clone_clone_clone_5'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -26787,6 +26808,7 @@
       <pose frame=''>0.397235 -12.7503 -4.7e-05 -0 5.5e-05 1.54773</pose>
     </model>
     <model name='polaris_ranger_ev_clone_1_clone_clone_clone_clone_6'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -27960,6 +27982,7 @@
       <pose frame=''>2.82726 -12.8485 -4.7e-05 -0 5.5e-05 1.54773</pose>
     </model>
     <model name='polaris_ranger_ev_clone_1_clone_clone_clone_clone_7'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -29133,6 +29156,7 @@
       <pose frame=''>5.34126 -12.8435 -4.7e-05 -0 5.5e-05 1.54773</pose>
     </model>
     <model name='polaris_ranger_ev_clone_1_clone_clone_clone_clone_8'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
@@ -30306,6 +30330,7 @@
       <pose frame=''>7.86196 -12.7432 -4.7e-05 -0 5.5e-05 1.54773</pose>
     </model>
     <model name='polaris_ranger_ev_clone_1_clone_clone_clone_clone_9'>
+      <static>true</static>
       <link name='chassis'>
         <inertial>
           <mass>720</mass>
