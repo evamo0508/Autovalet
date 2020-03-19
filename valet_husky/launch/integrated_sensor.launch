@@ -27,6 +27,6 @@
     <!-- odom remap for rtab -->
 
     <!-- RVIZ -->
-    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find valet_husky)/rviz/config.rviz" />
+    <!-- node type="rviz" name="rviz" pkg="rviz" args="-d $(find valet_husky)/rviz/config.rviz" /-->
     
 </launch>
