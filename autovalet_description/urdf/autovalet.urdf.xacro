@@ -8,17 +8,17 @@
   		
 	<!-- Define the front camera link -->
 	<sensor_d435 parent="velodyne" name="backCamera" >
-	    <origin xyz="0 -0.11 -0.05" rpy="0 0 -1.57079" />
+	    <origin xyz="0 -0.11 -0.59" rpy="0 0 -1.57079" />
 	</sensor_d435>
 
 	<!-- Define the back camera link -->
 	<sensor_d435 parent="velodyne" name="frontCamera" >
-	    <origin xyz="0 0.197 -0.05" rpy="0 0 1.57079"/>
+	    <origin xyz="0 0.197 -0.59" rpy="0 0 1.57079"/>
 	</sensor_d435>
 
-	<!-- Define the velodyne link to the husky -->
-	<VLP-16 parent="base_link" name="velodyne" topic="/velodyne_points" hz="10" samples="440">
-    	<origin xyz="0 -0.015 0.345" rpy="0 0 -1.570796326"/>
+	<!-- Define the velodyne link to the husky (base_link)-->
+	<VLP-16 parent="base_footprint" name="velodyne" topic="/velodyne_points" hz="10" samples="440">
+    	<origin xyz="0 -0.015 1.47" rpy="0 0 -1.570796326"/> 
   	</VLP-16>
 
 </robot>
