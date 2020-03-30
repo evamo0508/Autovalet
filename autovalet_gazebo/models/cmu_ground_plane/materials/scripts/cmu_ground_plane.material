@@ -10,7 +10,7 @@ material CMUGroundPlane/Image
 
             texture_unit
             {
-                texture garage.jpg
+                texture garage_oneline.jpg
             }
         }
     }
