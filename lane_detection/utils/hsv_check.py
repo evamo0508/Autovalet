@@ -1,9 +1,6 @@
 import cv2
 import numpy as np
 
-
-cap = cv2.VideoCapture(0)
-
 def nothing(x):
     pass
 # Creating a window for later use
@@ -19,7 +16,7 @@ cv2.createTrackbar('v', 'result',0,255,nothing)
 
 while(1):
 
-    frame = cv2.imread('../data/green/train_image00000.jpg')
+    frame = cv2.imread('../data/green/train_image00312.jpg')
 
     #converting to HSV
     hsv = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
@@ -42,7 +39,5 @@ while(1):
     k = cv2.waitKey(5) & 0xFF
     if k == 27:
         break
-
-cap.release()
 
 cv2.destroyAllWindows()

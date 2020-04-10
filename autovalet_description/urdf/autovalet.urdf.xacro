@@ -7,12 +7,12 @@
 	<xacro:include filename="$(find velodyne_description)/urdf/VLP-16.urdf.xacro"/>
   		
 	<!-- Define the front camera link -->
-	<sensor_d435 parent="velodyne" name="backCamera" >
+	<sensor_d435 parent="base_link" name="backCamera" >
 	    <origin xyz="0 -0.11 -0.59" rpy="0 0 -1.57079" />
 	</sensor_d435>
 
 	<!-- Define the back camera link -->
-	<sensor_d435 parent="velodyne" name="frontCamera" >
+	<sensor_d435 parent="base_link" name="frontCamera" >
 	    <origin xyz="0 0.197 -0.59" rpy="0 0 1.57079"/>
 	</sensor_d435>
 
