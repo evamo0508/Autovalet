@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<launch>
+  	<include file="$(find autovalet_gazebo)/launch/slam_val_lot.launch">
+  		<arg name="joystick" value="true"/> 
+  	</include>
+
+  	<include file="$(find autovalet_gazebo)/launch/valet_rtab_sim.launch"/>
+
+</launch>

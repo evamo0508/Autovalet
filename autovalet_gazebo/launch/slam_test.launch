@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<launch>
+  	<!--node name="lane_detection" pkg="lane_detection" type="lane_detector_classical.py" output="screen"/-->
+	<node name="slam_test" pkg="autovalet_gazebo" type="slam_validation.py" output="screen"/>
+
+
+
+  	<!--node name="recording" type= "video_recorder" pkg="image_view" args="image:=/realsense/frontCamera/color/image_raw">
+  		<param name="filename" type="string" value="/home/kob51/output.avi" />
+  	</node-->
+  		
+</launch>
+
+
+
