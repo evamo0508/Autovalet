@@ -3,6 +3,7 @@
 import rospy
 from gazebo_msgs.msg import LinkStates
 from nav_msgs.msg import Odometry
+from tf.transformations import euler_from_quaternion
 
 import numpy as np
 
@@ -31,8 +32,8 @@ class Localization_validation:
         #TODO: get list index from name of first message
         self.gt = gt.pose[-5]
         if(self.isFirstCb is True):
-            self.last_gt = np.array([self.gt.position.x, self.gt.position.y, self.gt.position.z])
-            self.offset = np.array([self.gt.position.x,  self.gt.position.y, self.gt.position.z])
+            self.last_gt = np.array([self.gt.position.x, self.gt.position.y, self.quat_to_euler(self.gt.orientation)[2]])
+            self.offset = np.array([self.gt.position.x,  self.gt.position.y, self.quat_to_euler(self.gt.orientation)[2]])
             self.isFirstCb = False
 
     def est_cb(self, est):
@@ -44,15 +45,23 @@ class Localization_validation:
         self.estimate = est.pose.pose
 
         if(self.last_gt is not None and self.gt is not None):
-            cur_pose = np.array([self.estimate.position.x, self.estimate.position.y, self.estimate.position.z])
-            gt_pose = np.array([self.gt.position.x, self.gt.position.y, self.gt.position.z])
+            cur_pose = np.array([self.estimate.position.x, self.estimate.position.y, self.quat_to_euler(self.estimate.orientation)[2]])
+            gt_pose = np.array([self.gt.position.x, self.gt.position.y, self.quat_to_euler(self.gt.orientation)[2]])
             
-            dist_moved = np.linalg.norm(gt_pose - self.last_gt)
+            dist_moved = np.linalg.norm(gt_pose[:-1] - self.last_gt[:-1])
             if(dist_moved > self.sample_dist):
-                current_error = np.linalg.norm(cur_pose - (gt_pose - self.offset))
+                current_error_position = np.linalg.norm(cur_pose[:-1] - (gt_pose[:-1] - self.offset[:-1]))
+                current_error_heading = np.linalg.norm(cur_pose[-1] - (gt_pose[-1] - self.offset[-1]))
                 print("Individual Errors: ", cur_pose - (gt_pose - self.offset))
-                print("Current Euclidean error: ", current_error)
+                print("Current Euclidean error: ", current_error_position, current_error_heading)
                 self.last_gt = gt_pose
+
+    def quat_to_euler(self, q):
+        # euler indexing as RPY
+        quaternion = (q.x, q.y, q.z, q.w)
+        euler = euler_from_quaternion(quaternion)
+        return euler
+
 
 def main():
 
