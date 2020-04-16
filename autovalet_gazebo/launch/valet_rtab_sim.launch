@@ -43,7 +43,6 @@
           <param name="Reg/Force3DoF"             type="string" value="true"/>
           <param name="Reg/Strategy"              type="string" value="1"/> <!-- 1=ICP -->
           
-          
           <!-- ICP parameters -->
           <param name="Icp/VoxelSize"                 type="string" value="0.05"/>
           <param name="Icp/MaxCorrespondenceDistance" type="string" value="0.1"/>
