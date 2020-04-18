@@ -78,7 +78,7 @@ def main():
     rospy.init_node("localization_validation", anonymous=False)
     
     ground_truth_topic = '/gazebo/link_states'
-    estimate_topic = '/odometry/filtered'
+    estimate_topic = '/rtabmap/RT_odom'
     sample_dist = 0.3
 
     Localization_validation(ground_truth_topic, estimate_topic, sample_dist)
