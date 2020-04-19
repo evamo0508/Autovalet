@@ -4,6 +4,7 @@ import rospy
 from gazebo_msgs.msg import LinkStates
 from nav_msgs.msg import Odometry
 from tf.transformations import euler_from_quaternion
+from geometry_msgs.msg import Pose
 
 import numpy as np
 
@@ -11,6 +12,7 @@ class Localization_validation:
     def __init__(self, gt_topic, est_topic, sample_dist):
         self.gt_handle = rospy.Subscriber(gt_topic, LinkStates, self.gt_cb)
         self.est_handle = rospy.Subscriber(est_topic, Odometry, self.est_cb)
+        # self.est_handle = rospy.Subscriber(est_topic, Pose, self.est_cb)
         self.sample_dist = sample_dist
 
         self.gt = None
@@ -43,6 +45,7 @@ class Localization_validation:
         Error values are updated here as the EKF odom is of lower publish rate as compared to Gazebo state publisher
         """
         self.estimate = est.pose.pose
+        # self.estimate = est
 
         if(self.last_gt is not None and self.gt is not None):
             cur_pose = np.array([self.estimate.position.x, self.estimate.position.y, self.quat_to_euler(self.estimate.orientation)[2]])
@@ -78,7 +81,9 @@ def main():
     rospy.init_node("localization_validation", anonymous=False)
     
     ground_truth_topic = '/gazebo/link_states'
-    estimate_topic = '/rtabmap/RT_odom'
+    # estimate_topic = '/odometry/filtered'
+    estimate_topic = '/icp_odom'
+    # estimate_topic = 'robot_pose'
     sample_dist = 0.3
 
     Localization_validation(ground_truth_topic, estimate_topic, sample_dist)
