@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <launch>
-
 	<node name="robot_pose_publisher" pkg="robot_pose_publisher" type="robot_pose_publisher" output="screen"/>
 	<node name="localization_validation" pkg="autovalet_gazebo" type="validate_localization.py" output="screen"/>
-
-
 </launch>
 
