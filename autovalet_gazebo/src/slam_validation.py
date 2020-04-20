@@ -16,9 +16,9 @@ class Error_Calculator:
 		self.sub  = rospy.Subscriber("/clicked_point",PointStamped,self.clicked_point_callback)
 		# self.current_feed_sub = rospy.Subscriber("/subbu", Image, self.current_img_callback)
 
-		self.map_frame_transform = np.array([[1.,0.,0.,18],
+		self.map_frame_transform = np.array([[1.,0.,0.,-5],
 											  [0.,1.,0.,9],
-											  [0.,0.,1.,0],
+											  [0.,0.,1.,-0.132272858645],
 											  [0.,0.,0.,1]])
 		self.i = 0
 		self.num_points = 28
@@ -39,7 +39,8 @@ class Error_Calculator:
 				        ["TL","BL"],
 				        ["TR","BR"],
 				        ["TR","BR"]]
-		self.box_list = [0,13]
+		# self.box_list = [0,13]
+		self.box_list = [3,9]
 		self.corner_points = self.calc_corners(self.box_points,self.corners,self.box_list)
 
 	# calculate box corner points given box centroids and directions
@@ -107,6 +108,7 @@ class Error_Calculator:
 		map_y = data.point.y
 		map_z = data.point.z
 
+		print(self.corner_points)
 
 		map_point = np.array([map_x,map_y,map_z,1])
 		
@@ -145,7 +147,7 @@ if __name__ == "__main__":
 
 
 
-	calc = Error_Calculator('/home/kob51/catkin_ws/src/autovalet/autovalet_gazebo/worlds/slam_val.world')
+	calc = Error_Calculator('/home/subbu/catkin_ws/src/autovalet/autovalet_gazebo/worlds/slam_val_dumpster.world')
 
 
 
