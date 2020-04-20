@@ -71,10 +71,11 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   </node>
   
   <!-- Start EKF for localization -->
-  <!-- <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
-    <rosparam command="load" file="$(find autovalet_gazebo)/config/autovalet_ekf.yaml" />
-    <rosparam command="load" file="$(find husky_control)/config/localization.yaml" />
-  </node> -->
+  <!-- <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization"> -->
+    <!-- <rosparam command="load" file="$(find autovalet_gazebo)/config/autovalet_ekf.yaml" /> -->
+    <!-- <rosparam command="load" file="$(find husky_control)/config/localization.yaml" /> -->
+    <!-- <rosparam command="load" file="$(find autovalet_gazebo)/config/autovalet_icp.yaml" /> -->
+  <!-- </node> -->
 
   <!-- Launch joystick/keyboard teleop for husky based on command line argument joystick:=[true/false] 
        if you don't specify the command line parameter, joystick param defaults to false -->
