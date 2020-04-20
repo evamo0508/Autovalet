@@ -7,13 +7,14 @@ project(lane_detection)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
+find_package(OpenCV 3.1 REQUIRED)
 find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   image_transport
   roscpp
   rospy
   std_msgs
-  OpenCV
+  #OpenCV
 )
 
 ## System dependencies are found with CMake's conventions
@@ -149,9 +150,10 @@ include_directories(
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(
+#target_link_libraries(
+#    lane_detection
+#    ${OpenCV_LIBRARIES}
 #)
 
 #############
