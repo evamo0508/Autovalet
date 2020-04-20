@@ -20,7 +20,8 @@
     <node pkg="rtabmap_ros" type="icp_odometry" name="icp_odometry" output="screen">
         <remap from="scan_cloud" to="/velodyne_points"/>
         <param name="frame_id"        type="string" value="base_link"/>
-        <param name="odom_frame_id"   type="string" value="odom"/>
+        <param name="odom_frame_id"   type="string" value="icp_odom"/>
+        <param name="publish_tf"      type="bool"   value="true"/>
         <param name="expected_update_rate" type="double" value="15"/>
         <remap from="imu" to="/imu/data"/>
         <param name="guess_frame_id"   type="string" value=""/>
@@ -48,19 +49,16 @@
     
     <node name="rtabmap" pkg="rtabmap_ros" type="rtabmap" output="screen" args="--delete_db_on_start">
           <param name="frame_id" type="string" value="base_link"/>
-
+          <param name="odom_frame_id" type="string" value="icp_odom"/>
           <param name="subscribe_depth" type="bool" value="false"/>
           <param name="subscribe_rgbd" type="bool" value="true"/>
           <param name="subscribe_scan" type="bool" value="false"/>
           <param name="subscribe_scan_cloud" type="bool" value="true"/>
 
-          <remap from="odom" to="/odometry/filtered"/>
+          <!-- <remap from="odom" to="/odometry/filtered"/> -->
           <remap from="scan_cloud" to="/velodyne_points"/>
           <remap from="rgbd_image" to="rgbd_image"/>
-
           <param name="queue_size" type="int" value="10"/>
-
-          <param name="localization" type="bool" value= "true"/>
 
           <!-- RTAB-Map's parameters -->
           <param name="RGBD/NeighborLinkRefining" type="string" value="true"/>
@@ -75,21 +73,18 @@
           <param name="Reg/Strategy"              type="string" value="1"/> <!-- 1=ICP -->
 
           <!-- ICP Params -->
-        <param name="Icp/PointToPlane"        type="string" value="true"/>
-        <param name="Icp/Iterations"          type="string" value="10"/>
-        <param name="Icp/VoxelSize"           type="string" value="0.2"/>
-        <param name="Icp/DownsamplingStep"    type="string" value="1"/> <!-- cannot be increased with ring-like lidar -->
-        <param name="Icp/Epsilon"             type="string" value="0.001"/>
-        <param name="Icp/PointToPlaneK"       type="string" value="20"/>
-        <param name="Icp/PointToPlaneRadius"  type="string" value="0"/>
-        <param name="Icp/MaxTranslation"      type="string" value="2"/>
-        <param name="Icp/MaxCorrespondenceDistance" type="string" value="1"/>
-        <param name="Icp/PM"                  type="string" value="true"/>
-        <param name="Icp/PMOutlierRatio"      type="string" value="0.1"/>
-        <param name="Icp/CorrespondenceRatio" type="string" value="0.01"/>
-
-          <!-- <param name="Icp/VoxelSize"                 type="string" value="0.05"/> -->
-          <!-- <param name="Icp/MaxCorrespondenceDistance" type="string" value="0.1"/> -->
+          <param name="Icp/PointToPlane"        type="string" value="true"/>
+          <param name="Icp/Iterations"          type="string" value="10"/>
+          <param name="Icp/VoxelSize"           type="string" value="0.2"/>
+          <param name="Icp/DownsamplingStep"    type="string" value="1"/> <!-- cannot be increased with ring-like lidar -->
+          <param name="Icp/Epsilon"             type="string" value="0.001"/>
+          <param name="Icp/PointToPlaneK"       type="string" value="20"/>
+          <param name="Icp/PointToPlaneRadius"  type="string" value="0"/>
+          <param name="Icp/MaxTranslation"      type="string" value="2"/>
+          <param name="Icp/MaxCorrespondenceDistance" type="string" value="1"/>
+          <param name="Icp/PM"                  type="string" value="true"/>
+          <param name="Icp/PMOutlierRatio"      type="string" value="0.1"/>
+          <param name="Icp/CorrespondenceRatio" type="string" value="0.01"/>
 
     </node>
   </group>
