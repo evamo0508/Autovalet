@@ -4,7 +4,6 @@
 import sys
 import os
 
-
 import rospy
 
 from geometry_msgs.msg import PointStamped
@@ -16,32 +15,54 @@ class Error_Calculator:
 		self.sub  = rospy.Subscriber("/clicked_point",PointStamped,self.clicked_point_callback)
 		# self.current_feed_sub = rospy.Subscriber("/subbu", Image, self.current_img_callback)
 
-		self.map_frame_transform = np.array([[1.,0.,0.,-5],
-											  [0.,1.,0.,9],
-											  [0.,0.,1.,-0.132272858645],
-											  [0.,0.,0.,1]])
+		if "clearpath" not in filename:
+
+			self.map_frame_transform = np.array([[1.,0.,0.,18],
+												  [0.,1.,0.,9],
+												  [0.,0.,1.,-0.132272858645],
+												  [0.,0.,0.,1]])
+		else:
+			self.map_frame_transform = np.array([[1.,0.,0.,8],
+												  [0.,1.,0.,9],
+												  [0.,0.,1.,-0.182272858645],
+												  [0.,0.,0.,1]])
 		self.i = 0
-		self.num_points = 28
+		
 		self.dist = 0
 		self.filename = filename
 		self.box_points = self.parse_world(self.filename)
-		self.corners = [["BL","TL"],
-         				["BR","TR"],
-				       	["BR","TR"],
-				        ["BR","TR"],
-				        ["BR","TR"],
-				        ["BR","BL"],
-				        ["TR","TL"],
-				        ["TR","TL"],
-				        ["BR","TR"],
-				        ["TL","BL"],
-				        ["TL","BL"],
-				        ["TL","BL"],
-				        ["TR","BR"],
-				        ["TR","BR"]]
-		# self.box_list = [0,13]
-		self.box_list = [3,9]
+		if self.box_points.shape[0] == 14:
+			self.corners = [["BL","TL"],
+	         				["BR","TR"],
+					       	["BR","TR"],
+					        ["BR","TR"],
+					        ["BR","TR"],
+					        ["BR","BL"],
+					        ["TR","TL"],
+					        ["TR","TL"],
+					        ["BR","TR"],
+					        ["TL","BL"],
+					        ["TL","BL"],
+					        ["TL","BL"],
+					        ["TR","BR"],
+					        ["TR","BR"]]
+			# self.box_list = [0,13]
+			self.box_list = [0,1,4,7,12,13]
+		if self.box_points.shape[0] == 4:
+			self.corners = [["BR","TR"],
+							["TR","TL"],
+							["BR","BL"],
+							["TR","TL"]]
+			# self.corners.reverse()
+			self.box_list = [0,1,2,3]
+		# self.box_list = [0,1]
+		self.num_points = len(self.box_list) * 2
+		self.avgs = []
+		self.errors = []
 		self.corner_points = self.calc_corners(self.box_points,self.corners,self.box_list)
+		self.filename = 'playpen_errors.npy'
+		print "BOX",self.box_list[0]
+		print self.corners[self.box_list[0]]
 
 	# calculate box corner points given box centroids and directions
 	# talk to kevin about this, he knows what it means... :)
@@ -108,13 +129,19 @@ class Error_Calculator:
 		map_y = data.point.y
 		map_z = data.point.z
 
-		print(self.corner_points)
+		# print(self.corner_points)
 
 		map_point = np.array([map_x,map_y,map_z,1])
 		
-		if self.i % 2 == 0:
-			print "BOX",self.box_list[self.i/2]
+		# if self.i % 2 == 0:
+		# 	print
+		# 	print "BOX",self.box_list[self.i/2]
+		# 	print self.corners[self.i/2]
 		map_point = map_point[:3]
+		if map_point[2] < 0.5:
+			print "you fucked up, try again"
+			return
+
 		print "Map-Generated Coordinate:", map_point
 
 		gt_point = np.dot(self.map_frame_transform, self.corner_points[self.i])
@@ -126,6 +153,7 @@ class Error_Calculator:
 		print "dx:", diff[0], "m"
 		print "dy:", diff[1], "m"
 		print "dz:",diff[2],"m"
+		print
 		print "Error:", error, "m"
 		print
 
@@ -133,21 +161,39 @@ class Error_Calculator:
 		self.dist += error
 
 		avg = self.dist / self.i
+		self.errors.append(error)
 
 		print "Compounded Average Error:", avg, "m"
+		# self.avgs.append(avg)
 		print("*********")
+		
+		
+
 		if self.i == self.num_points:
 			print("Error test completed")
+			array = np.array(self.errors)
+			np.save('/home/kob51/catkin_ws/src/autovalet/autovalet_gazebo/data/'+self.filename,array)
 			self.sub.unregister()
+			return
 
+		if self.i % 2 == 0:
+			print
+			box = self.box_list[self.i/2]
+			print "BOX", box
+			print self.corners[box]
+		
+		
 
 if __name__ == "__main__":
 
 	rospy.init_node('test')
 
+	filename = sys.argv[1]
 
 
-	calc = Error_Calculator('/home/subbu/catkin_ws/src/autovalet/autovalet_gazebo/worlds/slam_val_dumpster.world')
+
+	# calc = Error_Calculator('/home/kob51/catkin_ws/src/autovalet/autovalet_gazebo/worlds/slam_val_dumpster.world')
+	calc = Error_Calculator(filename)
 
 
 
