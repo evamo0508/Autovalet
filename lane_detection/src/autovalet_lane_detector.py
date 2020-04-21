@@ -83,16 +83,18 @@ class LaneDetector:
         if self.model is None:
             return
         img = self.bridge.imgmsg_to_cv2(data,"bgr8")
-        # =========test jpg issue=========
-        #cv2.imwrite('/home/evamo0508/test.jpg', img)
-        #pImg = pImage.open('/home/evamo0508/test.jpg').convert('RGB')
-        # =========still bad output=======
-        
-        # ========test test/ image========
-        #pImg = pImage.open('/home/evamo0508/Documents/datasets/AVLane/data/test/image00000.jpg').convert('RGB')
-        # ========work as it was==========
 
         if self.count % 10 == 0:
+            #=======ADDING CONTRAST OR BRIGHTNESS TESTING=====
+            alpha = np.random.random_sample() + 0.5       
+            beta = np.random.randint(0, 80) - 40
+            img  = cv2.convertScaleAbs(img, alpha=alpha, beta=beta)
+            #=======ADDING GAUSSIAN NOISE=====================
+            #sigma = 3
+            #gauss = np.random.normal(0, sigma, img.shape).reshape(img.shape)
+            #img = (img + gauss).astype(np.uint8)
+            self.img = img
+            #===================================================
             pImg = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             pImg = pImage.fromarray(pImg.astype(np.uint8)).convert('RGB')
 
@@ -111,7 +113,7 @@ class LaneDetector:
             pred = np.stack((pred, pred, pred), axis=-1)
             self.pred = pred
         
-        concat = np.concatenate((img, self.pred), axis=1)
+        concat = np.concatenate((self.img, self.pred), axis=1)
         cv2.imshow("Lane Detection", concat)
         cv2.waitKey(10)
         self.count += 1
