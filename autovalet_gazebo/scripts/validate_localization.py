@@ -7,9 +7,11 @@ from tf.transformations import euler_from_quaternion
 from geometry_msgs.msg import Pose
 
 import numpy as np
+import matplotlib.pyplot as plt
+import os
 
 class Localization_validation:
-    def __init__(self, gt_topic, est_topic, sample_dist):
+    def __init__(self, gt_topic, est_topic, sample_dist, file):
         self.gt_handle = rospy.Subscriber(gt_topic, LinkStates, self.gt_cb)
         self.est_handle = rospy.Subscriber(est_topic, Odometry, self.est_cb)
         # self.est_handle = rospy.Subscriber(est_topic, Pose, self.est_cb)
@@ -18,12 +20,16 @@ class Localization_validation:
         self.gt = None
         self.estimate = None
         self.last_gt = None
+        self.filename = file
 
         """
         To ping the first message of gt and populate the world to pose offset
         """
         self.isFirstCb = True
         self.offset = None
+        self.positionErrorLog = []
+        self.yawErrorLog = []
+        self.runningAverage = []
 
     def gt_cb(self, gt):
         """
@@ -64,9 +70,16 @@ class Localization_validation:
                 print "Current Euclidean error (in cms, degrees): ", current_error_position*100, current_error_heading*180/3.14
                 print "==============================================="
                 print "\n\n"
-                
-                self.last_gt = gt_pose
 
+                self.last_gt = gt_pose
+                self.positionErrorLog.append(current_error_position)
+                self.runningAverage.append(sum(self.positionErrorLog)/len(self.positionErrorLog))
+                self.yawErrorLog.append(current_error_heading)
+
+                np.save(self.filename+"_pError", self.positionErrorLog)
+                np.save(self.filename+"_aError", self.runningAverage)
+                np.save(self.filename+"_yError", self.yawErrorLog)
+                
     def quat_to_euler(self, q):
         # euler indexing as RPY
         quaternion = (q.x, q.y, q.z, q.w)
@@ -85,8 +98,11 @@ def main():
     estimate_topic = '/icp_odom'
     # estimate_topic = 'robot_pose'
     sample_dist = 0.3
+    outFile = "/home/subbu/catkin_ws/src/autovalet/autovalet_gazebo/data/"
+    noise = 0.008
+    outFile = outFile + str(noise)
 
-    Localization_validation(ground_truth_topic, estimate_topic, sample_dist)
+    errorHandler = Localization_validation(ground_truth_topic, estimate_topic, sample_dist, outFile)
 
     while not rospy.is_shutdown():
         pass
