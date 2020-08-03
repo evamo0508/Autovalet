@@ -93,8 +93,8 @@ class LaneDetector:
             #sigma = 3
             #gauss = np.random.normal(0, sigma, img.shape).reshape(img.shape)
             #img = (img + gauss).astype(np.uint8)
-            self.img = img
             #===================================================
+            self.img = img
             pImg = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             pImg = pImage.fromarray(pImg.astype(np.uint8)).convert('RGB')
 
@@ -110,10 +110,24 @@ class LaneDetector:
             
             # concatenate data & result
             pred = np.asarray(pred, dtype=np.uint8) # only contains 0, 255 at this point
+            proc = pred.copy()
+            proc[:proc.shape[0]/2] = 0
+            #se1 = cv2.getStructuringElement(cv2.MORPH_RECT, (40,40))
+            se1 = np.ones((10,10), np.uint8)
+            proc = cv2.dilate(proc, se1, 1)
+            #se2 = cv2.getStructuringElement(cv2.MORPH_RECT, (60,60))
+            se2 = np.ones((30,30), np.uint8)
+            #mask = cv2.morphologyEx(proc, cv2.MORPH_CLOSE, se1)
+            mask = cv2.morphologyEx(proc, cv2.MORPH_OPEN, se2)
+            proc = proc * (mask / 255)
+            proc = np.stack((proc, proc, proc), axis=-1)
+            self.proc = proc
             pred = np.stack((pred, pred, pred), axis=-1)
             self.pred = pred
         
-        concat = np.concatenate((self.img, self.pred), axis=1)
+        
+        concat = np.concatenate((self.proc, self.pred), axis=1)
+        #concat = np.concatenate((self.img, self.pred), axis=1)
         cv2.imshow("Lane Detection", concat)
         cv2.waitKey(10)
         self.count += 1
