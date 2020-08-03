@@ -98,7 +98,7 @@ def main():
     estimate_topic = '/icp_odom'
     # estimate_topic = 'robot_pose'
     sample_dist = 0.3
-    outFile = "/home/subbu/catkin_ws/src/autovalet/autovalet_gazebo/data/"
+    outFile = "/home/kob51/catkin_ws/src/autovalet/autovalet_gazebo/data/"
     noise = 0.008
     outFile = outFile + str(noise)
 
