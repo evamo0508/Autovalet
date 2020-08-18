@@ -86,7 +86,7 @@ class LaneDetector:
         roi = cv2.bitwise_and(th, th, mask=mask)
 
         # detect center line
-        minLineLength, maxLineGap = 100, 40
+        minLineLength, maxLineGap = 130, 20
         edges = cv2.Canny(roi, 100, 200, apertureSize=3)
         lines = cv2.HoughLinesP(edges, 1, np.pi/180, 30, np.array([]), minLineLength, maxLineGap)
 
