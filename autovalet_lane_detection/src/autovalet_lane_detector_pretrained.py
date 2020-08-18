@@ -29,7 +29,7 @@ class LaneDetector:
         self.count = 0
 
         self.model = None
-        self.weightspath = "/home/evamo0508/catkin_autovalet/src/autovalet/autovalet_lane_detection/include/lane_detection/model_best3.pth"
+        self.weightspath = "/home/evamo0508/catkin_autovalet/src/autovalet/autovalet_lane_detection/include/lane_detection/erfnet_pretrained.pth"
         self.num_channels = 3
         self.num_classes = 20
 
@@ -44,14 +44,12 @@ class LaneDetector:
         ])
 
         # load model
-        erfnet_imagenet = ERFNet_imagenet(1000)
-        pretrainedEnc = torch.nn.DataParallel(erfnet_imagenet)
-        pretrainedEnc = next(pretrainedEnc.children()).features.encoder
-        pretrainedEnc = pretrainedEnc.cpu()
-        self.model = ERFNet(self.num_classes, encoder=pretrainedEnc)
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self.model = ERFNet(self.num_classes)
         self.model = torch.nn.DataParallel(self.model)
-        self.model = self.load_my_state_dict(self.model, torch.load(self.weightspath, map_location=torch.device('cpu')))
+        self.model = self.load_my_state_dict(self.model,torch.load(self.weightspath, map_location=self.device))
         self.model = self.model.eval()
+        self.model.to(self.device)
 
         self.bridge = CvBridge()
         self.im_sub  = rospy.Subscriber("/camera/color/image_raw",Image,self.image_callback, queue_size=1)
@@ -75,48 +73,28 @@ class LaneDetector:
 
         if self.count % 10 == 0:
             #=======ADDING CONTRAST OR BRIGHTNESS TESTING=====
-            #alpha = np.random.random_sample() + 0.5
-            #beta = np.abs(16 - (self.count/10) % 32) * 2.5
-            #img  = cv2.convertScaleAbs(img, alpha=1, beta=beta)
-            #=======ADDING GAUSSIAN NOISE=====================
-            #sigma = 3
-            #gauss = np.random.normal(0, sigma, img.shape).reshape(img.shape)
-            #img = (img + gauss).astype(np.uint8)
+            beta = 20
+            img  = cv2.convertScaleAbs(img, alpha=1, beta=beta)
             #===================================================
             self.img = img
             pImg = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             pImg = pImage.fromarray(pImg.astype(np.uint8)).convert('RGB')
 
             inputs = self.image_transform(pImg)
-            inputs = Variable(inputs)
-            inputs = inputs.unsqueeze(0)
+            inputs = Variable(inputs).to(self.device)
+            inputs = inputs.unsqueeze(0) # since this is a single img
             with torch.no_grad():
                 outputs = self.model(inputs)
 
-            pred = torch.where(outputs > 0.1, torch.ones([1], dtype=torch.uint8), torch.zeros([1], dtype=torch.uint8))
-            pred = pred.squeeze(0)
-            pred = self.target_transform(pred)
+            pred = outputs[0].max(0)[1].byte().cpu().data
+            pred = Colorize()(pred.unsqueeze(0))
+            pred = self.pred_transform(pred)
 
             # concatenate data & result
-            pred = np.asarray(pred, dtype=np.uint8) # only contains 0, 255 at this point
-            proc = pred.copy()
-            proc[:proc.shape[0]/2] = 0
-            #se1 = cv2.getStructuringElement(cv2.MORPH_RECT, (40,40))
-            se1 = np.ones((10,10), np.uint8)
-            proc = cv2.dilate(proc, se1, 1)
-            #se2 = cv2.getStructuringElement(cv2.MORPH_RECT, (60,60))
-            se2 = np.ones((30,30), np.uint8)
-            #mask = cv2.morphologyEx(proc, cv2.MORPH_CLOSE, se1)
-            mask = cv2.morphologyEx(proc, cv2.MORPH_OPEN, se2)
-            proc = proc * (mask / 255)
-            proc = np.stack((proc, proc, proc), axis=-1)
-            self.proc = proc
-            pred = np.stack((pred, pred, pred), axis=-1)
+            pred = np.asarray(pred, dtype=np.uint8)
             self.pred = pred
 
-
-        #concat = np.concatenate((self.proc, self.pred), axis=1)
-        concat = np.concatenate((self.img, self.proc), axis=1)
+        concat = np.concatenate((self.img, self.pred), axis=1)
         cv2.imshow("Lane Detection", concat)
         cv2.waitKey(10)
         self.count += 1
