@@ -13,6 +13,7 @@ Changelog:
     eva/subbu - 9/12 - Fixed fov
     subbu - 9/14 - lane line extraction from segmap
     subbu - 9/18 - Depth registration added
+    eva - 10/7 - Modify topic name according to lane detn sim
 '''
 import numpy as np
 import rospy
@@ -115,7 +116,7 @@ def main():
 
     rospy.init_node("lane_transfer", anonymous=False)
 
-    segmap      = '/lane/ground_truth'
+    segmap      = '/lane/segmap'
     depthmap    = '/depth_registered/image_rect'
     camera_info = '/frontCamera/color/camera_info'
     lane_cloud  = '/lane/pointcloud'
