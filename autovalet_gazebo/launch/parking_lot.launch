@@ -31,9 +31,13 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     <arg name="simulation" value="true"/>
   </include>
 
+
+  <arg name="world_file" default="cmu_parking_lot.world"/>
+
+
   <!-- Launch CMU parking plane world -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find autovalet_gazebo)/worlds/cmu_parking_lot.world"/> 
+    <arg name="world_name" value="$(find autovalet_gazebo)/worlds/$(arg world_file)"/> 
     <arg name="paused" value="false"/>
     <arg name="use_sim_time" value="true"/>
     <arg name="gui" value="true"/>
@@ -42,7 +46,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   </include>
 
   <!-- Spawn husky in the world -->
-  <arg name="x" default="-18"/>
+  <arg name="x" default="-8"/>
   <arg name="y" default="-9"/>
   <arg name="z" default="0.0"/>
   <arg name="yaw" default="0.0"/>
@@ -71,9 +75,11 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   </node>
   
   <!-- Start EKF for localization -->
-  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization">
-    <rosparam command="load" file="$(find husky_control)/config/localization.yaml" />
-  </node>
+  <!-- <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization"> -->
+    <!-- <rosparam command="load" file="$(find autovalet_gazebo)/config/autovalet_ekf.yaml" /> -->
+    <!-- <rosparam command="load" file="$(find husky_control)/config/localization.yaml" /> -->
+    <!-- <rosparam command="load" file="$(find autovalet_gazebo)/config/autovalet_icp.yaml" /> -->
+  <!-- </node> -->
 
   <!-- Launch joystick/keyboard teleop for husky based on command line argument joystick:=[true/false] 
        if you don't specify the command line parameter, joystick param defaults to false -->

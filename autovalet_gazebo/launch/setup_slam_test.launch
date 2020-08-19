@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <launch>
-  	<include file="$(find autovalet_gazebo)/launch/slam_val_lot.launch">
+
+	<arg name="world_file" default="slam_val_dumpster.world"/>
+
+  	<include file="$(find autovalet_gazebo)/launch/parking_lot.launch">
   		<arg name="joystick" value="true"/> 
+  		<arg name="world_file" value="$(arg world_file)"/>
   	</include>
 
   	<include file="$(find autovalet_gazebo)/launch/valet_rtab_sim.launch"/>
