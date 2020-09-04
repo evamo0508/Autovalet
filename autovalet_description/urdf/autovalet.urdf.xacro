@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="valet_husky">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="autovalet_husky">
 
 	<!-- Include the link for the realsense sensors from the local realsense2_package--> 
 	<xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro"/>
