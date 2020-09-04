@@ -3,7 +3,7 @@
 <launch>
     <remap from="odometry/filtered" to="my_odom"/>
     <!-- Husky setup and teleop -->
-	<include file="$(find valet_husky)/launch/valet_bringup.launch" />
+	<include file="$(find autovalet_husky)/launch/valet_bringup.launch" />
 	
 	<!-- <arg name="cam_1_serial_number" value="819112073090" /> -->
 	<arg name="cam_2_serial_number" value="909512071908" />
@@ -28,6 +28,6 @@
     <!-- odom remap for rtab -->
 
     <!-- RVIZ -->
-    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find valet_husky)/rviz/config.rviz" />
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find autovalet_husky)/rviz/config.rviz" />
     
 </launch>

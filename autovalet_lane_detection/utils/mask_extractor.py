@@ -44,10 +44,10 @@ def reverse(frame):
 
 def main():
 
-    data_dir = "/home/subbu/catkin_ws/src/autovalet/lane_detection/data/"
+    data_dir = "/home/subbu/catkin_ws/src/autovalet/autovalet_lane_detection/data/"
     cur_data = data_dir + "green_left/*.jpg"
-    label_dir = "/home/subbu/catkin_ws/src/autovalet/lane_detection/data/training_label/"
-    image_dir = "/home/subbu/catkin_ws/src/autovalet/lane_detection/data/training_data/"
+    label_dir = "/home/subbu/catkin_ws/src/autovalet/autovalet_lane_detection/data/training_label/"
+    image_dir = "/home/subbu/catkin_ws/src/autovalet/autovalet_lane_detection/data/training_data/"
 
     for img in sorted(glob.glob(cur_data)):
         cv_img = cv2.imread(img)

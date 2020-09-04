@@ -2,7 +2,7 @@
 <package format="2">
   <name>autovalet_lane_detection</name>
   <version>0.0.0</version>
-  <description>The lane_detection package</description>
+  <description>The autovalet_lane_detection package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
