@@ -1,0 +1,5 @@
+<launch>
+
+    <node pkg="autovalet_navigation" type="autovalet_navigation" name="planner" output="screen"/>
+
+</launch> 

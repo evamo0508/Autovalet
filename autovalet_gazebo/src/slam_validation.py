@@ -48,6 +48,7 @@ class Error_Calculator:
 					        ["TR","BR"]]
 			# self.box_list = [0,13]
 			self.box_list = [0,1,4,7,12,13]
+			# self.box_list=[0]
 		if self.box_points.shape[0] == 4:
 			self.corners = [["BR","TR"],
 							["TR","TL"],
@@ -60,7 +61,7 @@ class Error_Calculator:
 		self.avgs = []
 		self.errors = []
 		self.corner_points = self.calc_corners(self.box_points,self.corners,self.box_list)
-		self.filename = 'playpen_errors.npy'
+		self.filename = 'svd.npy'
 		print "BOX",self.box_list[0]
 		print self.corners[self.box_list[0]]
 
@@ -139,7 +140,7 @@ class Error_Calculator:
 		# 	print self.corners[self.i/2]
 		map_point = map_point[:3]
 		if map_point[2] < 0.5:
-			print "you fucked up, try again"
+			print "Invalid point, try again"
 			return
 
 		print "Map-Generated Coordinate:", map_point
@@ -164,14 +165,14 @@ class Error_Calculator:
 		self.errors.append(error)
 
 		print "Compounded Average Error:", avg, "m"
-		# self.avgs.append(avg)
+		self.avgs.append(avg)
 		print("*********")
 		
 		
 
 		if self.i == self.num_points:
 			print("Error test completed")
-			array = np.array(self.errors)
+			array = np.array(self.avgs)
 			np.save('/home/kob51/catkin_ws/src/autovalet/autovalet_gazebo/data/'+self.filename,array)
 			self.sub.unregister()
 			return
