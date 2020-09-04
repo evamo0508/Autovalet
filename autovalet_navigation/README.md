@@ -1,5 +1,7 @@
 # Navigation Stack
 
+This package contains movebase implementation of the TEB Local planner for the Husky to move within the RTAB-generated map.
+
 ## Running the navigation stack
 1. Make sure you have the [TEB Local Planner](http://wiki.ros.org/teb_local_planner) package installed
 ```

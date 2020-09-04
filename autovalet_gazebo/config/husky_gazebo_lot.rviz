@@ -12,6 +12,7 @@ Panels:
         - /Map1
         - /PointCloud22
         - /Path1
+        - /Marker1
       Splitter Ratio: 0.5
     Tree Height: 532
   - Class: rviz/Selection
@@ -315,8 +316,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 2.36554313
-        Min Value: -0.140757471
+        Max Value: 2.33588719
+        Min Value: -0.137108624
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -364,6 +365,14 @@ Visualization Manager:
       Shaft Length: 0.100000001
       Topic: /move_base/TebLocalPlannerROS/local_plan
       Unreliable: false
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /move_base/TebLocalPlannerROS/teb_markers
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
       Value: true
   Enabled: true
   Global Options:

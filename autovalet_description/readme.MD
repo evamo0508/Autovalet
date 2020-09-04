@@ -1,3 +1,5 @@
+# autovalet_description
+
 This is the autovalet husky URDF description package. We have a modified version of the husky with a LiDAR and 2 d435s on it. The huskyValet_urdf launch file calls xacro parser onto the modified urdf passed to it. Also, it runs robot_state publisher and joint_state publisher for standalone vizualization purposes.
 
 Notes:
