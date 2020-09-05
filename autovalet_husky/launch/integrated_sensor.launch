@@ -4,28 +4,35 @@
     <remap from="odometry/filtered" to="my_odom"/>
     <!-- Husky setup and teleop -->
 	<include file="$(find autovalet_husky)/launch/valet_bringup.launch" />
-	
-	<!-- <arg name="cam_1_serial_number" value="819112073090" /> -->
-	<arg name="cam_2_serial_number" value="909512071908" />
-	
+
+	<arg name="cam_1_serial_number" value="909512071908" />
+	<arg name="cam_2_serial_number" value="819112073090" />
+
 	<!-- IntelRealsense launching -->
-<!--   	<include file="$(find realsense2_camera)/launch/rs_camera.launch">
+  	<include file="$(find realsense2_camera)/launch/rs_camera.launch">
     	<arg name="camera" value="backCamera"/>
     	<arg name="serial_no" value="$(arg cam_1_serial_number)"/>
     	<arg name="filters" value="pointcloud"/>
-  	</include> -->
+  	</include>
 
   	<include file="$(find realsense2_camera)/launch/rs_camera.launch">
     	<arg name="camera" value="frontCamera"/>
     	<arg name="serial_no" value="$(arg cam_2_serial_number)"/>
     	<arg name="filters" value="pointcloud"/>
         <arg name="unite_imu_method" value="linear_interpolation"/>
+        <arg name="color_width"         default="1920"/>
+        <arg name="color_height"        default="1080"/>
+        <arg name="depth_width"         default="848"/>
+        <arg name="depth_height"        default="480"/>
+        
+        <arg name="enable_fisheye"      default="false"/>
+        <arg name="enable_infra1"       default="false"/>
+        <arg name="enable_infra2"       default="false"/>
+
 	 </include>
 
 	<!-- Velodyne launching -->
-    <!-- <include file="$(find velodyne_pointcloud)/launch/VLP16_points.launch" /> -->
-
-    <!-- odom remap for rtab -->
+    <include file="$(find velodyne_pointcloud)/launch/VLP16_points.launch" />
 
     <!-- RVIZ -->
     <node type="rviz" name="rviz" pkg="rviz" args="-d $(find autovalet_husky)/rviz/config.rviz" />
