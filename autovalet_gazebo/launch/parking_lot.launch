@@ -31,9 +31,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
     <arg name="simulation" value="true"/>
   </include>
 
-
   <arg name="world_file" default="cmu_parking_lot.world"/>
-
 
   <!-- Launch CMU parking plane world -->
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
