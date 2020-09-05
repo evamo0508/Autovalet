@@ -9,16 +9,13 @@
 
 
     <node pkg="aruco_ros" type="single" name="aruco_single">
-        <!-- <remap from="/camera_info" to="/stereo/$(arg eye)/camera_info" /> -->
-        <remap from="/camera_info" to="/realsense/frontCamera/color/camera_info" />
-        <!-- <remap from="/image" to="/stereo/$(arg eye)/image_rect_color" /> -->
-        <remap from="/image" to="/realsense/frontCamera/color/image_raw" />
+        <remap from="/camera_info" to="/frontCamera/color/camera_info" />
+        <remap from="/image" to="/frontCamera/color/image_raw" />
 
         <param name="image_is_rectified" value="True"/>
         <param name="marker_size"        value="$(arg markerSize)"/>
         <param name="marker_id"          value="$(arg markerId)"/>
         <param name="reference_frame"    value="$(arg ref_frame)"/>   <!-- frame in which the marker pose will be refered -->
-        <!-- <param name="camera_frame"       value="stereo_gazebo_$(arg eye)_camera_optical_frame"/> -->
         <param name="camera_frame"       value="frontCamera_color_optical_frame"/>
         <param name="marker_frame"       value="$(arg marker_frame)" />
         <param name="corner_refinement"  value="$(arg corner_refinement)" />

@@ -29,11 +29,8 @@ class aruco_tags_validation:
         """
         To ping the first message of gt and populate the world to pose offset
         """
-        # self.isFirstCb = True
         self.offset = None
-        self.positionErrorLog = []
-        self.yawErrorLog = []
-        self.runningAverage = []
+
 
     def gt_cb(self, gt):
         """
