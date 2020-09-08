@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>lane_detection</name>
+  <name>autovalet_husky</name>
   <version>0.0.0</version>
-  <description>The lane_detection package</description>
+  <description>The autovalet_husky package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="kob51@todo.todo">kob51</maintainer>
+  <maintainer email="nvidia@todo.todo">nvidia</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
@@ -19,7 +19,7 @@
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/lane_detection</url> -->
+  <!-- <url type="website">http://wiki.ros.org/valet_husky</url> -->
 
 
   <!-- Author tags are optional, multiple are allowed, one per tag -->

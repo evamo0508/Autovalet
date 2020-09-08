@@ -19,10 +19,10 @@
     </node>
 
     <!-- Differential controller parameters and basic localization -->
-    <include file="$(find valet_husky)/launch/valet_control.launch" />
+    <include file="$(find autovalet_husky)/launch/valet_control.launch" />
 
     <!--Teleop -->
-    <include file="$(find valet_husky)/launch/teleop.launch" />
+    <include file="$(find autovalet_husky)/launch/teleop.launch" />
 
     <!-- Diagnostic Aggregator -->
     <node pkg="diagnostic_aggregator" type="aggregator_node" name="diagnostic_aggregator">

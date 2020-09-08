@@ -46,7 +46,7 @@ TebLocalPlannerROS:
     
  xy_goal_tolerance: 0.2
  yaw_goal_tolerance: 0.1
- free_goal_vel: False
+ free_goal_vel: True # allow goal to be reached with nonzero speed (useful for traversal waypoints)
     
  # Obstacles
     
@@ -70,7 +70,7 @@ TebLocalPlannerROS:
  weight_acc_lim_x: 1
  weight_acc_lim_theta: 1
  weight_kinematics_nh: 1000
- weight_kinematics_forward_drive: 1
+ weight_kinematics_forward_drive: 1000 # weight going forward very high (penalize backward moves)
  weight_kinematics_turning_radius: 1
  weight_optimaltime: 1
  weight_obstacle: 50
@@ -89,4 +89,4 @@ TebLocalPlannerROS:
  h_signature_threshold: 0.1
  obstacle_keypoint_offset: 0.1
  obstacle_heading_threshold: 0.45
- visualize_hc_graph: False
+ visualize_hc_graph: True

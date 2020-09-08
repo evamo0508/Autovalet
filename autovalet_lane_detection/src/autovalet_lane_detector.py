@@ -44,7 +44,7 @@ class LaneDetector:
         self.bridge = CvBridge()
 
         #self.weightspath = "../include/lane_detection/erfnet_pretrained.pth"
-        self.weightspath = "/home/evamo0508/catkin_ws/src/autovalet/lane_detection/include/lane_detection/model_best3.pth"
+        self.weightspath = "/home/evamo0508/catkin_ws/src/autovalet/autovalet_lane_detection/include/lane_detection/model_best3.pth"
 
         self.num_channels = 3
         self.num_classes= 1
