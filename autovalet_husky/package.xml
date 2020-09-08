@@ -2,7 +2,7 @@
 <package format="2">
   <name>autovalet_husky</name>
   <version>0.0.0</version>
-  <description>The valet_husky package</description>
+  <description>The autovalet_husky package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->

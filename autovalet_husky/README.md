@@ -1,4 +1,4 @@
-# valet_husky
+# autovalet_husky
 
 This package contains launch files for running the physical robot on hardware.
 
@@ -7,5 +7,5 @@ This package contains launch files for running the physical robot on hardware.
 To run the Husky with all sensors and joystick teleop:
 
 ```
-roslaunch valet_husky integrated_sensor.launch
+roslaunch autovalet_husky integrated_sensor.launch
 ```
