@@ -11,3 +11,7 @@ global_costmap:
   rolling_window: true
   always_send_full_costmap: true
   map_type: costmap
+
+  static_layer:
+    map_topic: "/rtabmap/grid_map"
+    first_map_only: false

@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+This launch file wraps seg map launch with lane transfer node.
+In short, launches gazebo world (with green lane), runs lane
+ground truth generator and segments lane in pointcloud. Launches
+the localization system and the navigation stack to generate costmap
+
+Author  : Subramanian Krishnan (subramak@andrew.cmu.edu)
+Date    : 15 Sep 2020
+
+Changelog:
+    subbu - 9/15 - Initial commit
+    subbu - 9/18 - Added Depth to RGB registration
+-->
+
+<launch>
+
+  <!-- Launch gazebo world and generate gt segmentation map -->
+  <include file="$(find autovalet_goal_generation)/launch/seg_map.launch"/>
+
+  <!-- Register depth image to rgb image and transfer lane to pcl -->
+  <include file="$(find autovalet_goal_generation)/launch/lane_projection.launch"/>
+
+  <!-- Launch SLAM to generate 3D map and map prior for nav stack(?) -->
+  <include file="$(find autovalet_gazebo)/launch/valet_rtab_sim.launch"/>
+
+  <!-- Launch navigation stack -->
+  <!-- <include file="$(find autovalet_navigation)/launch/autovalet_nav.launch"/> -->
+
+
+</launch>
