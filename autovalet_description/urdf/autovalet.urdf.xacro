@@ -1,24 +1,24 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="autovalet_husky">
 
-	<!-- Include the link for the realsense sensors from the local realsense2_package--> 
+	<!-- Include the link for the realsense sensors from the local realsense2_package-->
 	<xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro"/>
 	<!-- Include the velodyne model from the velodyne description package-->
 	<xacro:include filename="$(find velodyne_description)/urdf/VLP-16.urdf.xacro"/>
-  		
-	<!-- Define the front camera link -->
-	<sensor_d435 parent="velodyne" name="backCamera" >
-	    <origin xyz="0 -0.11 -0.59" rpy="0 0 -1.57079" />
+
+	<sensor_d435 parent="front_bumper_link" name="frontCamera" >
+	    <origin xyz="-0.305 0.02 0.91" rpy="0 0 0" />
 	</sensor_d435>
 
-	<!-- Define the back camera link -->
-	<sensor_d435 parent="velodyne" name="frontCamera" >
-	    <origin xyz="0 0.197 -0.59" rpy="0 0 1.57079"/>
+	<!-- Define the back camera link to the front camera-->
+	<sensor_d435 parent="frontCamera_bottom_screw_frame" name="backCamera" >
+	    <origin xyz="-0.235 0 0" rpy="0 0 3.14159"/>
 	</sensor_d435>
 
-	<!-- Define the velodyne link to the husky (base_link)-->
-	<VLP-16 parent="base_footprint" name="velodyne" topic="/velodyne_points" hz="10" samples="440">
-    	<origin xyz="0 -0.015 1.47" rpy="0 0 -1.570796326"/> 
+	<!-- Define the velodyne link to the front camera-->
+	<VLP-16 parent="frontCamera_bottom_screw_frame" name="velodyne" topic="/velodyne_points" hz="10" samples="440">
+        <!-- the z coordinate is wrong. in our sensor frame, it's more like .35m. but .22m aligns the point clouds in rviz...-->
+    	<origin xyz="-0.155 0.0 0.22" rpy="0.0 0.0 0.0"/>
   	</VLP-16>
 
 </robot>
