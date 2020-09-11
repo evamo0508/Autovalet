@@ -1,19 +1,43 @@
 <launch>
 
-   <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
-    <rosparam file="$(find autovalet_navigation)/config/static_map_params.yaml" command="load" ns="global_costmap/static_layer"/>
-    <rosparam file="$(find autovalet_navigation)/config/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
-    <rosparam file="$(find autovalet_navigation)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
-    <rosparam file="$(find autovalet_navigation)/config/local_costmap_params.yaml" command="load" />
-    <rosparam file="$(find autovalet_navigation)/config/global_costmap_params.yaml" command="load" /> 
-    <rosparam file="$(find autovalet_navigation)/config/base_local_planner_params.yaml" command="load" />
+   <arg name="simulation" default="true"/>
 
-    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
-    <param name="controller_frequency" value="10.0" />
-    <param name="recovery_behavior_enabled" value="false" />
-    <param name="clearing_rotation_allowed" value="false" />
+   <!-- RUN MOVEBASE WITH SIM PARAMETERS -->
+   <group if="$(arg simulation)">
+      <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+         <rosparam file="$(find autovalet_navigation)/config/sim/static_map_params.yaml" command="load" ns="global_costmap/static_layer"/>
+         <rosparam file="$(find autovalet_navigation)/config/sim/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
+         <rosparam file="$(find autovalet_navigation)/config/sim/costmap_common_params.yaml" command="load" ns="local_costmap" />
+         <rosparam file="$(find autovalet_navigation)/config/sim/local_costmap_params.yaml" command="load" />
+         <rosparam file="$(find autovalet_navigation)/config/sim/global_costmap_params.yaml" command="load" /> 
+         <rosparam file="$(find autovalet_navigation)/config/sim/base_local_planner_params.yaml" command="load" />
 
-    <remap from="/odom" to="/rtabmap/odom"/>
-   </node>
+         <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+         <param name="controller_frequency" value="10.0" />
+         <param name="recovery_behavior_enabled" value="false" />
+         <param name="clearing_rotation_allowed" value="false" />
+
+         <remap from="/odom" to="/rtabmap/odom"/>
+      </node>
+   </group>
+      
+   <!-- RUN MOVEBASE WITH HARDWARE PARAMETERS -->
+   <group unless="$(arg simulation)">
+      <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+         <rosparam file="$(find autovalet_navigation)/config/husky/static_map_params.yaml" command="load" ns="global_costmap/static_layer"/>
+         <rosparam file="$(find autovalet_navigation)/config/husky/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
+         <rosparam file="$(find autovalet_navigation)/config/husky/costmap_common_params.yaml" command="load" ns="local_costmap" />
+         <rosparam file="$(find autovalet_navigation)/config/husky/local_costmap_params.yaml" command="load" />
+         <rosparam file="$(find autovalet_navigation)/config/husky/global_costmap_params.yaml" command="load" /> 
+         <rosparam file="$(find autovalet_navigation)/config/husky/base_local_planner_params.yaml" command="load" />
+
+         <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+         <param name="controller_frequency" value="10.0" />
+         <param name="recovery_behavior_enabled" value="false" />
+         <param name="clearing_rotation_allowed" value="false" />
+
+         <remap from="/odom" to="/rtabmap/odom"/>
+      </node>
+   </group>
 
 </launch> 

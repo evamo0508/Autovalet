@@ -6,10 +6,14 @@ Panels:
       Expanded:
         - /Global Options1
         - /Status1
-        - /TF1
+        - /RobotModel1
         - /TF1/Frames1
+        - /Map1
+        - /Path1
+        - /Marker1
+        - /Image1
       Splitter Ratio: 0.5
-    Tree Height: 565
+    Tree Height: 687
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -127,7 +131,7 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 160
+      Max Intensity: 117
       Min Color: 0; 0; 0
       Min Intensity: 0
       Name: PointCloud2
@@ -222,19 +226,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        top_plate_front_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        top_plate_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        top_plate_rear_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
         user_rail_link:
           Alpha: 1
           Show Axes: false
@@ -263,54 +254,24 @@ Visualization Manager:
         All Enabled: false
         backCamera_bottom_screw_frame:
           Value: false
-        backCamera_color_frame:
-          Value: false
-        backCamera_color_optical_frame:
-          Value: false
-        backCamera_depth_frame:
-          Value: false
-        backCamera_depth_optical_frame:
-          Value: false
-        backCamera_infra1_frame:
-          Value: false
-        backCamera_infra1_optical_frame:
-          Value: false
-        backCamera_infra2_frame:
-          Value: false
-        backCamera_infra2_optical_frame:
-          Value: false
         backCamera_link:
           Value: false
         base_footprint:
           Value: false
         base_link:
           Value: true
-        frontCamera_accel_frame:
+        frontCamera_aligned_depth_to_color_frame:
           Value: true
-        frontCamera_accel_optical_frame:
-          Value: false
         frontCamera_bottom_screw_frame:
           Value: false
         frontCamera_color_frame:
-          Value: false
+          Value: true
         frontCamera_color_optical_frame:
-          Value: false
+          Value: true
         frontCamera_depth_frame:
-          Value: false
+          Value: true
         frontCamera_depth_optical_frame:
-          Value: false
-        frontCamera_gyro_frame:
-          Value: false
-        frontCamera_gyro_optical_frame:
-          Value: false
-        frontCamera_infra1_frame:
-          Value: false
-        frontCamera_infra1_optical_frame:
-          Value: false
-        frontCamera_infra2_frame:
-          Value: false
-        frontCamera_infra2_optical_frame:
-          Value: false
+          Value: true
         frontCamera_link:
           Value: false
         front_bumper_link:
@@ -319,11 +280,13 @@ Visualization Manager:
           Value: false
         front_right_wheel_link:
           Value: false
+        icp_odom:
+          Value: true
         imu_link:
           Value: false
         inertial_link:
           Value: false
-        odom:
+        map:
           Value: true
         rear_bumper_link:
           Value: false
@@ -332,12 +295,6 @@ Visualization Manager:
         rear_right_wheel_link:
           Value: false
         top_chassis_link:
-          Value: false
-        top_plate_front_link:
-          Value: false
-        top_plate_link:
-          Value: false
-        top_plate_rear_link:
           Value: false
         user_rail_link:
           Value: false
@@ -351,78 +308,108 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        odom:
-          base_link:
-            base_footprint:
-              {}
-            front_bumper_link:
-              {}
-            front_left_wheel_link:
-              {}
-            front_right_wheel_link:
-              {}
-            imu_link:
-              {}
-            inertial_link:
-              {}
-            rear_bumper_link:
-              {}
-            rear_left_wheel_link:
-              {}
-            rear_right_wheel_link:
-              {}
-            top_chassis_link:
-              {}
-            top_plate_link:
-              top_plate_front_link:
-                {}
-              top_plate_rear_link:
-                {}
-            user_rail_link:
-              {}
-            velodyne_base_link:
-              velodyne:
-                backCamera_bottom_screw_frame:
-                  backCamera_link:
-                    backCamera_color_frame:
-                      backCamera_color_optical_frame:
-                        {}
-                    backCamera_depth_frame:
-                      backCamera_depth_optical_frame:
-                        {}
-                    backCamera_infra1_frame:
-                      backCamera_infra1_optical_frame:
-                        {}
-                    backCamera_infra2_frame:
-                      backCamera_infra2_optical_frame:
-                        {}
-                frontCamera_bottom_screw_frame:
-                  frontCamera_link:
-                    frontCamera_accel_frame:
-                      frontCamera_accel_optical_frame:
-                        {}
-                    frontCamera_color_frame:
-                      frontCamera_color_optical_frame:
-                        {}
-                    frontCamera_depth_frame:
-                      frontCamera_depth_optical_frame:
-                        {}
-                    frontCamera_gyro_frame:
-                      frontCamera_gyro_optical_frame:
-                        {}
-                    frontCamera_infra1_frame:
-                      frontCamera_infra1_optical_frame:
-                        {}
-                    frontCamera_infra2_frame:
-                      frontCamera_infra2_optical_frame:
-                        {}
+        base_link:
+          base_footprint:
+            {}
+          front_bumper_link:
+            frontCamera_bottom_screw_frame:
+              backCamera_bottom_screw_frame:
+                backCamera_link:
+                  {}
+              frontCamera_link:
+                frontCamera_aligned_depth_to_color_frame:
+                  frontCamera_color_optical_frame:
+                    {}
+                frontCamera_color_frame:
+                  {}
+                frontCamera_depth_frame:
+                  frontCamera_depth_optical_frame:
+                    {}
+              velodyne_base_link:
+                velodyne:
+                  {}
+          front_left_wheel_link:
+            {}
+          front_right_wheel_link:
+            {}
+          imu_link:
+            {}
+          inertial_link:
+            {}
+          rear_bumper_link:
+            {}
+          rear_left_wheel_link:
+            {}
+          rear_right_wheel_link:
+            {}
+          top_chassis_link:
+            {}
+          user_rail_link:
+            {}
+        icp_odom:
+          {}
+        map:
+          {}
       Update Interval: 0
       Value: true
+    - Alpha: 0.699999988
+      Class: rviz/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: true
+      Name: Map
+      Topic: /rtabmap/grid_map
+      Unreliable: false
+      Use Timestamp: false
+      Value: true
+    - Alpha: 1
+      Buffer Length: 1
+      Class: rviz/Path
+      Color: 25; 255; 0
+      Enabled: true
+      Head Diameter: 0.300000012
+      Head Length: 0.200000003
+      Length: 0.300000012
+      Line Style: Lines
+      Line Width: 0.0299999993
+      Name: Path
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Pose Color: 255; 85; 255
+      Pose Style: None
+      Radius: 0.0299999993
+      Shaft Diameter: 0.100000001
+      Shaft Length: 0.100000001
+      Topic: /move_base/TebLocalPlannerROS/local_plan
+      Unreliable: false
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /move_base/TebLocalPlannerROS/teb_markers
+      Name: Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Image
+      Enabled: false
+      Image Topic: /frontCamera/color/image_raw
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Unreliable: false
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: odom
+    Fixed Frame: map
     Frame Rate: 30
   Name: root
   Tools:
@@ -443,7 +430,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 1.12806523
+      Distance: 20.5016193
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
@@ -458,18 +445,20 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 1.52479637
+      Pitch: 0.769796729
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.5454216
+      Yaw: 3.34542179
     Saved: ~
 Window Geometry:
   Displays:
+    collapsed: true
+  Height: 965
+  Hide Left Dock: true
+  Hide Right Dock: true
+  Image:
     collapsed: false
-  Height: 846
-  Hide Left Dock: false
-  Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd00000004000000000000016a000002c4fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006100fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c0061007900730100000028000002c4000000d700fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f000002c4fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a005600690065007700730100000028000002c4000000ad00fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000006690000003efc0100000002fb0000000800540069006d00650100000000000006690000030000fffffffb0000000800540069006d00650100000000000004500000000000000000000003e4000002c400000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000004000000000000016a0000033efc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006100fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c00610079007300000000280000033e000000d700fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f0000037afc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a0056006900650077007300000000280000037a000000ad00fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b2000000000000000000000002000003a8000001eafc0100000002fb0000000a0049006d0061006700650000000000000003a80000005c00fffffffb0000000a00560069006500770073030000004e00000080000002e10000019700000003000003a80000003bfc0100000002fb0000000800540069006d00650100000000000003a80000030000fffffffb0000000800540069006d00650100000000000004500000000000000000000003a80000033e00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   Time:
@@ -477,7 +466,7 @@ Window Geometry:
   Tool Properties:
     collapsed: false
   Views:
-    collapsed: false
-  Width: 1641
-  X: 65
-  Y: 60
+    collapsed: true
+  Width: 936
+  X: 49
+  Y: 24
