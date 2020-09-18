@@ -15,7 +15,6 @@ from cv_bridge import CvBridge, CvBridgeError
 
 class LaneDetector:
     def __init__(self):
-
         self.bridge = CvBridge()
         self.im_sub  = rospy.Subscriber("/frontCamera/color/image_raw",Image,self.image_callback, queue_size=1)
         # other possible topics:
@@ -25,6 +24,9 @@ class LaneDetector:
         # define ROI
         self.ROI_UPPER_Y = 340
         self.ROI_RIGHT_X = 480
+
+        # tracker
+        self.tracker = None
 
     def image_callback(self, data):
         img = self.bridge.imgmsg_to_cv2(data,"bgr8")
@@ -38,7 +40,9 @@ class LaneDetector:
         hls = cv2.cvtColor(img, cv2.COLOR_BGR2HLS).astype(np.float)
 
         # hls thresholding for yellow
-        lower = np.array([15.0, 0.00*255, 0.90*255], dtype=np.uint8)
+        # perfect bounds:
+        # straightway_2020: 12-20, 0.18-1, 0.9-1
+        lower = np.array([12.0, 0.18*255, 0.90*255], dtype=np.uint8)
         upper = np.array([30.0, 1.00*255, 1.00*255], dtype=np.uint8)
         mask = cv2.inRange(hls, lower, upper)
         th = cv2.bitwise_and(rgb, rgb, mask=mask).astype(np.uint8)
@@ -78,28 +82,19 @@ class LaneDetector:
             cv2.line(res, (X1, Y1), (X2, Y2), (0, 0, 255), 3)
             bb = (X1, Y1, np.abs(X2-X1), np.abs(Y2-Y1))
             self.tracker = cv2.TrackerKCF_create()
-            self.tracker.init(roi, bb)
+            self.tracker.init(rgb, bb)
             self.lose_track_count = 0
         elif self.tracker is not None:
-            success, bb = self.tracker.update(roi)
+            success, bb = self.tracker.update(rgb)
             x, y, w, h = [int(v) for v in bb]
             if success:
-                cv2.line(res, (x, y), (x+w, y-h), (0, 0, 255), 3)
+                cv2.line(res, (x, y), (x+w, y-h), (0, 255, 0), 3)
                 self.lose_track_count = 0
             else:
                 self.lose_track_count += 1
                 # lost track for a short time only
                 if self.lose_track_count < 10:
-                    cv2.line(res, (X1, Y1), (X2, Y2), (0, 0, 255), 3)
-
-
-        """
-        # draw all lines
-        if lines is not None:
-            for line in lines:
-                x1, y1, x2, y2 = line[0]
-                cv2.line(res, (x1, y1), (x2, y2), (0, 0, 255), 3)
-        """
+                    cv2.line(res, (X1, Y1), (X2, Y2), (255, 0, 255), 3)
 
         # draw rectangle on ROI
         h, w, _ = img.shape
@@ -115,6 +110,6 @@ class LaneDetector:
         cv2.waitKey(10)
 
 if __name__ == "__main__":
-    rospy.init_node('test')
+    rospy.init_node('lane_detector_node')
     detector = LaneDetector()
     rospy.spin()

@@ -16,7 +16,7 @@ cv2.createTrackbar('v', 'result',0,255,nothing)
 
 while(1):
 
-    frame = cv2.imread('../data/green/train_image00312.jpg')
+    frame = cv2.imread('/home/evamo0508/Downloads/image.png')
 
     #converting to HSV
     hsv = cv2.cvtColor(frame,cv2.COLOR_BGR2HSV)
