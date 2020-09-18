@@ -13,9 +13,9 @@ sudo apt-get install ros-kinetic-teb-local-planner
 roslaunch autovalet_gazebo setup_slam_test.launch
 ```
 
-3. In another terminal, launch the navigation node
+3. In another terminal, launch the navigation node 
 ```
-roslaunch autovalet_navigation autovalet_nav.launch
+roslaunch autovalet_navigation autovalet_nav.launch simulation:=true
 ```
 
 4. In another terminal, launch the state machine pipeline for easier debugging
