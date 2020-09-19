@@ -4,14 +4,17 @@ global_costmap:
       - {name: inflation,      type: "costmap_2d::InflationLayer"}
   global_frame: map
   robot_base_frame: base_link
-  update_frequency: 2.0 # Hz
-  transform_tolerance: 20.0
-  publish_frequency: 1.0
+  update_frequency: 30.0 # 2.0 Hz
+  transform_tolerance: 1.5 # increased this
+  publish_frequency: 30.0
   static_map: false
   rolling_window: true
   always_send_full_costmap: true
   map_type: costmap
+  height: 8.0
+  width: 8.0
 
   static_layer:
     map_topic: "/rtabmap/grid_map"
     first_map_only: false
+  

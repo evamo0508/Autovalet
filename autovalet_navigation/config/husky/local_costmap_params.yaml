@@ -1,13 +1,13 @@
 local_costmap:
   global_frame: icp_odom
   robot_base_frame: base_link
-  update_frequency: 5.0 # Hz
-  publish_frequency: 2.0 # Hz
+  update_frequency: 5.0 # 5 Hz
+  publish_frequency: 1.0 # Hz
   static_map: false
   rolling_window: true
   always_send_full_costmap: true
   width: 6.0
   height: 6.0
-  resolution: 0.05
+  resolution: 0.1 # brought this up (0.1 m)
   map_type: costmap
-  transform_tolerance: 20.0
+  transform_tolerance: 1.5 # increased this
