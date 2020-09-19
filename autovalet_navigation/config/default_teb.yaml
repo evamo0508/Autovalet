@@ -10,7 +10,7 @@ TebLocalPlannerROS:
  max_samples: 500
  global_plan_overwrite_orientation: True
  allow_init_with_backwards_motion: True
- max_global_plan_lookahead_dist: 3.0 #3
+ max_global_plan_lookahead_dist: 3.0
  global_plan_viapoint_sep: -1
  global_plan_prune_distance: 1
  exact_arc_length: False
@@ -19,8 +19,8 @@ TebLocalPlannerROS:
     
  # Robot
          
- max_vel_x: 0.8
- max_vel_x_backwards: 0.8
+ max_vel_x: 0.4
+ max_vel_x_backwards: 0.2
  max_vel_y: 0.0
  max_vel_theta: 0.3 # the angular velocity is also bounded by min_turning_radius in case of a carlike robot (r = v / omega)
  acc_lim_x: 0.5
@@ -33,8 +33,8 @@ TebLocalPlannerROS:
  # ********************************************************************
 
  footprint_model: # types: "point", "circular", "two_circles", "line", "polygon"
-   type: "circular"
-   radius: 0.5 # for type "circular"
+   type: "line"
+   radius: 0.2 # for type "circular"
    line_start: [0.0, 0.0] # for type "line"
    line_end: [0.4, 0.0] # for type "line"
    front_offset: 0.2 # for type "two_circles"
@@ -52,7 +52,7 @@ TebLocalPlannerROS:
     
  # Obstacles
     
- min_obstacle_dist: 0 #0.27 # This value must also include our robot's expansion, since footprint_model is set to "line".
+ min_obstacle_dist: 0.27 # This value must also include our robot's expansion, since footprint_model is set to "line".
  inflation_dist: 0.6
  include_costmap_obstacles: True
  costmap_obstacles_behind_robot_dist: 1.0
@@ -91,7 +91,7 @@ TebLocalPlannerROS:
 
  # Homotopy Class Planner
 
- enable_homotopy_class_planning: False
+ enable_homotopy_class_planning: True
  enable_multithreading: True
  max_number_classes: 4
  selection_cost_hysteresis: 1.0

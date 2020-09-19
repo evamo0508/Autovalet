@@ -27,7 +27,8 @@
          <rosparam file="$(find autovalet_navigation)/config/husky/costmap_common_params.yaml" command="load" ns="local_costmap" />
          <rosparam file="$(find autovalet_navigation)/config/husky/local_costmap_params.yaml" command="load" />
          <rosparam file="$(find autovalet_navigation)/config/husky/global_costmap_params.yaml" command="load" />
-         <rosparam file="$(find autovalet_navigation)/config/husky/base_local_planner_params.yaml" command="load" />
+         <!-- <rosparam file="$(find autovalet_navigation)/config/husky/base_local_planner_params.yaml" command="load" /> -->
+         <rosparam file="$(find teb_local_planner_tutorials)/cfg/carlike/teb_local_planner_params.yaml" command="load" />
 
          <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
          <param name="controller_frequency" value="6.0" />
