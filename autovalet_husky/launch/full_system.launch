@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+<launch>
+    <include file="$(find autovalet_husky)/launch/integrated_sensor.launch"/>
+
+    <include file="$(find autovalet_husky)/launch/valet_rtab.launch" />
+
+</launch>
