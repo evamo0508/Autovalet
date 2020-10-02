@@ -1,13 +1,24 @@
+# Added lane as a plugin for obstacle layer (?)
 global_costmap:
   plugins:
       - {name: static_layer,   type: "costmap_2d::StaticLayer"}
       - {name: inflation,      type: "costmap_2d::InflationLayer"}
+      - {name: lane,           type: "costmap_2d::ObstacleLayer"}
+
+  lane:
+    observation_sources: fake_lane_sensor
+    fake_lane_sensor: {data_type: PointCloud2, sensor_frame: frontCamera_depth_optical_frame, clearing: true, marking: true, topic: /lane/pointcloud}
+
   global_frame: map
   robot_base_frame: base_link
-  update_frequency: 2.0 # Hz
+  update_frequency: 10.0 # Hz
   transform_tolerance: 20.0
-  publish_frequency: 1.0
+  publish_frequency: 10.0
   static_map: false
   rolling_window: true
   always_send_full_costmap: true
   map_type: costmap
+
+  static_layer:
+    map_topic: "/rtabmap/grid_map"
+    first_map_only: false

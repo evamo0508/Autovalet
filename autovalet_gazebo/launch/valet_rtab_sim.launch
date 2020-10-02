@@ -3,26 +3,26 @@
   <group ns="rtabmap">
 
     <!-- Use RGBD synchronization -->
-    <!-- Here is a general example using a standalone nodelet, 
-         but it is recommended to attach this nodelet to nodelet 
+    <!-- Here is a general example using a standalone nodelet,
+         but it is recommended to attach this nodelet to nodelet
          manager of the camera to avoid topic serialization -->
     <node pkg="nodelet" type="nodelet" name="rgbd_sync" args="standalone rtabmap_ros/rgbd_sync" output="screen">
-      <remap from="rgb/image"       to="/realsense/frontCamera/color/image_raw"/>
-      <remap from="depth/image"     to="/realsense/frontCamera/depth/image_raw"/>
-      <remap from="rgb/camera_info" to="/realsense/frontCamera/color/camera_info"/>
+      <remap from="rgb/image"       to="/frontCamera/color/image_raw"/>
+      <remap from="depth/image"     to="/frontCamera/depth/image_raw"/>
+      <remap from="rgb/camera_info" to="/frontCamera/color/camera_info"/>
       <remap from="rgbd_image"      to="rgbd_image"/> <!-- output -->
-      
-      <!-- Should be true for not synchronized camera topics 
-           (e.g., false for kinectv2, zed, realsense, true for xtion, kinect360)-->
-      <param name="approx_sync"       value="true"/> 
-    </node> 
 
-    
+      <!-- Should be true for not synchronized camera topics
+           (e.g., false for kinectv2, zed, realsense, true for xtion, kinect360)-->
+      <param name="approx_sync"       value="true"/>
+    </node>
+
+
     <!-- IMU orientation estimation and publish tf accordingly to base_frame -->
     <!-- <node pkg="nodelet" type="nodelet" name="imu_nodelet_manager" args="manager">
       <remap from="imu" to="imu/data"/>
     </node>
-    
+
     <node pkg="nodelet" type="nodelet" name="imu_filter" args="load imu_filter_madgwick/ImuFilterNodelet imu_nodelet_manager">
       <param name="use_mag" value="false"/>
       <param name="world_frame" value="enu"/>
@@ -47,7 +47,7 @@
         <!-- ICP parameters -->
         <param name="Icp/PointToPlane"        type="string" value="true"/>
         <param name="Icp/Iterations"          type="string" value="20"/>
-        <param name="Icp/VoxelSize"           type="string" value="0.01"/> <!-- 0.01 works pretty well -->
+        <param name="Icp/VoxelSize"           type="string" value="0.1"/> <!-- 0.01 works pretty well -->
         <param name="Icp/DownsamplingStep"    type="string" value="1"/> <!-- cannot be increased with ring-like lidar -->
         <param name="Icp/Epsilon"             type="string" value="0.001"/>
         <param name="Icp/PointToPlaneK"       type="string" value="20"/>
@@ -64,7 +64,7 @@
         <param name="OdomF2M/ScanMaxSize"        type="string" value="15000"/>
 
       </node>
-    
+
     <node name="rtabmap" pkg="rtabmap_ros" type="rtabmap" output="screen" args="--delete_db_on_start">
           <param name="frame_id" type="string" value="base_link"/>
           <param name="odom_frame_id" type="string" value="icp_odom"/>
@@ -73,7 +73,6 @@
           <param name="subscribe_scan" type="bool" value="false"/>
           <param name="subscribe_scan_cloud" type="bool" value="true"/>
 
-          <!-- <remap from="odom" to="/odometry/filtered"/> -->
           <remap from="scan_cloud" to="/concat_points"/>
           <remap from="rgbd_image" to="rgbd_image"/>
           <param name="queue_size" type="int" value="10"/>
@@ -85,8 +84,8 @@
           <param name="RGBD/LinearUpdate"         type="string" value="0.01"/>
           <param name="RGBD/OptimizeFromGraphEnd" type="string" value="false"/>
           <param name="Grid/FromDepth"            type="string" value="false"/> <!-- occupancy grid from lidar -->
-          <param name="Grid/3D"            type="string" value="true"/> 
-          <param name="Grid/RayTracing"            type="string" value="true"/>
+          <param name="Grid/3D"                   type="string" value="true"/>
+          <param name="Grid/RayTracing"           type="string" value="true"/>
           <param name="Reg/Force3DoF"             type="string" value="true"/>
           <param name="Reg/Strategy"              type="string" value="1"/> <!-- 1=ICP -->
 

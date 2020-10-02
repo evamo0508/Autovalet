@@ -17,9 +17,9 @@ aluminum peripherial evaluation case.
   <!-- For running with gazebo sim -->
   <xacro:arg name="use_nominal_extrinsics" default="false"/>
 
-  <xacro:macro name="sensor_d435" params="parent *origin name:=camera topics_ns:=realsense">
+  <xacro:macro name="sensor_d435" params="parent *origin name:=camera topics_ns:=/">
     <xacro:property name="M_PI" value="3.1415926535897931" />
-  
+
     <!-- The following values are approximate, and the camera node
      publishing TF values with actual calibrated camera extrinsic values -->
     <xacro:property name="d435_cam_depth_to_infra1_offset" value="0.0"/>

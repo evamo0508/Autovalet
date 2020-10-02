@@ -1,0 +1,25 @@
+<!--
+This file launches the gazebo dumpster world with a green colored lane
+<?xml version="1.0"?>
+as it's ground plane. On top of that launches a node to publish segmentation
+map which is to be used by the goal generator
+
+Adapted from parking_lot.launchh
+
+Author  : Subramanian Krishnan (subramak@andrew.cmu.edu)
+Date    : 8 Sep 2020
+
+Changelog:
+    subbu - 9/08 - Initial commit
+-->
+
+<launch>
+
+  <!-- Launch the parking lot with a green lane world file -->
+  <include file="$(find autovalet_gazebo)/launch/parking_lot.launch">
+      <arg name="world_file" value="greenland.world"/>
+  </include>
+
+  <!-- Launch the ground truth segmentation map generator -->
+  <node pkg="autovalet_goal_generation" type="generate_gt_segmap.py" name="gt_segmap_generator"/>
+</launch>

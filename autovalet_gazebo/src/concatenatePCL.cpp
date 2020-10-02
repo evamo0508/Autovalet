@@ -26,7 +26,7 @@ void callback(const PointCloud::ConstPtr& velPtr, const PointCloud::ConstPtr& rs
   PointCloud rs2vel;
   pcl_ros::transformPointCloud("velodyne", *rsPtr, rs2vel, *pListener);
 
-  // concatenate two pcls 
+  // concatenate two pcls
   PointCloud pcl_concat;
   pcl_concat = *velPtr;
   pcl_concat += rs2vel;
@@ -40,15 +40,15 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "concat_pcl");
   ros::NodeHandle nh;
-  
+
   pListener = new tf::TransformListener();
-  
+
   message_filters::Subscriber<PointCloud> vel_sub(nh, "/velodyne_points", 1);
-  message_filters::Subscriber<PointCloud> rs_sub(nh, "/realsense/frontCamera/depth/points", 1);
+  message_filters::Subscriber<PointCloud> rs_sub(nh, "/frontCamera/depth/points", 1);
   typedef sync_policies::ApproximateTime<PointCloud, PointCloud> MySyncPolicy;
   Synchronizer<MySyncPolicy> sync(MySyncPolicy(10), vel_sub, rs_sub);
   sync.registerCallback(boost::bind(&callback, _1, _2));
   cloud_pub = nh.advertise<PointCloud> ("/concat_points", 1);
-  
+
   ros::spin();
 }
