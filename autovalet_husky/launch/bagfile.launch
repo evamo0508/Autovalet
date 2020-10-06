@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <param name="use_sim_time" value="true"/>
+
+    <arg name="bagfile" default="dummy_new_test_2020-10-02-19-13-26.bag"/>
+
+    <!-- RVIZ -->
+    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find autovalet_husky)/rviz/config.rviz" />
+
+    <!-- <include file="$(find autovalet_description)/launch/autovalet_description.launch" /> -->
+
+    <include file="$(find autovalet_husky)/launch/valet_rtab.launch" />
+
+    <node pkg="autovalet_husky" type="timed_roslaunch.sh" 
+    args="5 autovalet_husky play_bag.launch bagfile:=$(arg bagfile)" 
+    name="timed_roslaunch2" output="screen"/>
+
+</launch>
+
+
