@@ -12,8 +12,8 @@
 
 
     <node pkg="aruco_ros" type="single" name="aruco_single">
-        <remap from="/camera_info" to="/realsense/frontCamera/color/camera_info" />
-        <remap from="/image" to="/realsense/frontCamera/color/image_raw" />
+        <remap from="/camera_info" to="/frontCamera/color/camera_info" />
+        <remap from="/image" to="/frontCamera/color/image_raw" />
 
         <param name="image_is_rectified" value="True"/>
         <param name="marker_size"        value="$(arg markerSize)"/>
