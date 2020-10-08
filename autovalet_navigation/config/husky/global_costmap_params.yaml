@@ -2,6 +2,12 @@ global_costmap:
   plugins:
       - {name: static_layer,   type: "costmap_2d::StaticLayer"}
       - {name: inflation,      type: "costmap_2d::InflationLayer"}
+      - {name: lane,           type: "costmap_2d::ObstacleLayer"}
+
+  lane:
+    observation_sources: fake_lane_sensor
+    fake_lane_sensor: {data_type: PointCloud2, sensor_frame: frontCamera_color_optical_frame, clearing: true, marking: true, topic: /lane/pointCloud}
+
   global_frame: map
   robot_base_frame: base_link
   update_frequency: 2.0 # Hz
