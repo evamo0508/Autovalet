@@ -143,6 +143,10 @@ class LaneDetector:
         x = np.multiply(x, z)
         y = np.multiply(y, z) - 2 #: tmp fix accounted for map being gen w.r.t base_link
 
+        x = x[np.nonzero(z)]
+        y = y[np.nonzero(z)]
+        z = z[np.nonzero(z)]
+
         cloud = np.hstack((x.reshape(-1, 1), y.reshape(-1, 1), z.reshape(-1, 1)))
 
         return cloud

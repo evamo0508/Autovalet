@@ -39,7 +39,7 @@ class LaneDetector:
         self.cy = self.camera.K[5]
 
         # define ROI
-        self.ROI_UPPER_Y = 340
+        self.ROI_UPPER_Y = 320
         self.ROI_RIGHT_X = 480
 
         # tracker
@@ -86,13 +86,12 @@ class LaneDetector:
         roi = cv2.bitwise_and(th, th, mask=mask)
 
         # detect center line
-        minLineLength, maxLineGap = 130, 20
+        minLineLength, maxLineGap = 100, 40
         edges = cv2.Canny(roi, 100, 200, apertureSize=3)
         lines = cv2.HoughLinesP(edges, 1, np.pi/180, 30, np.array([]), minLineLength, maxLineGap)
 
         # possible scenarios: 0. no line detected 1. new line 2. tracking
         max_len, scenario = 0, 0
-        X1, Y1, X2, Y2 = 0, 0, 0, 0
         if lines is not None: # 1. new line
             for line in lines:
                 x1, y1, x2, y2 = line[0]
