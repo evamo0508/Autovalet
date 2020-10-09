@@ -9,6 +9,16 @@ roslaunch autovalet_lane_detection lane_detector.launch
 
 ## Running the lane detector node in Simulation
 
+To see the lane detection in action, do the following:
+
+```
+roslaunch autovalet_gazebo parking_lot.launch world_file:=slam_val_dumpster.world
+```  
+
 ```
 roslaunch autovalet_lane_detection lane_detector_sim.launch
 ```
+
+To view the lane as a pointcloud, use the pointcloud2 widget in Rviz and subscribe to the /lane/pointCloud topic
+
+Note: Running lane_detector_sim.launch would also start the goal generator in sim 

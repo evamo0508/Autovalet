@@ -10,7 +10,7 @@ material CMUGroundPlane/Image
 
             texture_unit
             {
-                texture dark-garage_onlyRightCurve.jpg
+                texture dark-garage_noRightLines.jpg
             }
         }
     }

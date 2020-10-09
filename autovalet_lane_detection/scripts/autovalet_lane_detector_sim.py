@@ -7,14 +7,22 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image as pImage
+import tf2_ros
+import time
 
 # ROS
 import rospy
 from sensor_msgs.msg import Image, CameraInfo, PointCloud2
+from geometry_msgs.msg import PoseStamped
 import sensor_msgs.point_cloud2 as pcl2
 from std_msgs.msg import Header
 from cv_bridge import CvBridge, CvBridgeError
 from message_filters import ApproximateTimeSynchronizer, Subscriber
+from tf.transformations import quaternion_from_matrix, rotation_matrix, euler_from_quaternion, quaternion_from_euler
+
+# Goal generation stuff
+from autovalet_goal_generation.goal_generator import goal_generator
+import autovalet_goal_generation.utils
 
 class LaneDetector:
 
@@ -27,6 +35,10 @@ class LaneDetector:
         self.camera        = rospy.wait_for_message(colorInfo_topic, CameraInfo)
         self.laneCloud_pub = rospy.Publisher(laneCloud_topic, PointCloud2, queue_size=1)
         self.egoLine_pub   = rospy.Publisher(egoLine_topic, PointCloud2, queue_size=1)
+        
+        # A handle for publishing goal poses
+        self.goal_handle   = rospy.Publisher("move_base_simple/goal", PoseStamped, queue_size=1)
+        self.av_goal_generator = goal_generator("map")
 
         # Looking to synchronize both the topics within a 1/10th of a second
         self.ats = ApproximateTimeSynchronizer([self.color_sub, self.depth_sub], queue_size=2, slop=0.5)
@@ -45,6 +57,9 @@ class LaneDetector:
         # tracker
         self.tracker = None
 
+        # time tracker for publishing goals at a lower rate
+        self.previous_time = rospy.get_time()
+    
     def image_callback(self, color_msg, depth_msg):
         # cvBridge image
         color_img = self.bridge.imgmsg_to_cv2(color_msg, desired_encoding="bgr8")
@@ -57,6 +72,13 @@ class LaneDetector:
             norm_vec          = self.findNormalVectorInCloud(center_line_cloud)
             lane_cloud        = self.interpolateRightLine(center_line_cloud, norm_vec) # 2px3
             ego_line          = self.interpolateEgoLine(center_line_cloud, norm_vec)   # px3
+
+            # generate goal from the egoline
+            if( (rospy.get_time() - self.previous_time) > 2):
+                goal_pose = self.av_goal_generator.generate_goal_from_egoline(ego_line, depth_msg.header.frame_id)
+                self.goal_handle.publish(goal_pose)
+                self.previous_time = rospy.get_time()
+
             self.publishLaneCloud(lane_cloud, depth_msg.header.frame_id)
             self.publishEgoLine(ego_line, depth_msg.header.frame_id)
 
@@ -78,7 +100,7 @@ class LaneDetector:
         th    = cv2.cvtColor(th, cv2.COLOR_RGB2GRAY)
         th    = cv2.GaussianBlur(th, (5, 5), 0)
         _, th = cv2.threshold(th, 60, 255, cv2.THRESH_BINARY)
-	th    = cv2.morphologyEx(th, cv2.MORPH_OPEN, (5,5))
+        th    = cv2.morphologyEx(th, cv2.MORPH_OPEN, (5,5))
 
         # extract ROI
         mask = np.zeros_like(th)
@@ -86,7 +108,7 @@ class LaneDetector:
         roi = cv2.bitwise_and(th, th, mask=mask)
 
         # detect center line
-        minLineLength, maxLineGap = 130, 20
+        minLineLength, maxLineGap = 100, 40
         edges = cv2.Canny(roi, 100, 200, apertureSize=3)
         lines = cv2.HoughLinesP(edges, 1, np.pi/180, 30, np.array([]), minLineLength, maxLineGap)
 

@@ -10,11 +10,19 @@ from PIL import Image as pImage
 
 # ROS
 import rospy
+import tf2_ros
+from geometry_msgs.msg import PoseStamped
 from sensor_msgs.msg import Image, CameraInfo, PointCloud2
 import sensor_msgs.point_cloud2 as pcl2
 from std_msgs.msg import Header
 from cv_bridge import CvBridge, CvBridgeError
 from message_filters import ApproximateTimeSynchronizer, Subscriber
+from tf.transformations import quaternion_from_matrix, rotation_matrix, euler_from_quaternion, quaternion_from_euler
+from tf2_geometry_msgs import do_transform_pose
+
+# Goal generation stuff
+from autovalet_goal_generation.goal_generator import goal_generator
+import autovalet_goal_generation.utils
 
 class LaneDetector:
 
@@ -27,6 +35,10 @@ class LaneDetector:
         self.camera        = rospy.wait_for_message(colorInfo_topic, CameraInfo)
         self.laneCloud_pub = rospy.Publisher(laneCloud_topic, PointCloud2, queue_size=1)
         self.egoLine_pub   = rospy.Publisher(egoLine_topic, PointCloud2, queue_size=1)
+        
+        # A handle for publishing goal poses
+        self.goal_handle   = rospy.Publisher("move_base_simple/goal", PoseStamped, queue_size=1)
+        self.av_goal_generator = goal_generator("map")
 
         # Looking to synchronize both the topics within a 1/10th of a second
         self.ats = ApproximateTimeSynchronizer([self.color_sub, self.depth_sub], queue_size=2, slop=0.5)
@@ -59,6 +71,13 @@ class LaneDetector:
             ego_line          = self.interpolateEgoLine(center_line_cloud, norm_vec)   # px3
             self.publishLaneCloud(lane_cloud)
             self.publishEgoLine(ego_line)
+
+             # generate goal from the egoline - setup TF
+            goal_pose         = av_goal_generator.generate_goal_from_egoline(ego_line, depth_msg.header.frame_id)
+            self.goal_handle.publish(goal_pose)
+
+            self.publishLaneCloud(lane_cloud, depth_msg.header.frame_id)
+            self.publishEgoLine(ego_line, depth_msg.header.frame_id)
 
     def center_line_detection(self, img):
         # colorspace transformation
