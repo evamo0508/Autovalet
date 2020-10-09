@@ -114,6 +114,7 @@ class LaneDetector:
                 Y1 = min(Y1, img.shape[0] - 1)
         if scenario == 0:
             return np.array([])
+        print(scenario)
 
         # lines detected, calculate coordinates and slope
         if X1 == X2: # vertical line
@@ -142,6 +143,10 @@ class LaneDetector:
         z = depth[v, u] / 1000.0; # unit: mm -> m
         x = np.multiply(x, z)
         y = np.multiply(y, z) - 2 #: tmp fix accounted for map being gen w.r.t base_link
+
+        x = x[np.nonzero(z)]
+        y = y[np.nonzero(z)]
+        z = z[np.nonzero(z)]
 
         cloud = np.hstack((x.reshape(-1, 1), y.reshape(-1, 1), z.reshape(-1, 1)))
 
