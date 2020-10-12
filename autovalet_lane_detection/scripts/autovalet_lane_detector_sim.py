@@ -39,7 +39,7 @@ class LaneDetector:
         self.cy = self.camera.K[5]
 
         # define ROI
-        self.ROI_UPPER_Y = 340
+        self.ROI_UPPER_Y = 320
         self.ROI_RIGHT_X = 480
 
         # tracker
@@ -57,8 +57,8 @@ class LaneDetector:
             norm_vec          = self.findNormalVectorInCloud(center_line_cloud)
             lane_cloud        = self.interpolateRightLine(center_line_cloud, norm_vec) # 2px3
             ego_line          = self.interpolateEgoLine(center_line_cloud, norm_vec)   # px3
-            self.publishLaneCloud(lane_cloud)
-            self.publishEgoLine(ego_line)
+            self.publishLaneCloud(lane_cloud, depth_msg.header.frame_id)
+            self.publishEgoLine(ego_line, depth_msg.header.frame_id)
 
     def center_line_detection(self, img):
         # colorspace transformation
@@ -66,8 +66,8 @@ class LaneDetector:
         hls = cv2.cvtColor(img, cv2.COLOR_BGR2HLS).astype(np.float)
 
         # bounds & mask for hls thresholding of color yellow
-        lower = np.array([12.0, 0.18*255, 0.90*255], dtype=np.uint8)
-        upper = np.array([30.0, 1.00*255, 1.00*255], dtype=np.uint8)
+        lower = np.array([25.0, 0.00*255, 0.30*255], dtype=np.uint8)
+        upper = np.array([67.0, 0.90*255, 1.00*255], dtype=np.uint8)
         mask  = cv2.inRange(hls, lower, upper)
 
         # hls thresholding
@@ -86,13 +86,12 @@ class LaneDetector:
         roi = cv2.bitwise_and(th, th, mask=mask)
 
         # detect center line
-        minLineLength, maxLineGap = 130, 20
+        minLineLength, maxLineGap = 100, 40
         edges = cv2.Canny(roi, 100, 200, apertureSize=3)
         lines = cv2.HoughLinesP(edges, 1, np.pi/180, 30, np.array([]), minLineLength, maxLineGap)
 
         # possible scenarios: 0. no line detected 1. new line 2. tracking
         max_len, scenario = 0, 0
-        X1, Y1, X2, Y2 = 0, 0, 0, 0
         if lines is not None: # 1. new line
             for line in lines:
                 x1, y1, x2, y2 = line[0]
@@ -114,6 +113,7 @@ class LaneDetector:
                 Y1 = min(Y1, img.shape[0] - 1)
         if scenario == 0:
             return np.array([])
+        print(scenario)
 
         # lines detected, calculate coordinates and slope
         if X1 == X2: # vertical line
@@ -204,17 +204,17 @@ class LaneDetector:
 
         return ego_line
 
-    def publishLaneCloud(self, lane_cloud):
+    def publishLaneCloud(self, lane_cloud, frame_id):
         header          = Header()
         header.stamp    = rospy.Time.now()
-        header.frame_id = self.camera.header.frame_id
+        header.frame_id = frame_id
         lane_pcl        = pcl2.create_cloud_xyz32(header, lane_cloud)
         self.laneCloud_pub.publish(lane_pcl)
 
-    def publishEgoLine(self, ego_line):
+    def publishEgoLine(self, ego_line, frame_id):
         header          = Header()
         header.stamp    = rospy.Time.now()
-        header.frame_id = self.camera.header.frame_id
+        header.frame_id = frame_id
         ego_pcl         = pcl2.create_cloud_xyz32(header, ego_line)
         self.egoLine_pub.publish(ego_pcl)
 
@@ -222,7 +222,7 @@ if __name__ == "__main__":
     rospy.init_node('lane_detector_node')
 
     color_topic     = "/frontCamera/color/image_raw"
-    depth_topic     = "/frontCamera/aligned_depth_to_color/image_raw"
+    depth_topic     = "/depth_registered/image_rect"
     colorInfo_topic = "/frontCamera/color/camera_info"
     laneCloud_topic = "/lane/pointCloud"
     egoLine_topic   = "/lane/egoLine"
@@ -232,4 +232,4 @@ if __name__ == "__main__":
     try:
         rospy.spin()
     except KeyboardInterrupt:
-        print("Shutting down")
+        rint("Shutting down")

@@ -33,7 +33,7 @@ def reverse(frame):
     indices1 = np.logical_and(indices, foo)
     # make green the avg of red and blue where green is greater than red+50
     g[indices] = r[indices] + b[indices]
-    
+
     g[indices] /= 2
 
     # on the averaged pixels, if red is high, then set green to red (this makes these pixels yellow)
