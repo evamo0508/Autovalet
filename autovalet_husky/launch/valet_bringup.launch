@@ -8,7 +8,6 @@
         <rosparam subst_value="true">
             port: $(arg port)
 
-            <!-- control_frequency: 10.0 -->
             control_frequency: 10.0
             diagnostic_frequency: 1.0
 
