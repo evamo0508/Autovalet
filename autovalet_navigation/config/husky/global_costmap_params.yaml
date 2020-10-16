@@ -4,7 +4,7 @@ global_costmap:
 
   lane:
     observation_sources: fake_lane_sensor
-    fake_lane_sensor: {data_type: PointCloud2, sensor_frame: frontCamera_depth_optical_frame, clearing: true, marking: true, topic: /lane/pointcloud}
+    fake_lane_sensor: {data_type: PointCloud2, sensor_frame: frontCamera_color_optical_frame, clearing: true, marking: true, topic: /lane/pointcloud}
   
   global_frame: map
   robot_base_frame: base_link
