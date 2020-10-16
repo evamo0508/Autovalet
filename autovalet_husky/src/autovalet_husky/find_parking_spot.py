@@ -39,6 +39,7 @@ class parking_spot:
         self.aruco_frame_name = aruco_frame_name
         self.goal_frame_id    = goal_frame_id
         self.husky_frame_id   = husky_frame_id
+        self.first_goal_close = False
         self.debug = debug
 
     def collect_tag_poses(self, tag_pose):
@@ -69,8 +70,12 @@ class parking_spot:
         self.goal1 = self.generate_parking_goal(self.tag_tf, pos1, rot1)
         while not parking:
             rospy.sleep(0.5)
+            # keep moving w/ goal gen until goal1 is in costmap
+            if self.dist_to_goal(self.goal1) > 4.0:
+                continue
             # keep publishing the first goal until the robot is close enough
-            if self.dist_to_first_goal(self.goal1) > 0.5:
+            self.first_goal_close = True
+            if self.dist_to_goal(self.goal1) > 0.5:
                 self.pub.publish(self.goal1)
                 if self.debug:
                     print("first goal published")
@@ -84,16 +89,16 @@ class parking_spot:
                 parking = True
         return
 
-    def dist_to_first_goal(self, goal1):
+    def dist_to_goal(self, goal):
         base_link_tf = self.tf_buffer.lookup_transform(self.goal_frame_id, # target_frame_id
                                 self.husky_frame_id, #source frame
                                 rospy.Time(0), #get the tf at first available time
                                 rospy.Duration(1.0)) #timeout after 1
         base_link_x = base_link_tf.transform.translation.x
         base_link_y = base_link_tf.transform.translation.y
-        first_goal_x = goal1.pose.position.x
-        first_goal_y = goal1.pose.position.y
-        dist = np.linalg.norm(np.array([base_link_x - first_goal_x, base_link_y - first_goal_y]))
+        goal_x = goal.pose.position.x
+        goal_y = goal.pose.position.y
+        dist = np.linalg.norm(np.array([base_link_x - goal_x, base_link_y - goal_y]))
 
         return dist
 

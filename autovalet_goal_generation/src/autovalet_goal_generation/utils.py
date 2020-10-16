@@ -20,7 +20,7 @@ def force2DGoal(pose):
         '''
         Input:
         pose            : [PoseStamped] contains goal on which 2D constraints need to be enforced.
-        
+
         Output:
         goal_pose_2D    : [PoseStamped] contains the output goal pose which has z=0 and pitch, roll = 0
         '''
@@ -35,7 +35,7 @@ def force2DGoal(pose):
 
         # Perform corrections to make 2D nav goal
         goal_pose_2D.pose.position.z = 0        # Force pose to ground
-        
+
         # Force pitch and roll to zero
         _, _, yaw = euler_from_quaternion((pose.pose.orientation.x,
                                                   pose.pose.orientation.y,
@@ -49,10 +49,10 @@ def force2DGoal(pose):
         goal_pose_2D.pose.orientation.w = w
 
         return goal_pose_2D
-    
+
 def direction_vector_to_quaternion(direction_vector, reference_vector = np.array([1,0,0])):
     # We can find the rotation matrix that rotates reference vector into this new direction
-        
+
     '''
     LEGACY: Calculates rotation matrix first and then tried to convert to quaternion
     Seems to be an unnecessry pain. Rather let's convert straight to quaternion.
@@ -88,8 +88,8 @@ def make_pose_stamped(frame_id, position, quaternion):
     pose_msg.pose.position.z = position[2]
 
     # Populate the orientation as quaternion
-    pose_msg.pose.orientation.y = quaternion[1]
     pose_msg.pose.orientation.x = quaternion[0]
+    pose_msg.pose.orientation.y = quaternion[1]
     pose_msg.pose.orientation.z = quaternion[2]
     pose_msg.pose.orientation.w = quaternion[3]
 
