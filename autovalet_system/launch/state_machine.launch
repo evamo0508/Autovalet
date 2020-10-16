@@ -1,0 +1,29 @@
+<launch>
+
+    <arg name="simulation" default="true"/>
+
+    <!-- SETUP SIMULATION ENVIRONMENT AND MAPPING -->
+    <group if="$(arg simulation)">
+        <include file="$(find autovalet_gazebo)/launch/parking_lot.launch">
+            <arg name="world_file" default="slam_val_dumpster.world"/>
+        </include>
+
+        <include file="$(find autovalet_gazebo)/launch/valet_rtab_sim.launch"/>
+    </group>
+    
+    <!-- SETUP HUSKY AND MAPPING -->
+    <group unless="$(arg simulation)">
+        <include file="$(find autovalet_husky)/launch/integrated_sensor.launch"/>
+
+        <include file="$(find autovalet_husky)/launch/valet_rtab.launch"/>
+    </group>
+
+    <!-- MOVEBASE -->
+    <include file="$(find autovalet_navigation)/launch/autovalet_nav.launch">
+        <arg name="simulation" value="$(arg simulation)"/>
+    </include>
+
+    <!-- <node pkg="autovalet_system" type="autovalet_system.py" name="SM"/> -->
+
+</launch>
+

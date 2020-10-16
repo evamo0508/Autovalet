@@ -1,0 +1,223 @@
+... logging to /home/kob51/.ros/log/6c6805a6-1000-11eb-ba93-b90dfc711b48/roslaunch-KOB-20120.log
+Checking log directory for disk usage. This may take awhile.
+Press Ctrl-C to interrupt
+]2;/home/kob51/catkin_autovalet/src/autovalet/autovalet_husky/launch/integrated_sensor.launch
+[1mstarted roslaunch server http://KOB:41799/[0m
+
+SUMMARY
+========
+
+PARAMETERS
+ * /diagnostic_aggregator/analyzers/husky/expected: ['husky_base: pow...
+ * /diagnostic_aggregator/analyzers/husky/find_and_remove_prefix: husky_base: 
+ * /diagnostic_aggregator/analyzers/husky/path: Husky A200
+ * /diagnostic_aggregator/analyzers/husky/timeout: 5.0
+ * /diagnostic_aggregator/analyzers/husky/type: diagnostic_aggreg...
+ * /frontCamera/realsense2_camera/accel_fps: 250
+ * /frontCamera/realsense2_camera/accel_frame_id: frontCamera_accel...
+ * /frontCamera/realsense2_camera/accel_optical_frame_id: frontCamera_accel...
+ * /frontCamera/realsense2_camera/align_depth: True
+ * /frontCamera/realsense2_camera/aligned_depth_to_color_frame_id: frontCamera_align...
+ * /frontCamera/realsense2_camera/aligned_depth_to_fisheye1_frame_id: frontCamera_align...
+ * /frontCamera/realsense2_camera/aligned_depth_to_fisheye2_frame_id: frontCamera_align...
+ * /frontCamera/realsense2_camera/aligned_depth_to_fisheye_frame_id: frontCamera_align...
+ * /frontCamera/realsense2_camera/aligned_depth_to_infra1_frame_id: frontCamera_align...
+ * /frontCamera/realsense2_camera/aligned_depth_to_infra2_frame_id: frontCamera_align...
+ * /frontCamera/realsense2_camera/allow_no_texture_points: False
+ * /frontCamera/realsense2_camera/base_frame_id: frontCamera_link
+ * /frontCamera/realsense2_camera/calib_odom_file: 
+ * /frontCamera/realsense2_camera/clip_distance: -2.0
+ * /frontCamera/realsense2_camera/color_fps: 30
+ * /frontCamera/realsense2_camera/color_frame_id: frontCamera_color...
+ * /frontCamera/realsense2_camera/color_height: 480
+ * /frontCamera/realsense2_camera/color_optical_frame_id: frontCamera_color...
+ * /frontCamera/realsense2_camera/color_width: 848
+ * /frontCamera/realsense2_camera/depth_fps: 30
+ * /frontCamera/realsense2_camera/depth_frame_id: frontCamera_depth...
+ * /frontCamera/realsense2_camera/depth_height: 480
+ * /frontCamera/realsense2_camera/depth_optical_frame_id: frontCamera_depth...
+ * /frontCamera/realsense2_camera/depth_width: 848
+ * /frontCamera/realsense2_camera/device_type: 
+ * /frontCamera/realsense2_camera/enable_accel: True
+ * /frontCamera/realsense2_camera/enable_color: True
+ * /frontCamera/realsense2_camera/enable_depth: True
+ * /frontCamera/realsense2_camera/enable_fisheye1: True
+ * /frontCamera/realsense2_camera/enable_fisheye2: True
+ * /frontCamera/realsense2_camera/enable_fisheye: False
+ * /frontCamera/realsense2_camera/enable_gyro: True
+ * /frontCamera/realsense2_camera/enable_infra1: False
+ * /frontCamera/realsense2_camera/enable_infra2: False
+ * /frontCamera/realsense2_camera/enable_pointcloud: True
+ * /frontCamera/realsense2_camera/enable_sync: True
+ * /frontCamera/realsense2_camera/filters: pointcloud
+ * /frontCamera/realsense2_camera/fisheye1_frame_id: frontCamera_fishe...
+ * /frontCamera/realsense2_camera/fisheye1_optical_frame_id: frontCamera_fishe...
+ * /frontCamera/realsense2_camera/fisheye2_frame_id: frontCamera_fishe...
+ * /frontCamera/realsense2_camera/fisheye2_optical_frame_id: frontCamera_fishe...
+ * /frontCamera/realsense2_camera/fisheye_fps: 30
+ * /frontCamera/realsense2_camera/fisheye_frame_id: frontCamera_fishe...
+ * /frontCamera/realsense2_camera/fisheye_height: 480
+ * /frontCamera/realsense2_camera/fisheye_optical_frame_id: frontCamera_fishe...
+ * /frontCamera/realsense2_camera/fisheye_width: 640
+ * /frontCamera/realsense2_camera/gyro_fps: 400
+ * /frontCamera/realsense2_camera/gyro_frame_id: frontCamera_gyro_...
+ * /frontCamera/realsense2_camera/gyro_optical_frame_id: frontCamera_gyro_...
+ * /frontCamera/realsense2_camera/imu_optical_frame_id: frontCamera_imu_o...
+ * /frontCamera/realsense2_camera/infra1_frame_id: frontCamera_infra...
+ * /frontCamera/realsense2_camera/infra1_optical_frame_id: frontCamera_infra...
+ * /frontCamera/realsense2_camera/infra2_frame_id: frontCamera_infra...
+ * /frontCamera/realsense2_camera/infra2_optical_frame_id: frontCamera_infra...
+ * /frontCamera/realsense2_camera/infra_fps: 30
+ * /frontCamera/realsense2_camera/infra_height: 480
+ * /frontCamera/realsense2_camera/infra_width: 640
+ * /frontCamera/realsense2_camera/initial_reset: False
+ * /frontCamera/realsense2_camera/json_file_path: 
+ * /frontCamera/realsense2_camera/linear_accel_cov: 0.01
+ * /frontCamera/realsense2_camera/odom_frame_id: frontCamera_odom_...
+ * /frontCamera/realsense2_camera/pointcloud_texture_index: 0
+ * /frontCamera/realsense2_camera/pointcloud_texture_stream: RS2_STREAM_COLOR
+ * /frontCamera/realsense2_camera/pose_frame_id: frontCamera_pose_...
+ * /frontCamera/realsense2_camera/pose_optical_frame_id: frontCamera_pose_...
+ * /frontCamera/realsense2_camera/publish_odom_tf: True
+ * /frontCamera/realsense2_camera/publish_tf: True
+ * /frontCamera/realsense2_camera/rosbag_filename: 
+ * /frontCamera/realsense2_camera/serial_no: 819112073090
+ * /frontCamera/realsense2_camera/tf_publish_rate: 0.0
+ * /frontCamera/realsense2_camera/topic_odom_in: odom_in
+ * /frontCamera/realsense2_camera/unite_imu_method: linear_interpolation
+ * /frontCamera/realsense2_camera/usb_port_id: 
+ * /husky_joint_publisher/publish_rate: 50
+ * /husky_joint_publisher/type: joint_state_contr...
+ * /husky_node/control_frequency: 10.0
+ * /husky_node/diagnostic_frequency: 1.0
+ * /husky_node/max_acceleration: 3.0
+ * /husky_node/max_speed: 1.0
+ * /husky_node/polling_timeout: 10.0
+ * /husky_node/port: /dev/prolific
+ * /husky_node/wheel_diameter: 0.3302
+ * /husky_velocity_controller/angular/z/has_acceleration_limits: True
+ * /husky_velocity_controller/angular/z/has_velocity_limits: True
+ * /husky_velocity_controller/angular/z/max_acceleration: 6.0
+ * /husky_velocity_controller/angular/z/max_velocity: 2.0
+ * /husky_velocity_controller/base_frame_id: base_link
+ * /husky_velocity_controller/cmd_vel_timeout: 0.25
+ * /husky_velocity_controller/enable_odom_tf: False
+ * /husky_velocity_controller/estimate_velocity_from_position: False
+ * /husky_velocity_controller/left_wheel: ['front_left_whee...
+ * /husky_velocity_controller/linear/x/has_acceleration_limits: True
+ * /husky_velocity_controller/linear/x/has_velocity_limits: True
+ * /husky_velocity_controller/linear/x/max_acceleration: 3.0
+ * /husky_velocity_controller/linear/x/max_velocity: 1.0
+ * /husky_velocity_controller/pose_covariance_diagonal: [0.001, 0.001, 0....
+ * /husky_velocity_controller/publish_rate: 50
+ * /husky_velocity_controller/right_wheel: ['front_right_whe...
+ * /husky_velocity_controller/twist_covariance_diagonal: [0.001, 0.001, 0....
+ * /husky_velocity_controller/type: diff_drive_contro...
+ * /husky_velocity_controller/velocity_rolling_window_size: 2
+ * /husky_velocity_controller/wheel_radius_multiplier: 1.0
+ * /husky_velocity_controller/wheel_separation_multiplier: 1.875
+ * /joy_teleop/joy_node/autorepeat_rate: 20
+ * /joy_teleop/joy_node/deadzone: 0.1
+ * /joy_teleop/joy_node/dev: /dev/input/js0
+ * /joy_teleop/teleop_twist_joy/axis_angular: 4
+ * /joy_teleop/teleop_twist_joy/axis_linear: 5
+ * /joy_teleop/teleop_twist_joy/enable_button: 5
+ * /joy_teleop/teleop_twist_joy/enable_turbo_button: 4
+ * /joy_teleop/teleop_twist_joy/scale_angular: 0.5
+ * /joy_teleop/teleop_twist_joy/scale_angular_turbo: 1.0
+ * /joy_teleop/teleop_twist_joy/scale_linear: 0.4
+ * /joy_teleop/teleop_twist_joy/scale_linear_turbo: 1.0
+ * /robot_description: <?xml version="1....
+ * /rosdistro: kinetic
+ * /rosversion: 1.12.16
+ * /twist_mux/locks: [{'topic': 'e_sto...
+ * /twist_mux/topics: [{'topic': 'joy_t...
+ * /velodyne_nodelet_manager_cloud/calibration: /opt/ros/kinetic/...
+ * /velodyne_nodelet_manager_cloud/max_range: 130.0
+ * /velodyne_nodelet_manager_cloud/min_range: 0.4
+ * /velodyne_nodelet_manager_driver/cut_angle: -0.01
+ * /velodyne_nodelet_manager_driver/device_ip: 
+ * /velodyne_nodelet_manager_driver/frame_id: velodyne
+ * /velodyne_nodelet_manager_driver/model: VLP16
+ * /velodyne_nodelet_manager_driver/pcap: 
+ * /velodyne_nodelet_manager_driver/port: 2368
+ * [0m[ INFO] [1602887957.988283346]: Initializing nodelet with 12 worker threads.[0m
+[0m[ INFO] [1602887958.052487719]: RealSense ROS v2.2.12[0m
+[0m[ INFO] [1602887958.052512007]: Running with LibRealSense v2.38.1[0m
+[33m[ WARN] [1602887958.068705680]: No RealSense devices were found![0m
+ 16/10 18:39:22,192 WARNING [140369602852736] (rs.cpp:285) null pointer passed for argument "list"
+[0m[ INFO] [1602887957.883184285]: [twist_marker_server] Initialized.[0m
+/velodyne_nodelet_manager_driver/read_fast: False
+ * /velodyne_nodelet_manager_driver/read_once: False
+ * /velodyne_nodelet_manager_driver/repeat_delay: 0.0
+ * /velodyne_nodelet_manager_driver/rpm: 600.0
+ * /velodyne_nodelet_manager_laserscan/resolution: 0.007
+ * /velodyne_nodelet_manager_laserscan/ring: -1
+
+NODES
+  /joy_teleop/
+    joy_node (joy/joy_node)
+    teleop_twist_joy (teleop_twist_joy/teleop_node)
+  /frontCamera/
+    realsense2_camera (nodelet/nodelet)
+    realsense2_camera_manager (nodelet/nodelet)
+  /
+    base_controller_spawner (controller_manager/spawner)
+    diagnostic_aggregator (diagnostic_aggregator/aggregator_node)
+    dynamic_reconfigure_load (dynamic_reconfigure/dynparam)
+    husky_node (husky_base/husky_node)
+    joint_state_publisher (joint_state_publisher/joint_state_publisher)
+    robot_state_publisher (robot_state_publisher/robot_state_publisher)
+    rviz (rviz/rviz)
+    twist_marker_server (interactive_marker_twist_server/marker_server)
+    twist_mux (twist_mux/twist_mux)
+    velodyne_nodelet_manager (nodelet/nodelet)
+    velodyne_nodelet_manager_cloud (nodelet/nodelet)
+    velodyne_nodelet_manager_driver (nodelet/nodelet)
+    velodyne_nodelet_manager_laserscan (nodelet/nodelet)
+
+auto-starting new master
+[1mprocess[master]: started with pid [20133][0m
+[1mROS_MASTER_URI=http://localhost:11311[0m
+]2;/home/kob51/catkin_autovalet/src/autovalet/autovalet_husky/launch/integrated_sensor.launch http://localhost:11311
+[1msetting /run_id to 6c6805a6-1000-11eb-ba93-b90dfc711b48[0m
+[1mprocess[rosout-1]: started with pid [20146][0m
+started core service [/rosout]
+[1mprocess[husky_node-2]: started with pid [20163][0m
+[1mprocess[base_controller_spawner-3]: started with pid [20164][0m
+[1mprocess[twist_marker_server-4]: started with pid [20166][0m
+[1mprocess[robot_state_publisher-5]: started with pid [20181][0m
+[1mprocess[joint_state_publisher-6]: started with pid [20199][0m
+[1mprocess[twist_mux-7]: started with pid [20215][0m
+[1mprocess[joy_teleop/joy_node-8]: started with pid [20233][0m
+[1mprocess[joy_teleop/teleop_twist_joy-9]: started with pid [20259][0m
+[1mprocess[diagnostic_aggregator-10]: started with pid [20282][0m
+[1mprocess[dynamic_reconfigure_load-11]: started with pid [20303][0m
+[1mprocess[frontCamera/realsense2_camera_manager-12]: started with pid [20322][0m
+[1mprocess[frontCamera/realsense2_camera-13]: started with pid [20347][0m
+[1mprocess[velodyne_nodelet_manager-14]: started with pid [20367][0m
+[1mprocess[velodyne_nodelet_manager_driver-15]: started with pid [20385][0m
+[1mprocess[velodyne_nodelet_manager_cloud-16]: started with pid [20386][0m
+[1mprocess[velodyne_nodelet_manager_laserscan-17]: started with pid [20394][0m
+[1mprocess[rviz-18]: started with pid [20406][0m
+[rviz-18] killing on exit
+[velodyne_nodelet_manager_laserscan-17] killing on exit
+[velodyne_nodelet_manager_cloud-16] killing on exit
+[velodyne_nodelet_manager_driver-15] killing on exit
+[frontCamera/realsense2_camera-13] killing on exit
+[velodyne_nodelet_manager-14] killing on exit
+[frontCamera/realsense2_camera_manager-12] killing on exit
+[dynamic_reconfigure_load-11] killing on exit
+[diagnostic_aggregator-10] killing on exit
+[joy_teleop/teleop_twist_joy-9] killing on exit
+[joy_teleop/joy_node-8] killing on exit
+[twist_mux-7] killing on exit
+[joint_state_publisher-6] killing on exit
+[robot_state_publisher-5] killing on exit
+[twist_marker_server-4] killing on exit
+[base_controller_spawner-3] killing on exit
+[rosout-1] killing on exit
+[master] killing on exit
+shutting down processing monitor...
+... shutting down processing monitor complete
+[1mdone[0m
