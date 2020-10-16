@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+
+
+<!-- This launch file runs RTAB and a bagfile in the proper order with the proper delays necessary for
+everything to run properly. See timed_roslaunch.sh for more info. Make sure to chmod +x timed_roslaunch.sh -->
+
+<launch>
+
+    <param name="use_sim_time" value="true"/>
+
+    <!-- what bagfile you want to run (make sure to put it in the autovalet_husky/bags folder)-->
+    <arg name="bagfile" default="costmap_testing_2020-10-07-18-02-13.bag"/>
+
+    <!-- RVIZ -->
+    <node type="rviz" name="rviz" pkg="rviz"/>
+
+    <include file="$(find autovalet_husky)/launch/valet_rtab.launch" />
+
+    <node pkg="autovalet_husky" type="timed_roslaunch.sh" 
+    args="5 autovalet_husky play_bag.launch bagfile:=$(arg bagfile)" 
+    name="timed_roslaunch2" output="screen"/>
+
+</launch>
+
+

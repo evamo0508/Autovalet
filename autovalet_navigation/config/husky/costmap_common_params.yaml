@@ -1,14 +1,25 @@
 #documentation : http://wiki.ros.org/navigation/Tutorials/RobotSetup
 
-obstacle_range: 6.0 # only detect obstacles within obstacle_range meters
-raytrace_range: 3.0 # robot will attempt to clear out space in front of it up to raytrace_range meters away given a sensor reading
-footprint: [[0.4937, 0.28545], [0.4937, -0.28545], [-0.4937, -0.28545], [-0.4937, 0.28545]]
+obstacle_range: 14.0 # only detect obstacles within obstacle_range meters
+raytrace_range: 14.0 # robot will attempt to clear out space in front of it up to raytrace_range meters away given a sensor reading
 
-#robot_radius: ir_of_robot
-inflation_radius: 0.5 # stay inflation_radius meters away from obstacles
+### Keep commented if using robot radius
+# footprint: [[0.4937, 0.28545], [0.4937, -0.28545], [-0.4937, -0.28545], [-0.4937, 0.28545]]
+# footprint_padding: 0
+
+robot_radius: 0.6
+
+inflation: # Name of the inflation layer plugin in global costmap params
+  # Inflation radius = Robot_radius + difference
+  inflation_radius: 0.7
+  cost_scaling_factor: 1.0
+
+obstacle_layer:
+    max_obstacle_height: 1.5
+    min_obstacle_height: 0.2
 
 observation_sources: realsense velodyne lane
 
-realsense: {sensor_frame: frontCamera_link, data_type: PointCloud2, topic: /realsense/frontCamera/depth/points, marking: true, clearing: true}
+# realsense: {sensor_frame: frontCamera_link, data_type: PointCloud2, topic: /frontCamera/depth/color/points, marking: true, clearing: true}
 
 velodyne: {sensor_frame: velodyne, data_type: PointCloud2, topic: /velodyne_points, marking: true, clearing: true}
