@@ -1,4 +1,11 @@
 global_costmap:
+  plugins:
+      - {name: lane,           type: "costmap_2d::ObstacleLayer"}
+
+  lane:
+    observation_sources: fake_lane_sensor
+    fake_lane_sensor: {data_type: PointCloud2, sensor_frame: frontCamera_depth_optical_frame, clearing: true, marking: true, topic: /lane/pointcloud}
+
   global_frame: map
   robot_base_frame: base_link
   update_frequency: 5.0 #  Hz
