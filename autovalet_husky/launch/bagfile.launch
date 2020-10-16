@@ -12,7 +12,7 @@ everything to run properly. See timed_roslaunch.sh for more info. Make sure to c
     <arg name="bagfile" default="costmap_testing_2020-10-07-18-02-13.bag"/>
 
     <!-- RVIZ -->
-    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find autovalet_husky)/rviz/config.rviz" />
+    <node type="rviz" name="rviz" pkg="rviz"/>
 
     <include file="$(find autovalet_husky)/launch/valet_rtab.launch" />
 
