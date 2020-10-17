@@ -91,7 +91,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <remap from="cmd_vel" to="husky_velocity_controller/cmd_vel"/>
 
   <!-- node for combining depth pcl and lidar pcl -->
-  <node pkg="autovalet_gazebo" type="concat_pcl" name="concat_pcl" />
+  <!--node pkg="autovalet_gazebo" type="concat_pcl" name="concat_pcl" /-->
 
   <!-- RVIZ -->
   <node type="rviz" name="rviz" pkg="rviz" args="-d $(find autovalet_gazebo)/config/husky_gazebo_lot.rviz" />

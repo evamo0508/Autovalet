@@ -35,7 +35,7 @@ class LaneDetector:
         self.camera        = rospy.wait_for_message(colorInfo_topic, CameraInfo)
         self.laneCloud_pub = rospy.Publisher(laneCloud_topic, PointCloud2, queue_size=1)
         self.egoLine_pub   = rospy.Publisher(egoLine_topic, PointCloud2, queue_size=1)
-        
+
         # A handle for publishing goal poses
         self.goal_handle   = rospy.Publisher("move_base_simple/goal", PoseStamped, queue_size=1)
         self.av_goal_generator = goal_generator("map")
@@ -59,7 +59,7 @@ class LaneDetector:
 
         # time tracker for publishing goals at a lower rate
         self.previous_time = rospy.get_time()
-    
+
     def image_callback(self, color_msg, depth_msg):
         # cvBridge image
         color_img = self.bridge.imgmsg_to_cv2(color_msg, desired_encoding="bgr8")
@@ -67,7 +67,7 @@ class LaneDetector:
 
         # lane detection algo
         center_line_coordinates = self.center_line_detection(color_img)                # px2
-        if center_line_coordinates.shape[0] != 0:
+        try:
             center_line_cloud = self.line2cloud(depth_img, center_line_coordinates)    # px3
             norm_vec          = self.findNormalVectorInCloud(center_line_cloud)
             lane_cloud        = self.interpolateRightLine(center_line_cloud, norm_vec) # 2px3
@@ -81,6 +81,8 @@ class LaneDetector:
 
             self.publishLaneCloud(lane_cloud, depth_msg.header.frame_id)
             self.publishEgoLine(ego_line, depth_msg.header.frame_id)
+        except:
+            print("empty center line")
 
     def center_line_detection(self, img):
         # colorspace transformation
@@ -126,6 +128,7 @@ class LaneDetector:
             self.tracker = cv2.TrackerKCF_create()
             self.tracker.init(rgb, bbox)
             self.lose_track_count = 0
+            print("new line detected")
         elif self.tracker is not None:
             success, bbox = self.tracker.update(rgb)
             x, y, w, h = [int(v) for v in bbox]
@@ -133,9 +136,9 @@ class LaneDetector:
                 scenario = 2
                 X1, Y1, X2, Y2 = x, y, x+w, y-h
                 Y1 = min(Y1, img.shape[0] - 1)
+                print("tracking")
         if scenario == 0:
-            return np.array([])
-        print(scenario)
+            return None
 
         # lines detected, calculate coordinates and slope
         if X1 == X2: # vertical line
@@ -163,7 +166,7 @@ class LaneDetector:
 
         z = depth[v, u] / 1000.0; # unit: mm -> m
         x = np.multiply(x, z)
-        y = np.multiply(y, z) - 2 #: tmp fix accounted for map being gen w.r.t base_link
+        y = np.multiply(y, z) - 1 #: tmp fix accounted for map being gen w.r.t base_link
 
         x = x[np.nonzero(z)]
         y = y[np.nonzero(z)]

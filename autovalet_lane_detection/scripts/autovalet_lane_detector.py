@@ -35,7 +35,7 @@ class LaneDetector:
         self.camera        = rospy.wait_for_message(colorInfo_topic, CameraInfo)
         self.laneCloud_pub = rospy.Publisher(laneCloud_topic, PointCloud2, queue_size=1)
         self.egoLine_pub   = rospy.Publisher(egoLine_topic, PointCloud2, queue_size=1)
-        
+
         # A handle for publishing goal poses
         self.goal_handle   = rospy.Publisher("move_base_simple/goal", PoseStamped, queue_size=1)
         self.av_goal_generator = goal_generator("map")
@@ -64,7 +64,7 @@ class LaneDetector:
 
         # lane detection algo
         center_line_coordinates = self.center_line_detection(color_img)                # px2
-        if center_line_coordinates.shape[0] != 0:
+        try:
             center_line_cloud = self.line2cloud(depth_img, center_line_coordinates)    # px3
             norm_vec          = self.findNormalVectorInCloud(center_line_cloud)
             lane_cloud        = self.interpolateRightLine(center_line_cloud, norm_vec) # 2px3
@@ -78,6 +78,8 @@ class LaneDetector:
 
             self.publishLaneCloud(lane_cloud, depth_msg.header.frame_id)
             self.publishEgoLine(ego_line, depth_msg.header.frame_id)
+        except:
+            print("empty center line")
 
     def center_line_detection(self, img):
         # colorspace transformation
@@ -132,7 +134,7 @@ class LaneDetector:
                 X1, Y1, X2, Y2 = x, y, x+w, y-h
                 Y1 = min(Y1, img.shape[0] - 1)
         if scenario == 0:
-            return np.array([])
+            return None
 
         # lines detected, calculate coordinates and slope
         if X1 == X2: # vertical line
