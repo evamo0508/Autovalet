@@ -4,7 +4,7 @@ This package contains our lane detection pipeline. The output of the lane detect
 
 ## Running the lane detector node in Hardware
 ```
-roslaunch autovalet_lane_detection lane_detector.launch
+roslaunch autovalet_lane_detection lane_detector.launch simulation:=false
 ```
 
 ## Running the lane detector node in Simulation
@@ -16,7 +16,7 @@ roslaunch autovalet_gazebo parking_lot.launch world_file:=slam_val_dumpster.worl
 ```  
 
 ```
-roslaunch autovalet_lane_detection lane_detector_sim.launch
+roslaunch autovalet_lane_detection lane_detector.launch
 ```
 
 To view the lane as a pointcloud, use the pointcloud2 widget in Rviz and subscribe to the /lane/pointCloud topic
