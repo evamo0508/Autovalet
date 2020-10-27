@@ -50,7 +50,7 @@ class State:
     Success = 4
 
 class MoveBaseListener:
-    def __init__(self, print_status=True):
+    def __init__(self, debug=True):
         self.goal_sub       = rospy.Subscriber("/move_base_simple/goal", PoseStamped, self.goalCallback)
         self.status_sub     = rospy.Subscriber("/move_base/status", GoalStatusArray, self.MBstatusCallback)
         
@@ -59,7 +59,22 @@ class MoveBaseListener:
 
         self.plan_state     = State.Waiting
 
-        self.debug          = print_status
+        self.debug          = debug
+
+    def getState(self):
+        output = None
+        if self.plan_state == State.Waiting:
+            output = "waiting"
+        elif self.plan_state == State.Planning:
+            output = "planning"
+        elif self.plan_state == State.Executing:
+            output = "executing"
+        elif self.plan_state == State.Fail:
+            output = "fail"
+        elif self.plan_state == State.Success:
+            output = "success"
+        
+        return output 
 
     def printState(self):
         rospy.logwarn("---------")
@@ -90,18 +105,19 @@ class MoveBaseListener:
 
         self.start_pose = getCurrentPose()
 
-        self.printState()
+        if self.debug:
+            self.printState()
 
-        rospy.logwarn("Goal:")
-        rospy.logwarn("Position")
-        rospy.logwarn("  x: %f",self.goal_pose.pose.position.x)
-        rospy.logwarn("  y: %f",self.goal_pose.pose.position.y)
-        rospy.logwarn("  z: %f",self.goal_pose.pose.position.z)
-        rospy.logwarn("Orientation");
-        rospy.logwarn("  x: %f",self.goal_pose.pose.orientation.x)
-        rospy.logwarn("  y: %f",self.goal_pose.pose.orientation.y)
-        rospy.logwarn("  z: %f",self.goal_pose.pose.orientation.z)
-        rospy.logwarn("  w: %f",self.goal_pose.pose.orientation.w)
+            rospy.logwarn("Goal:")
+            rospy.logwarn("Position")
+            rospy.logwarn("  x: %f",self.goal_pose.pose.position.x)
+            rospy.logwarn("  y: %f",self.goal_pose.pose.position.y)
+            rospy.logwarn("  z: %f",self.goal_pose.pose.position.z)
+            rospy.logwarn("Orientation");
+            rospy.logwarn("  x: %f",self.goal_pose.pose.orientation.x)
+            rospy.logwarn("  y: %f",self.goal_pose.pose.orientation.y)
+            rospy.logwarn("  z: %f",self.goal_pose.pose.orientation.z)
+            rospy.logwarn("  w: %f",self.goal_pose.pose.orientation.w)
 
     def MBstatusCallback(self,status_array_msg):
 
@@ -152,7 +168,7 @@ class MoveBaseListener:
         else:
             return
 
-        if self.debug():
+        if self.debug:
             self.printState()
 
 

@@ -24,9 +24,10 @@ class parking_spot:
     '''
     Module for defining parking spot parameters
     '''
-    def __init__(self, goal_topic, tag_topic, goal_frame_id, husky_frame_id, aruco_frame_name):
+    def __init__(self, goal_topic, tag_topic, goal_frame_id, husky_frame_id, aruco_frame_name,debug=True):
         # for accumulating tag poses
         self.count = 0
+        self.tag_buffer_size = 20
         self.tfArray = []
 
         # Setup listeners and talkers
@@ -38,13 +39,13 @@ class parking_spot:
         self.aruco_frame_name = aruco_frame_name
         self.goal_frame_id    = goal_frame_id
         self.husky_frame_id   = husky_frame_id
+        self.debug = debug
 
     def collect_tag_poses(self, tag_pose):
         '''
         Take in numOfTags tag poses and do RANSAC in the end to avoid outliers
         '''
-        numOfTags = 20
-        if self.count < numOfTags: # collect tag poses
+        if self.count < self.tag_buffer_size: # collect tag poses
             self.aruco_frame_id = tag_pose.header.frame_id
 
             tf = self.tf_buffer.lookup_transform(self.goal_frame_id, # target_frame_id
@@ -53,29 +54,33 @@ class parking_spot:
                                     rospy.Duration(1.0)) # timeout after 1
             self.tfArray.append(tf)
             self.count += 1
-        elif self.count == numOfTags: # perform RANSAC on transformArray
+        elif self.count == self.tag_buffer_size: # perform RANSAC on transformArray
             self.tag_tf = self.tag_pose_RANSAC()
             self.pub_two_goals()
             self.count += 1
+            self.goal1 = None
+            self.goal2 = None
 
     def pub_two_goals(self):
         # current params for right turns only
         parking = False
         pos1 = [0, 2, 1]
         rot1 = [-np.pi/2, 0, -np.pi/2]
-        goal1 = self.generate_parking_goal(self.tag_tf, pos1, rot1)
+        self.goal1 = self.generate_parking_goal(self.tag_tf, pos1, rot1)
         while not parking:
             rospy.sleep(0.5)
             # keep publishing the first goal until the robot is close enough
-            if self.dist_to_first_goal(goal1) > 0.5:
-                self.pub.publish(goal1)
-                print("first goal published")
+            if self.dist_to_first_goal(self.goal1) > 0.5:
+                self.pub.publish(self.goal1)
+                if self.debug:
+                    print("first goal published")
             else:
                 pos2 = [0, 0, 4]
                 rot2 = [0, -np.pi/2, -np.pi/2]
-                goal2 = self.generate_parking_goal(self.tag_tf, pos2, rot2)
-                self.pub.publish(goal2)
-                print("second goal published")
+                self.goal2 = self.generate_parking_goal(self.tag_tf, pos2, rot2)
+                self.pub.publish(self.goal2)
+                if self.debug:
+                    print("second goal published")
                 parking = True
         return
 
@@ -107,7 +112,7 @@ class parking_spot:
             for j in range(len(quatArray)):
                 diff = np.abs(1 - np.dot(quatArray[i], quatArray[j]) ** 2)
                 vote = vote + 1 if diff < 0.005 else vote
-                if i == 0:
+                if i == 0 and self.debug:
                     print(diff)
             votes.append(vote)
         # pick the pose with the most inliers
@@ -160,7 +165,7 @@ def main():
     # tag_topic is the name of the topic in which the pose of the marker is being published
     # goal_pose_frame_id is the name of the frame in which you want the goal to be generated
     # aruco_frame_name is the NAME OF THE FRAME PUBLISHED AS THE ARUCO TAG
-    tag_topic          = '/aruco_single/pose'
+    tag_topic          = '/ARUCO/pose'
     goal_topic         = '/move_base_simple/goal'
     goal_pose_frame_id = 'map'
     husky_frame_id     = 'base_link'

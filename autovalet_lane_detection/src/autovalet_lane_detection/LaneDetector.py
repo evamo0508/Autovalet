@@ -24,7 +24,7 @@ from utils import publishCloud
 
 class LaneDetector:
 
-    def __init__(self, colorInfo_topic, laneCloud_topic, egoLine_topic, hlsBounds, lineParams):
+    def __init__(self, colorInfo_topic, laneCloud_topic, egoLine_topic, hlsBounds, lineParams,debug=True):
 
         # Setup publishers
         self.laneCloud_pub = rospy.Publisher(laneCloud_topic, PointCloud2, queue_size=1)
@@ -55,6 +55,8 @@ class LaneDetector:
         self.maxLineGap = lineParams['maxLineGap']
         self.lane_width = 3.5
 
+        self.debug = debug
+
     def detectLaneRGBD(self, color_img, depth_img):
         # lane detection algo
         center_line_coordinates = self.center_line_detection(color_img)                # px2
@@ -77,7 +79,8 @@ class LaneDetector:
             return lane_cloud, ego_line
 
         except:
-            print("empty center line")
+            if self.debug:
+                print("empty center line")
             return None, None
 
     def center_line_detection(self, img):
