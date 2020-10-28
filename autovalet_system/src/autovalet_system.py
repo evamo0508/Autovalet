@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 import numpy as np
-
 import sys
 
 # Include ROS libs
@@ -10,16 +9,6 @@ import tf2_ros
 import smach
 from tf2_geometry_msgs import do_transform_pose
 import rospkg
-
-from PIL import Image as pImage
-from cv_bridge import CvBridge, CvBridgeError
-from message_filters import ApproximateTimeSynchronizer, Subscriber
-
-from autovalet_lane_detection.LaneDetector import LaneDetector
-from autovalet_navigation.move_base_listener import MoveBaseListener
-from autovalet_husky.find_parking_spot import parking_spot
-from autovalet_goal_generation.goal_generator import goal_generator
-
 import rosparam
 import yaml
 
@@ -29,9 +18,19 @@ from geometry_msgs.msg import PoseStamped, Quaternion, Pose
 from tf.transformations import quaternion_matrix, quaternion_from_matrix
 from actionlib_msgs.msg import GoalStatusArray
 
-import smach
+# Include image helpers
+from PIL import Image as pImage
+from cv_bridge import CvBridge, CvBridgeError
+from message_filters import ApproximateTimeSynchronizer, Subscriber
+
+# Include autovalet nodes
+from autovalet_lane_detection.LaneDetector import LaneDetector
+from autovalet_navigation.move_base_listener import MoveBaseListener
+from autovalet_husky.find_parking_spot import parking_spot
+from autovalet_goal_generation.goal_generator import goal_generator
 
 
+# struct to define states
 class State:
     START = 0
     SEND_GOAL = 1
@@ -39,38 +38,14 @@ class State:
     PARK = 3
     FINISH = 4
 
-
-def getCurrentPose():
-
-    tf_buffer      = tf2_ros.Buffer(rospy.Duration(1200.0)) # Length of tf2 buffer (?)
-    tf_listener    = tf2_ros.TransformListener(tf_buffer)
-
-    transform = tf_buffer.lookup_transform("base_link", # target_frame_id
-                                "map", #source frame
-                                rospy.Time(0), #get the tf at first available time
-                                rospy.Duration(3.0)) #timeout after 1
-
-    current_pose = PoseStamped()
-    current_pose.header = transform.header
-    current_pose.pose.position.x = transform.transform.translation.x
-    current_pose.pose.position.y = transform.transform.translation.y
-    current_pose.pose.position.z = transform.transform.translation.z
-    current_pose.pose.orientation = transform.transform.rotation
-
-    return current_pose
-
 class AutoValet:
     def __init__(self,sim):
         self.sim = sim
 
-        print('\n')
-        print('\n')
-        print('\n')
-        print('\n')
-        # move_base listener setup
+        # moveBaseListener setup #############################
         self.moveBaseListener = MoveBaseListener(debug=False)
 
-        # lane detection setup ##################################
+        # laneDetector setup ##################################
         self.colorInfo_topic = "/frontCamera/color/camera_info"
         self.laneCloud_topic = "/lane/pointCloud"
         self.egoLine_topic   = "/lane/egoLine"
@@ -115,8 +90,6 @@ class AutoValet:
                                    self.husky_frame,
                                    self.aruco_frame_name,
                                    debug=False)
-
-        self.prev_goal = PoseStamped()
         
         # State Machine variables
         self.current_state = State.START
@@ -131,7 +104,6 @@ class AutoValet:
         else:
             yaml_path += "hardware_params.yaml"
         
-        print(yaml_path)
         f = open(yaml_path,'r')
         yaml_file = yaml.load(f)
         f.close()
@@ -149,6 +121,8 @@ class AutoValet:
 
         return LD
 
+    # callback for image messages. this is what keeps the system moving forward, as processState gets
+    # called everytime we get a new img
     def registered_image_callback(self, color_msg, depth_msg):
         # cvBridge image
         self.color_img = self.bridge.imgmsg_to_cv2(color_msg, desired_encoding="bgr8")
@@ -156,6 +130,7 @@ class AutoValet:
 
         self.depth_frame_id = depth_msg.header.frame_id
         
+        # if we're not in the PARK state, detect the lane and publish
         if self.current_state != State.PARK:
             # lane detection algo
             _, self.ego_line = self.laneDetector.detectLaneRGBD(self.color_img, self.depth_img)
@@ -171,62 +146,66 @@ class AutoValet:
             self.previous_time = rospy.get_time()
 
     def processState(self):
+        # START state ############################
         if self.current_state == State.START:
             self.printState()
             self.prev_state = State.START
             self.current_state = State.SEND_GOAL
 
-        
+        # SEND_GOAL state #############################
         elif self.current_state == State.SEND_GOAL:
+            # get goal from lane detector and publish
             self.sendGoal()
             self.printState()
+
+            # move to PLANNING state
             self.prev_state = self.current_state
             self.current_state = State.PLANNING
             self.prev_time = rospy.get_time()
 
-            # if self.prev_state == State.START:
-            #     self.sendGoal()
-            #     self.printState()
-            #     self.prev_state = self.current_state
-            # elif self.prev_state == State.SEND_GOAL:
-            #     if :
-            #         self.current_state = State.PARK  
-            #     else:
-            #         # print(self.parker.dist_to_first_goal(self.current_goal))
-            #         if 
-            #             self.sendGoal()
-            #             self.printState()
-
+        # PLANNING state #######################
         elif self.current_state == State.PLANNING:
+            # check if we are ready for parking (tag buffer is filled)
+            # if so, move to PARK state
             if self.parker.count >= self.parker.tag_buffer_size:
                 self.prev_state = self.current_state
                 self.current_state = State.PARK
 
+            # if it's been 2 secs since last sent goal (allow for processing time) AND we're within 2 m of last goal,
+            # move to the SEND_GOAL state
             elif rospy.get_time() - self.prev_time > 2 and self.parker.dist_to_first_goal(self.current_goal) <= 2:
                 self.prev_state = self.current_state
                 self.current_state = State.SEND_GOAL
             
+            # keep planning, only print if it's your first time entering this fxn in the PLANNING state
             else:
                 if self.prev_state != State.PLANNING:
                     self.printState()
                     self.prev_state = self.current_state
 
+        # PARK state ############################
         elif self.current_state == State.PARK:
-            # print(self.moveBaseListener.getState())
+
+            # printState() the first time you enter this state
             if self.prev_state != State.PARK:
                 # rospy.ServiceProxy("/move_base/clear_costmaps", {})
                 self.printState()
                 self.prev_state = self.current_state
+
+            # if the moveBaseListener is waiting for a new goal, that means we've reached the last goal we've
+            # sent, so we're done!
             if self.moveBaseListener.getState() == "waiting":
                 self.prev_state = self.current_state
                 self.current_state = State.FINISH
         
+        # FINISH state #############################
+        # TODO - print parking error and time here
         elif self.current_state == State.FINISH:
-            self.printState()
-            rospy.signal_shutdown("U DID IT!!!!")
-
-            
-
+            if self.prev_state != State.FINISH:
+                self.printState()
+                self.prev_state = self.current_state
+        
+    # fxn to print pretty log msgs (roswarn just cause yellow is easier to read imo)
     def printState(self):
         rospy.logwarn("---------")
         if self.current_state == State.START:
@@ -258,19 +237,10 @@ if __name__ == '__main__':
         sim = True
     else:
         sim = False
+
     AV = AutoValet(sim)
+
     try:
         rospy.spin()
     except KeyboardInterrupt:
         print("Shutting down")
-
-    
-
-
-    # rospy.init_node('state_machine')
-
-    # mbl = MoveBaseListener()
-
-
-
-    
