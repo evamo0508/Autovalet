@@ -42,7 +42,7 @@ def arePosesClose(pose1, pose2):
 
     return result
 
-class State:
+class MoveBaseState:
     Waiting = 0
     Planning = 1
     Executing = 2
@@ -57,38 +57,26 @@ class MoveBaseListener:
         self.goal_pose      = PoseStamped()
         self.start_pose     = PoseStamped()
 
-        self.plan_state     = State.Waiting
+        self.plan_state     = MoveBaseState.Waiting
 
         self.debug          = debug
 
     def getState(self):
-        output = None
-        if self.plan_state == State.Waiting:
-            output = "waiting"
-        elif self.plan_state == State.Planning:
-            output = "planning"
-        elif self.plan_state == State.Executing:
-            output = "executing"
-        elif self.plan_state == State.Fail:
-            output = "fail"
-        elif self.plan_state == State.Success:
-            output = "success"
-        
-        return output 
+        return self.plan_state 
 
     def printState(self):
         rospy.logwarn("---------")
         output = "Current State: "
 
-        if self.plan_state == State.Waiting:
+        if self.plan_state == MoveBaseState.Waiting:
             output += "WAITING FOR NEXT GOAL"
-        elif self.plan_state == State.Planning:
+        elif self.plan_state == MoveBaseState.Planning:
             output += "PLANNING PATH TO GOAL"
-        elif self.plan_state == State.Executing:
+        elif self.plan_state == MoveBaseState.Executing:
             output += "EXECUTING PLAN"
-        elif self.plan_state == State.Fail:
+        elif self.plan_state == MoveBaseState.Fail:
             output += "FAILED TO FIND A PLAN"
-        elif self.plan_state == State.Success:
+        elif self.plan_state == MoveBaseState.Success:
             output += "SUCCESSFULLY REACHED GOAL"
 
         rospy.logwarn(output)
@@ -98,8 +86,7 @@ class MoveBaseListener:
 
     def goalCallback(self,goal_msg):
         
-
-        self.plan_state = State.Planning
+        self.plan_state = MoveBaseState.Planning
 
         self.goal_pose = goal_msg
 
@@ -129,41 +116,41 @@ class MoveBaseListener:
         if status_array_msg.status_list:
             current_status = status_array_msg.status_list[-1]
 
-            if current_status.status != ACTIVE and self.plan_state == State.Waiting:
+            if current_status.status != ACTIVE and self.plan_state == MoveBaseState.Waiting:
                 return
 
             if current_status.status == ACTIVE:
-                if self.plan_state == State.Waiting:
-                    self.plan_state = State.Planning
+                if self.plan_state == MoveBaseState.Waiting:
+                    self.plan_state = MoveBaseState.Planning
             
-                elif self.plan_state == State.Planning:
+                elif self.plan_state == MoveBaseState.Planning:
                     current_pose = getCurrentPose()
 
                     if not arePosesClose(current_pose,self.start_pose):
-                        self.plan_state = State.Executing
+                        self.plan_state = MoveBaseState.Executing
                     else:
                         return
-                elif self.plan_state == State.Executing:
+                elif self.plan_state == MoveBaseState.Executing:
                     return
 
             elif current_status.status == SUCCEEDED:
-                if self.plan_state == State.Waiting:
+                if self.plan_state == MoveBaseState.Waiting:
                     return
                 else:
-                    self.plan_state = State.Success
+                    self.plan_state = MoveBaseState.Success
                     if self.debug:
                         self.printState()
-                    self.plan_state = State.Waiting
+                    self.plan_state = MoveBaseState.Waiting
             
-            elif current_status.status == ABORTED and self.plan_state != State.Waiting:
-                if self.plan_state == State.Waiting:
+            elif current_status.status == ABORTED and self.plan_state != MoveBaseState.Waiting:
+                if self.plan_state == MoveBaseState.Waiting:
                     return
 
                 else:
-                    self.plan_state = State.Fail
+                    self.plan_state = MoveBaseState.Fail
                     if self.debug:
                         self.printState()
-                    self.plan_state = State.Waiting
+                    self.plan_state = MoveBaseState.Waiting
 
         else:
             return
@@ -172,23 +159,7 @@ class MoveBaseListener:
             self.printState()
 
 
-# # class AutoValet:
-
-# #     def __init__():
-
-# #         self.lane_detector = LaneDetector # import from eva's pkg
-
-# #         self.next_pose = None
-
-# #         self.parking_pose = None
-
-# #         self.pub = rospy.Publisher("/move_base_simple/goal", PoseStamped, queue_size=1)
-
-
-
 if __name__ == '__main__':
-
-    # AV = AutoValet()
 
     rospy.init_node('planner')
 

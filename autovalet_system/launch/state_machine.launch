@@ -6,10 +6,10 @@
     <group if="$(arg simulation)">
 
         <!-- RTAB -->
-        <node name="SLAM" pkg="autovalet_system" type="slam.sh" args="true"/>
+        <node name="SLAM" pkg="autovalet_system" type="slam.sh" args="$(arg simulation)"/>
 
         <!-- MOVEBASE -->
-        <node name="NAVIGATION" pkg="autovalet_system" type="nav.sh" args="true" />
+        <node name="NAVIGATION" pkg="autovalet_system" type="nav.sh" args="$(arg simulation)" />
 
         <!-- ARUCO -->
         <include file="$(find autovalet_gazebo)/launch/aruco_sim.launch">
@@ -19,33 +19,35 @@
         </include>
 
         <!-- CAMERA PLUGIN DEPTH REGISTRATION -->
-        <node pkg="nodelet" type="nodelet" name="nodelet_manager" args="manager" />
+        <node pkg="nodelet" type="nodelet" name="NODELET_MANAGER" args="manager" />
 
-        <node pkg="nodelet" type="nodelet" name="nodelet1" args="load depth_image_proc/register nodelet_manager">
+        <node pkg="nodelet" type="nodelet" name="REGISTER_DEPTH_NODELET" args="load depth_image_proc/register NODELET_MANAGER">
             <remap from="depth/camera_info" to="/frontCamera/depth/camera_info"/>
             <remap from="rgb/camera_info" to="/frontCamera/color/camera_info"/>
             <remap from="depth/image_rect" to="/frontCamera/depth/image_raw"/>
         </node>
 
         <!-- STATE MACHINE -->
-        <node name="STATE_MACHINE" pkg="autovalet_system" type="run_sm.sh" args="true" />
+        <!-- state machine node runs lane detection, goal generation, and parking subsystems, as well as overall system logic -->
+        <node name="STATE_MACHINE" pkg="autovalet_system" type="run_sm.sh" args="$(arg simulation)" />
     </group>
 
 <!--_________________________________________________________________________________________________-->
 
-    <!-- HUSKY -->
+    <!-- HARDWARE -->
     <group unless="$(arg simulation)">
 
         <!-- RTAB -->
-        <node name="SLAM" pkg="autovalet_system" type="slam.sh" args="false"/>
+        <node name="SLAM" pkg="autovalet_system" type="slam.sh" args="$(arg simulation)"/>
 
         <!-- MOVEBASE -->
-        <node name="NAVIGATION" pkg="autovalet_system" type="nav.sh" args="false" />
+        <node name="NAVIGATION" pkg="autovalet_system" type="nav.sh" args="$(arg simulation)" />
 
         <!-- ARUCO -->
         <include file="$(find autovalet_husky)/launch/aruco_hardware.launch"/>
 
         <!-- STATE MACHINE -->
-        <node name="STATE_MACHINE" pkg="autovalet_system" type="run_sm.sh" args="false" />
+        <!-- state machine node runs lane detection, goal generation, and parking subsystems, as well as overall system logic -->
+        <node name="STATE_MACHINE" pkg="autovalet_system" type="run_sm.sh" args="$(arg simulation)" />
     </group>
 </launch>

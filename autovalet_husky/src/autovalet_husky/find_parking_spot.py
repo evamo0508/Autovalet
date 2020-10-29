@@ -112,8 +112,6 @@ class parking_spot:
             for j in range(len(quatArray)):
                 diff = np.abs(1 - np.dot(quatArray[i], quatArray[j]) ** 2)
                 vote = vote + 1 if diff < 0.005 else vote
-                if i == 0 and self.debug:
-                    print(diff)
             votes.append(vote)
         # pick the pose with the most inliers
         tf = self.tfArray[votes.index(max(votes))]

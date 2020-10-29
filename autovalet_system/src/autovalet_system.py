@@ -25,7 +25,7 @@ from message_filters import ApproximateTimeSynchronizer, Subscriber
 
 # Include autovalet nodes
 from autovalet_lane_detection.LaneDetector import LaneDetector
-from autovalet_navigation.move_base_listener import MoveBaseListener
+from autovalet_navigation.move_base_listener import MoveBaseListener, MoveBaseState
 from autovalet_husky.find_parking_spot import parking_spot
 from autovalet_goal_generation.goal_generator import goal_generator
 
@@ -40,6 +40,9 @@ class State:
 
 class AutoValet:
     def __init__(self,sim):
+        # State Machine variables
+        self.current_state = State.START
+        self.prev_state = None
         self.sim = sim
 
         # moveBaseListener setup #############################
@@ -51,6 +54,11 @@ class AutoValet:
         self.egoLine_topic   = "/lane/egoLine"
         self.color_topic     = "/frontCamera/color/image_raw"
         self.depth_topic     = "/depth_registered/image_rect"
+        self.ld_init         = False # flag to make sure lane_detector is initialized before trying to use it in callback
+
+        self.laneDetector    = self.init_detector(self.colorInfo_topic, 
+                                                  self.laneCloud_topic,
+                                                  self.egoLine_topic)
         self.bridge          = CvBridge()
         self.color_sub       = Subscriber(self.color_topic,Image)
         self.depth_sub       = Subscriber(self.depth_topic,Image)
@@ -63,10 +71,6 @@ class AutoValet:
 
         # time tracker for publishing goals at a lower rate
         self.previous_time = rospy.get_time()
-        
-        self.laneDetector = self.init_detector(self.colorInfo_topic, 
-                                               self.laneCloud_topic,
-                                               self.egoLine_topic)
         
         # goal gen setup ##########################################################
         self.goal_topic         = "/move_base_simple/goal"
@@ -90,10 +94,6 @@ class AutoValet:
                                    self.husky_frame,
                                    self.aruco_frame_name,
                                    debug=False)
-        
-        # State Machine variables
-        self.current_state = State.START
-        self.prev_state = None
 
     # helper fxn to load the correct lane detection params and initialize LaneDetector class
     def init_detector(self, colorInfo_topic, laneCloud_topic, egoLine_topic):
@@ -119,6 +119,8 @@ class AutoValet:
                           lineParams,
                           debug=False)
 
+        self.ld_init = True
+
         return LD
 
     # callback for image messages. this is what keeps the system moving forward, as processState gets
@@ -130,8 +132,8 @@ class AutoValet:
 
         self.depth_frame_id = depth_msg.header.frame_id
         
-        # if we're not in the PARK state, detect the lane and publish
-        if self.current_state != State.PARK:
+        # if we're not in the PARK state AND the lane detector has been successfully initialized, detect the lane and publish
+        if self.current_state != State.PARK and self.ld_init:
             # lane detection algo
             _, self.ego_line = self.laneDetector.detectLaneRGBD(self.color_img, self.depth_img)
 
@@ -194,7 +196,7 @@ class AutoValet:
 
             # if the moveBaseListener is waiting for a new goal, that means we've reached the last goal we've
             # sent, so we're done!
-            if self.moveBaseListener.getState() == "waiting":
+            if self.moveBaseListener.getState() == MoveBaseState.Waiting:
                 self.prev_state = self.current_state
                 self.current_state = State.FINISH
         

@@ -5,7 +5,7 @@ This package contains the state machine for the full AutoValet pipeline.
 ## Setup
 Make sure all of the files in the `/scripts` directory are executable
 ```
-chmod +x ~/catkin_autovalet/src/autovalet/autovalet_system/scripts/*
+chmod +x ~/catkin_ws/src/autovalet/autovalet_system/scripts/*
 ```
 
 ## Launching the system
