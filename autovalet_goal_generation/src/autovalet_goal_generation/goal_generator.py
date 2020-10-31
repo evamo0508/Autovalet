@@ -46,6 +46,8 @@ class goal_generator:
         '''
 
         # ref: https://stackoverflow.com/questions/2298390/fitting-a-line-in-3d/2333251#2333251
+        ego_line         = ego_line[ego_line[:, 2].argsort()]
+        #target_point     = ego_line[int(ego_line.shape[0]/4)]
         egoline_midpoint = ego_line.mean(axis=0)
         _, _, Vt         = np.linalg.svd(ego_line - egoline_midpoint)
         line_direction   = Vt[0]    # The principal direction of the distribution. Line direction here

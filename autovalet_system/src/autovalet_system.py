@@ -91,13 +91,17 @@ class AutoValet:
         self.husky_frame        = 'base_link'
         self.aruco_frame_name   = 'parking_spot' #'aruco_marker_frame' or 'parking_spot'
                             # (Needs to be same as what is set in aruco launcher)
-
+        # self.target_id          = 'base_link'
+        # self.source_id          = 'frontCamera_color_optical_frame'
+        
         self.parker = parking_spot(self.goal_topic,
                                    self.tag_topic,
                                    self.map_frame,
                                    self.husky_frame,
                                    self.aruco_frame_name,
-                                   debug=False)
+                                #    self.target_id, 
+                                #    self.source_id,
+                                   debug=True)
 
     # helper fxn to load the correct lane detection params and initialize LaneDetector class
     def init_detector(self, colorInfo_topic, laneCloud_topic, egoLine_topic):
@@ -121,7 +125,7 @@ class AutoValet:
                           egoLine_topic,
                           hlsBounds,
                           lineParams,
-                          debug=False)
+                          debug=True)
 
         self.ld_init = True
 
@@ -139,7 +143,10 @@ class AutoValet:
         # if we're not in the PARK state AND the lane detector has been successfully initialized, detect the lane and publish
         if self.current_state != State.PARK and self.ld_init:
             # lane detection algo
-            _, self.ego_line = self.laneDetector.detectLaneRGBD(self.color_img, self.depth_img)
+            print("heree***********")
+            foo, self.ego_line, temp_parker_line = self.laneDetector.detectLaneRGBD(self.color_img, self.depth_img)
+            if temp_parker_line is not None:
+                self.parker.line = temp_parker_line
 
         # self.processState()
 
@@ -235,7 +242,7 @@ class AutoValet:
             rospy.logwarn("  x: %f",self.current_goal.pose.position.x)
             rospy.logwarn("  y: %f",self.current_goal.pose.position.y)
             rospy.logwarn("  z: %f",self.current_goal.pose.position.z)
-            rospy.logwarn("Orientation");
+            rospy.logwarn("Orientation")
             rospy.logwarn("  x: %f",self.current_goal.pose.orientation.x)
             rospy.logwarn("  y: %f",self.current_goal.pose.orientation.y)
             rospy.logwarn("  z: %f",self.current_goal.pose.orientation.z)
