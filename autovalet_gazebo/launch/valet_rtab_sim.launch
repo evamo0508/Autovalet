@@ -73,7 +73,7 @@
           <param name="subscribe_scan" type="bool" value="false"/>
           <param name="subscribe_scan_cloud" type="bool" value="true"/>
 
-          <remap from="scan_cloud" to="/concat_points"/>
+          <remap from="scan_cloud" to="/velodyne_points"/>
           <remap from="rgbd_image" to="rgbd_image"/>
           <param name="queue_size" type="int" value="10"/>
 

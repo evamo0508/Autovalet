@@ -11,7 +11,7 @@
     <arg name="corner_refinement" default="LINES" /> <!-- NONE, HARRIS, LINES, SUBPIX -->
 
 
-    <node pkg="aruco_ros" type="single" name="aruco_single">
+    <node pkg="aruco_ros" type="single" name="ARUCO">
         <remap from="/camera_info" to="/frontCamera/color/camera_info" />
         <remap from="/image" to="/frontCamera/color/image_raw" />
 

@@ -1,0 +1,53 @@
+<launch>
+
+    <arg name="simulation" default="true"/>
+
+    <!-- SIMULATION -->
+    <group if="$(arg simulation)">
+
+        <!-- RTAB -->
+        <node name="SLAM" pkg="autovalet_system" type="slam.sh" args="$(arg simulation)"/>
+
+        <!-- MOVEBASE -->
+        <node name="NAVIGATION" pkg="autovalet_system" type="nav.sh" args="$(arg simulation)" />
+
+        <!-- ARUCO -->
+        <include file="$(find autovalet_gazebo)/launch/aruco_sim.launch">
+            <arg name="markerId" value="7" />
+            <arg name="markerSize" value="0.5" />
+            <arg name="ref_frame" value="/base_link" />
+        </include>
+
+        <!-- CAMERA PLUGIN DEPTH REGISTRATION -->
+        <node pkg="nodelet" type="nodelet" name="NODELET_MANAGER" args="manager" />
+
+        <node pkg="nodelet" type="nodelet" name="REGISTER_DEPTH_NODELET" args="load depth_image_proc/register NODELET_MANAGER">
+            <remap from="depth/camera_info" to="/frontCamera/depth/camera_info"/>
+            <remap from="rgb/camera_info" to="/frontCamera/color/camera_info"/>
+            <remap from="depth/image_rect" to="/frontCamera/depth/image_raw"/>
+        </node>
+
+        <!-- STATE MACHINE -->
+        <!-- state machine node runs lane detection, goal generation, and parking subsystems, as well as overall system logic -->
+        <node name="STATE_MACHINE" pkg="autovalet_system" type="run_sm.sh" args="$(arg simulation)" />
+    </group>
+
+<!--_________________________________________________________________________________________________-->
+
+    <!-- HARDWARE -->
+    <group unless="$(arg simulation)">
+
+        <!-- RTAB -->
+        <node name="SLAM" pkg="autovalet_system" type="slam.sh" args="$(arg simulation)"/>
+
+        <!-- MOVEBASE -->
+        <node name="NAVIGATION" pkg="autovalet_system" type="nav.sh" args="$(arg simulation)" />
+
+        <!-- ARUCO -->
+        <include file="$(find autovalet_husky)/launch/aruco_hardware.launch"/>
+
+        <!-- STATE MACHINE -->
+        <!-- state machine node runs lane detection, goal generation, and parking subsystems, as well as overall system logic -->
+        <node name="STATE_MACHINE" pkg="autovalet_system" type="run_sm.sh" args="$(arg simulation)" />
+    </group>
+</launch>
