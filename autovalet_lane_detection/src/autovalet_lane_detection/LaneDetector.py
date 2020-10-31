@@ -12,6 +12,7 @@ Changelog:
 # python libs
 import numpy as np
 import cv2
+from cv_bridge import CvBridge, CvBridgeError
 
 # roslibs
 import rospy
@@ -80,6 +81,7 @@ class LaneDetector:
             # Generate the right line for enforcing costmap constraints
             right_line        = self.interpolateLine(center_line_cloud, norm_vec, self.lane_width)
             lane_cloud        = np.vstack((center_line_cloud, right_line)) # 2px3
+
             # Generate the ego line for goal generation
             ego_line          = self.interpolateLine(center_line_cloud, norm_vec, self.lane_width/2) # px3
 
@@ -88,12 +90,12 @@ class LaneDetector:
             publishCloud(ego_line, self.camera.header.frame_id, self.egoLine_pub)
             # maybe publish center line alone too?
 
-            ## Parking directions            
+            ## Parking directions
             index = int(round((center_line_coordinates.shape[0] + 1) / 2 ))
             center_line_coordinates= center_line_coordinates[index,:]
-            
+
             if center_line_coordinates.shape[0] != 0:
-                center_line_cloud = self.line2cloud(depth_img, center_line_coordinates.reshape(1,-1))    # px3      
+                center_line_cloud = self.line2cloud(depth_img, center_line_coordinates.reshape(1,-1))    # px3
 
             transf = self.tf_buffer.lookup_transform(self.target_id, # target_frame_id
                                                      self.source_id, # source frame
@@ -102,12 +104,12 @@ class LaneDetector:
             tmp_centerline_midpt = PointStamped()
             tmp_centerline_midpt.point.x = center_line_cloud[0,0]
             tmp_centerline_midpt.point.y = center_line_cloud[0,1]
-            tmp_centerline_midpt.point.z = center_line_cloud[0,2]                        
-            centerline_midpt = do_transform_point(tmp_centerline_midpt,transf).point 
+            tmp_centerline_midpt.point.z = center_line_cloud[0,2]
+            centerline_midpt = do_transform_point(tmp_centerline_midpt,transf).point
 
             if self.debug:
                 print ("line: ", centerline_midpt)
-            
+
             return lane_cloud, ego_line, centerline_midpt
 
         except:
@@ -187,6 +189,7 @@ class LaneDetector:
         #  |u|   |fx 0 cx| |x|
         # s|v| = |0 fy cy|*|y|, where x,y,z is in rgb cam's frame.
         #  |1|   |0  0  1| |z|, x point to the right, y points downward, z points forward
+
         u, v = coordinates[:, 0], coordinates[:, 1]
         x    = (u - self.cx) / self.fx
         y    = (v - self.cy) / self.fy
@@ -200,6 +203,7 @@ class LaneDetector:
         z = z[np.nonzero(z)]
 
         cloud = np.hstack((x.reshape(-1, 1), y.reshape(-1, 1), z.reshape(-1, 1)))
+
         return cloud
 
     def findNormalVectorInCloud(self, center_line_cloud):

@@ -41,7 +41,6 @@ class State:
 class AutoValet:
     def __init__(self,sim):
 
-
         # State Machine variables
         self.current_state = State.START
         self.prev_state = None
@@ -79,13 +78,14 @@ class AutoValet:
         self.previous_time = rospy.get_time()
 
         # goal gen setup ##########################################################
-        self.goal_topic         = "/move_base_simple/goal"
-        self.map_frame          = "map"
-        self.goal_pub           = rospy.Publisher(self.goal_topic,PoseStamped,queue_size=1)
-        self.goalGenerator      = goal_generator(self.map_frame)
-        self.current_goal       = PoseStamped()
-        self.empty_line_count   = 0
-        self.empty_line_tol     = 10
+        self.goal_topic       = "/move_base_simple/goal"
+        self.map_frame        = "map"
+        self.goal_pub         = rospy.Publisher(self.goal_topic,PoseStamped,queue_size=1)
+        self.goalGenerator    = goal_generator(self.map_frame)
+        self.current_goal     = PoseStamped()
+        self.empty_line_count = 0
+        self.empty_line_tol   = 10
+        self.is_left_turn     = False
 
         # parking setup ###########################################################
         # tag_topic - name of the topic in which the pose of the marker is being published
@@ -105,7 +105,7 @@ class AutoValet:
 
         self.parking_goals = None
         self.parking_thresholds_m = [1,.2]
-        
+
 
     # helper fxn to load the correct lane detection params and initialize LaneDetector class
     def init_detector(self, colorInfo_topic, laneCloud_topic, egoLine_topic):
@@ -163,6 +163,7 @@ class AutoValet:
             if self.ego_line is not None:
                 self.current_goal = self.goalGenerator.generate_goal_from_egoline(self.ego_line, self.depth_frame_id)
                 self.goal_pub.publish(self.current_goal)
+                self.is_left_turn = False
                 self.previous_time = rospy.get_time()
                 self.empty_line_count = 0
                 return True
@@ -173,11 +174,12 @@ class AutoValet:
             elif self.empty_line_count == self.empty_line_tol and self.prev_state != State.START:
                 self.current_goal = self.goalGenerator.generate_goal_for_left_turn(self.husky_frame)
                 self.goal_pub.publish(self.current_goal)
+                self.is_left_turn = True
                 self.previous_time = rospy.get_time()
                 self.empty_line_count = 0
                 return True
             return False
-        
+
         else:
             self.current_goal = self.parking_goals.pop(0)
             self.goal_pub.publish(self.current_goal)
@@ -212,7 +214,7 @@ class AutoValet:
 
                 # if it's been 2 secs since last sent goal (allow for processing time) AND we're within 2 m of last goal,
                 # move to the SEND_GOAL state
-                if rospy.get_time() - self.prev_time > self.replan_rate and self.parker.distToGoal(self.current_goal) <= 2:
+                if rospy.get_time() - self.prev_time > self.replan_rate and (self.parker.distToGoal(self.current_goal) <= 2 or self.is_left_turn):
                     self.prev_state = self.current_state
                     self.current_state = State.SEND_GOAL
 
@@ -224,11 +226,11 @@ class AutoValet:
                         self.parking_goals = self.parker.getParkingPoses()
                         # self.publishParkingTFs()
                     print(self.parker.distToGoal(self.parking_goals[0]), .48 * self.costmap_height)
-                    if self.parker.distToGoal(self.parking_goals[0]) <= 0.48 * self.costmap_height:
+                    if self.parker.distToGoal(self.parking_goals[0]) <= 0.45 * self.costmap_height:
                         print('in costmap')
                         self.prev_state = self.current_state
                         self.current_state = State.PARK
-                
+
 
         # PARK state ############################
         elif self.current_state == State.PARK:
@@ -243,7 +245,7 @@ class AutoValet:
             if self.substate == State.SEND_GOAL:
                 self.sendGoal()
                 self.substate = State.PLANNING
-            
+
             elif self.substate == State.PLANNING:
                 if len(self.parking_goals) == 1:
                     if self.parker.distToGoal(self.current_goal) <= self.parking_thresholds_m[0]:

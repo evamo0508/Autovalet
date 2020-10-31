@@ -13,7 +13,7 @@ import numpy as np
 # Include ROS libs
 import rospy
 import tf2_ros
-from tf2_geometry_msgs import do_transform_pose
+from tf2_geometry_msgs import do_transform_pose, do_transform_point
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 # Include messages
@@ -24,7 +24,7 @@ class parking_spot:
     '''
     Module for defining parking spot parameters
     '''
-    def __init__(self, goal_topic, tag_topic, goal_frame_id, husky_frame_id, aruco_frame_name,debug=True):
+    def __init__(self, goal_topic, tag_topic, goal_frame_id, husky_frame_id, aruco_frame_name, debug=True):
         # for accumulating tag poses
         self.count = 0
         self.tag_buffer_size = 20
@@ -45,8 +45,9 @@ class parking_spot:
         # helper const & bool
         self.costmap_height              = rospy.get_param('/move_base/global_costmap/height')
         self.first_goal_in_costmap       = False
-        self.first_goal_is_close_meter   = 0.8
+        self.first_goal_is_close_meter   = 1.0
         self.debug = debug
+        self.line = None
 
     def collect_tag_poses(self, tag_pose):
         '''
@@ -63,24 +64,25 @@ class parking_spot:
             self.count += 1
         elif self.count == self.tag_buffer_size: # perform RANSAC on transformArray
             self.tag_tf = self.tag_pose_RANSAC()
+            print("tag tf:")
+            print(self.tag_tf)
             self.pub_two_goals()
             self.count += 1
             self.goal1 = None
             self.goal2 = None
 
     def pub_two_goals(self):
-
-        if self.centerline_midpt.y > self.tag_tf.transform.translation.y: 
+        if self.centerline_midpt.y > self.tag_tf.transform.translation.y:
             rhs = True
             pos1 = [0, 3, 1]
-            rot1 = [0 , -np.pi/4, -np.pi/4] 
+            rot1 = [0 , -np.pi/4, -np.pi/4]
 
         else: #left park
             rhs = False
             pos1 = [0, 1.5, -1]
             rot1 = [0 , np.pi/4, -np.pi/4]
         self.goal1 = self.generate_parking_goal(self.tag_tf, pos1, rot1)
-        
+
         # keep moving w/ goal gen until goal1 is in costmap
         while self.dist_to_goal(self.goal1) > 0.45 * self.costmap_height:
             # rospy.sleep(0.1)
@@ -106,7 +108,7 @@ class parking_spot:
         self.goal2 = self.generate_parking_goal(self.tag_tf, pos2, rot2)
         self.pub.publish(self.goal2)
         if self.debug:
-            print("second goal published")        
+            print("second goal published")
         return
 
     def dist_to_goal(self, goal):
@@ -136,7 +138,7 @@ class parking_spot:
             vote = 0
             for j in range(len(quatArray)):
                 diff = np.abs(1 - np.dot(quatArray[i], quatArray[j]) ** 2)
-                vote = vote + 1 if diff < 0.005 else vote
+                vote = vote + 1 if diff < 0.001 else vote
             votes.append(vote)
         # pick the pose with the most inliers
         tf = self.tfArray[votes.index(max(votes))]
@@ -195,8 +197,10 @@ def main():
     husky_frame_id     = 'base_link'
     aruco_frame_name   = 'parking_spot' #'aruco_marker_frame' or 'parking_spot'
                          # (Needs to be same as what is set in aruco launcher)
+    target_id          = 'base_link'
+    source_id          = 'frontCamera_color_optical_frame'
 
-    av_spot = parking_spot(goal_topic, tag_topic, goal_pose_frame_id, husky_frame_id, aruco_frame_name)
+    av_spot = parking_spot(goal_topic, tag_topic, goal_pose_frame_id, husky_frame_id, aruco_frame_name, target_id, source_id)
 
     try:
         rospy.spin()

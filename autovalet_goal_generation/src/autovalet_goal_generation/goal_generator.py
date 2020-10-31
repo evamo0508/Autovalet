@@ -20,15 +20,19 @@ import tf2_ros
 from tf2_geometry_msgs import do_transform_pose
 from tf.transformations import quaternion_from_euler
 
-
 class goal_generator:
-    def __init__(self, goal_frame):
+    def __init__(self, goal_frame, dist_from_line_start=2, goal_dist_factor=1.2):
         '''
         goal_frame      : [string] specifies the name of the frame in which goal is required to be published
         '''
 
         # Frames in which goals are to be generated
         self.goal_frame_id  = goal_frame
+
+        # control variable for distance from closest center line point
+        self.dist_from_line_start = dist_from_line_start
+        # control variable for choosing target point based on line length [must be less than 1]
+        self.goal_dist_factor     = goal_dist_factor
 
         # tf stuff for transforming to global goal frame
         self.tf_buffer      = tf2_ros.Buffer(rospy.Duration(1200.0)) # Length of tf2 buffer (?)
@@ -47,25 +51,32 @@ class goal_generator:
 
         # ref: https://stackoverflow.com/questions/2298390/fitting-a-line-in-3d/2333251#2333251
         ego_line         = ego_line[ego_line[:, 2].argsort()]
-        #target_point     = ego_line[int(ego_line.shape[0]/4)]
         egoline_midpoint = ego_line.mean(axis=0)
         _, _, Vt         = np.linalg.svd(ego_line - egoline_midpoint)
         line_direction   = Vt[0]    # The principal direction of the distribution. Line direction here
 
         # Correct sign to ensure that the direction is always away from the robot
         # The fix is to ensure the z-direction is always positive which means direction away from the robot
-        line_direction = np.sign(line_direction[-1])*line_direction
+        line_direction = np.sign(line_direction[-1]) * line_direction
 
+        '''
+        Different distances to generate the goal
+        (depending on whether the midpoint is in the costmap)
+        1. the 25% close point in the line cloud
+        2. retract fixed fraction of length between midpoint & costmap edge
+           to bring the point back in the costmap but still far
+        '''
         # generate target pos
-        dist_to_costmap  = egoline_midpoint[2] - 0.5 * self.costmap_height
-        dist_to_costmap  = max(0, dist_to_costmap)
-        target_point     = egoline_midpoint - 1.2 * line_direction * dist_to_costmap
+        if egoline_midpoint[2] < 0.5 * self.costmap_height:
+            target_point = ego_line[int(ego_line.shape[0]/3)]
+        else:
+            dist_to_costmap  = egoline_midpoint[2] - 0.5 * self.costmap_height
+            target_point = egoline_midpoint - self.goal_dist_factor * line_direction * dist_to_costmap
 
         # Convert the direction vector to quaternion
         line_quaternion = direction_vector_to_quaternion(line_direction)
 
         # Populate a pose message
-        #goal_cam_frame = make_pose_stamped(egoline_frame, egoline_midpoint, line_quaternion)
         goal_cam_frame = make_pose_stamped(egoline_frame, target_point, line_quaternion)
 
         # Transform the pose to the goal frame ID

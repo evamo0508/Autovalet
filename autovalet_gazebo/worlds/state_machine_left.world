@@ -338,10 +338,10 @@
       <static>1</static>
     </model>
     <state world_name='default'>
-      <sim_time>2328 434000000</sim_time>
-      <real_time>97 519735858</real_time>
-      <wall_time>1604093023 864573123</wall_time>
-      <iterations>83769</iterations>
+      <sim_time>2814 525000000</sim_time>
+      <real_time>38 829634374</real_time>
+      <wall_time>1604792383 354208474</wall_time>
+      <iterations>26164</iterations>
       <model name='Dumpster'>
         <pose frame=''>-10.1396 -1.79178 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
@@ -453,10 +453,10 @@
         </link>
       </model>
       <model name='Dumpster_clone_19'>
-        <pose frame=''>2.71277 12.8401 0.000917 0 -2e-06 -1.53974</pose>
+        <pose frame=''>2.98923 12.8401 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>2.71277 12.8401 0.000917 0 -2e-06 -1.53974</pose>
+          <pose frame=''>2.98923 12.8401 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>-0.000187 0.00603 -5e-06 -0.277514 -0.203817 4e-06</acceleration>
           <wrench>-0.000187 0.00603 -5e-06 0 -0 0</wrench>
@@ -593,10 +593,10 @@
         </link>
       </model>
       <model name='Dumpster_clone_21'>
-        <pose frame=''>7.57698 13 0.000917 0 -2e-06 -1.53974</pose>
+        <pose frame=''>7.89954 13 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>7.57698 13 0.000917 0 -2e-06 -1.53974</pose>
+          <pose frame=''>7.89954 13 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>-0.000187 0.00603 -5e-06 -0.277514 -0.203817 4e-06</acceleration>
           <wrench>-0.000187 0.00603 -5e-06 0 -0 0</wrench>
@@ -683,16 +683,16 @@
         </link>
       </model>
       <model name='aruco_visual_marker_7'>
-        <pose frame=''>5.23915 8.46244 0 0 0 -3.12384</pose>
+        <pose frame=''>5.49333 8.47922 0 0 -0 0.004945</pose>
         <scale>1 1 1</scale>
         <link name='marker'>
-          <pose frame=''>5.23915 8.46244 0.5 3.14159 1.57079 0.017747</pose>
+          <pose frame=''>5.49333 8.47922 0.5 3.14159 1.57079 -3.13665</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='marker_pad'>
-          <pose frame=''>5.23915 8.46244 -1e-05 0 0 -3.12384</pose>
+          <pose frame=''>5.49333 8.47922 -1e-05 0 -0 0.004944</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -754,8 +754,8 @@
         <link name='link'>
           <pose frame=''>-12.765 -12.4906 0.499995 -1e-05 0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>-0.004709 0.011055 -9.78158 -0.022108 -0.009414 -1e-06</acceleration>
-          <wrench>-0.004709 0.011055 -9.78158 0 -0 0</wrench>
+          <acceleration>0.004709 0.011055 -9.78158 -0.022108 0.009414 1e-06</acceleration>
+          <wrench>0.004709 0.011055 -9.78158 0 -0 0</wrench>
         </link>
       </model>
       <light name='sun'>
@@ -764,7 +764,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose frame=''>-9.67476 3.61813 36.6297 -0 1.12116 -0.349082</pose>
+        <pose frame=''>0.121774 18.1507 63.0093 0 1.5698 -0.005078</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
