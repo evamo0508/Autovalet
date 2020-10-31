@@ -67,7 +67,6 @@ class LaneDetector:
             # Generate the right line for enforcing costmap constraints
             right_line        = self.interpolateLine(center_line_cloud, norm_vec, self.lane_width)
             lane_cloud        = np.vstack((center_line_cloud, right_line)) # 2px3
-
             # Generate the ego line for goal generation
             ego_line          = self.interpolateLine(center_line_cloud, norm_vec, self.lane_width/2) # px3
 
@@ -112,7 +111,7 @@ class LaneDetector:
         # detect center line
         edges = cv2.Canny(roi, 100, 200, apertureSize=3)
         lines = cv2.HoughLinesP(edges, 1, np.pi/180, 30, np.array([]), self.minLineLength, self.maxLineGap)
-
+        
         # possible scenarios: 0. no line detected 1. new line 2. tracking
         max_len, scenario = 0, 0
         X1, Y1, X2, Y2 = 0, 0, 0, 0
@@ -125,16 +124,16 @@ class LaneDetector:
                     X1, Y1, X2, Y2 = x1, y1, x2, y2
             scenario = 1
             bbox = (X1, Y1, np.abs(X2-X1), np.abs(Y2-Y1))
-            self.tracker = cv2.TrackerKCF_create()
-            self.tracker.init(rgb, bbox)
-            self.lose_track_count = 0
-        elif self.tracker is not None:
-            success, bbox = self.tracker.update(rgb)
-            x, y, w, h = [int(v) for v in bbox]
-            if success: # 2. tracking
-                scenario = 2
-                X1, Y1, X2, Y2 = x, y, x+w, y-h
-                Y1 = min(Y1, img.shape[0] - 1)
+        #     self.tracker = cv2.TrackerKCF_create()
+        #     self.tracker.init(rgb, bbox)
+        #     self.lose_track_count = 0
+        # elif self.tracker is not None:
+        #     success, bbox = self.tracker.update(rgb)
+        #     x, y, w, h = [int(v) for v in bbox]
+        #     if success: # 2. tracking
+        #         scenario = 2
+        #         X1, Y1, X2, Y2 = x, y, x+w, y-h
+        #         Y1 = min(Y1, img.shape[0] - 1)
         if scenario == 0:
             return None
 
@@ -157,7 +156,6 @@ class LaneDetector:
         #  |u|   |fx 0 cx| |x|
         # s|v| = |0 fy cy|*|y|, where x,y,z is in rgb cam's frame.
         #  |1|   |0  0  1| |z|, x point to the right, y points downward, z points forward
-
         u, v = coordinates[:, 0], coordinates[:, 1]
         x    = (u - self.cx) / self.fx
         y    = (v - self.cy) / self.fy
@@ -171,7 +169,6 @@ class LaneDetector:
         z = z[np.nonzero(z)]
 
         cloud = np.hstack((x.reshape(-1, 1), y.reshape(-1, 1), z.reshape(-1, 1)))
-
         return cloud
 
     def findNormalVectorInCloud(self, center_line_cloud):

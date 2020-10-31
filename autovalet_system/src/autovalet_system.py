@@ -44,6 +44,8 @@ class AutoValet:
         self.current_state = State.START
         self.prev_state = None
         self.sim = sim
+        self.controller_rate = rospy.Rate(20)
+        self.replan_rate = 2 # in seconds
 
         # moveBaseListener setup #############################
         self.moveBaseListener = MoveBaseListener(debug=False)
@@ -137,7 +139,7 @@ class AutoValet:
             # lane detection algo
             _, self.ego_line = self.laneDetector.detectLaneRGBD(self.color_img, self.depth_img)
 
-        self.processState()
+        # self.processState()
     
     def sendGoal(self):
         # generate goal from the egoline
@@ -146,6 +148,8 @@ class AutoValet:
             self.current_goal = self.goalGenerator.generate_goal_from_egoline(self.ego_line, self.depth_frame_id)
             self.goal_pub.publish(self.current_goal)
             self.previous_time = rospy.get_time()
+            return True
+        return False
 
     def processState(self):
         # START state ############################
@@ -157,12 +161,13 @@ class AutoValet:
         # SEND_GOAL state #############################
         elif self.current_state == State.SEND_GOAL:
             # get goal from lane detector and publish
-            self.sendGoal()
+            success = self.sendGoal()
             self.printState()
 
             # move to PLANNING state
-            self.prev_state = self.current_state
-            self.current_state = State.PLANNING
+            if success:
+                self.prev_state = self.current_state
+                self.current_state = State.PLANNING
             self.prev_time = rospy.get_time()
 
         # PLANNING state #######################
@@ -175,7 +180,7 @@ class AutoValet:
 
             # if it's been 2 secs since last sent goal (allow for processing time) AND we're within 2 m of last goal,
             # move to the SEND_GOAL state
-            elif rospy.get_time() - self.prev_time > 2 and self.parker.dist_to_first_goal(self.current_goal) <= 2:
+            elif rospy.get_time() - self.prev_time > self.replan_rate and self.parker.dist_to_first_goal(self.current_goal) <= 2:
                 self.prev_state = self.current_state
                 self.current_state = State.SEND_GOAL
             
@@ -229,20 +234,25 @@ class AutoValet:
             rospy.logwarn("Executing parking maneuver...")
         elif self.current_state == State.FINISH:
             rospy.logwarn("Parking maneuver completed!")
-
+    
+    def run(self):
+        while not rospy.is_shutdown():
+            self.processState()
+            self.controller_rate.sleep()
 
 if __name__ == '__main__':
 
     rospy.init_node('AUTOVALET')
 
-    if sys.argv[-1] == "True" or sys.argv[-1] == "true":
-        sim = True
-    else:
+    # Defaults to simualtion parameters
+    if sys.argv[-1] == "False" or sys.argv[-1] == "false":
         sim = False
+    else:
+        sim = True
 
     AV = AutoValet(sim)
 
     try:
-        rospy.spin()
+        AV.run()
     except KeyboardInterrupt:
         print("Shutting down")
