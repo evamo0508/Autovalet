@@ -19,7 +19,6 @@ import rospy
 import tf2_ros
 from tf2_geometry_msgs import do_transform_pose
 from tf.transformations import quaternion_from_euler
-from geometry_msgs.msg import Twist
 
 
 class goal_generator:
@@ -34,6 +33,7 @@ class goal_generator:
         # tf stuff for transforming to global goal frame
         self.tf_buffer      = tf2_ros.Buffer(rospy.Duration(1200.0)) # Length of tf2 buffer (?)
         self.tf_listener    = tf2_ros.TransformListener(self.tf_buffer)
+        self.costmap_height = rospy.get_param('/move_base/global_costmap/height')
 
     def generate_goal_from_egoline(self, ego_line, egoline_frame):
         '''
@@ -46,8 +46,6 @@ class goal_generator:
         '''
 
         # ref: https://stackoverflow.com/questions/2298390/fitting-a-line-in-3d/2333251#2333251
-        ego_line         = ego_line[ego_line[:, 2].argsort()]
-        #target_point     = ego_line[int(ego_line.shape[0]/4)]
         egoline_midpoint = ego_line.mean(axis=0)
         _, _, Vt         = np.linalg.svd(ego_line - egoline_midpoint)
         line_direction   = Vt[0]    # The principal direction of the distribution. Line direction here
@@ -57,7 +55,7 @@ class goal_generator:
         line_direction = np.sign(line_direction[-1])*line_direction
 
         # generate target pos
-        dist_to_costmap  = egoline_midpoint[2] - 7.0
+        dist_to_costmap  = egoline_midpoint[2] - 0.5 * self.costmap_height
         dist_to_costmap  = max(0, dist_to_costmap)
         target_point     = egoline_midpoint - 1.2 * line_direction * dist_to_costmap
 

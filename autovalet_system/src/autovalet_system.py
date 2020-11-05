@@ -80,7 +80,8 @@ class AutoValet:
         self.goal_pub           = rospy.Publisher(self.goal_topic,PoseStamped,queue_size=1)
         self.goalGenerator      = goal_generator(self.map_frame)
         self.current_goal       = PoseStamped()
-        self.is_turning_left    = False
+        self.empty_line_count   = 0
+        self.empty_line_tol     = 5
 
         # parking setup ###########################################################
         # tag_topic - name of the topic in which the pose of the marker is being published
@@ -144,18 +145,21 @@ class AutoValet:
 
     def sendGoal(self):
         # generate goal from the egoline
-        # if((rospy.get_time() - self.previous_time) > 2 and self.ego_line is not None):
         if self.ego_line is not None:
             self.current_goal = self.goalGenerator.generate_goal_from_egoline(self.ego_line, self.depth_frame_id)
             self.goal_pub.publish(self.current_goal)
             self.previous_time = rospy.get_time()
-            self.is_turning_left = False
+            self.empty_line_count = 0
             return True
-        elif not self.is_turning_left and self.prev_state != State.START:
+        # accumlate consecutive frames w/o lines
+        elif self.empty_line_count < self.empty_line_tol:
+            self.empty_line_count += 1
+        # gen a left turn goal
+        elif self.empty_line_count == self.empty_line_tol and self.prev_state != State.START:
             self.current_goal = self.goalGenerator.generate_goal_for_left_turn(self.husky_frame)
             self.goal_pub.publish(self.current_goal)
             self.previous_time = rospy.get_time()
-            self.is_turning_left = True
+            self.empty_line_count = 0
             return True
         return False
 
@@ -182,7 +186,7 @@ class AutoValet:
         elif self.current_state == State.PLANNING:
             # check if we are ready for parking (tag buffer is filled)
             # if so, move to PARK state
-            if self.parker.count >= self.parker.tag_buffer_size and self.parker.first_goal_close:
+            if self.parker.count >= self.parker.tag_buffer_size and self.parker.first_goal_in_costmap:
                 self.prev_state = self.current_state
                 self.current_state = State.PARK
 

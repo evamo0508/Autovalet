@@ -44,7 +44,7 @@ class LaneDetector:
 
         # define ROI
         self.ROI_UPPER_Y = 300
-        self.ROI_RIGHT_X = 480
+        self.ROI_RIGHT_X = 450
 
         # tracker
         self.tracker = None

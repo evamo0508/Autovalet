@@ -8,5 +8,5 @@ hlsbounds:
         l: 0.90
         s: 1.00
 lineparams:
-    minLineLength: 60
+    minLineLength: 80
     maxLineGap: 40
