@@ -43,7 +43,7 @@ class parking_spot:
         # helper const & bool
         self.costmap_height              = rospy.get_param('/move_base/global_costmap/height')
         self.first_goal_in_costmap       = False
-        self.first_goal_is_close_meter   = 0.5
+        self.first_goal_is_close_meter   = 0.8
         self.debug = debug
 
     def collect_tag_poses(self, tag_pose):
@@ -68,12 +68,12 @@ class parking_spot:
 
     def pub_two_goals(self):
         # current params for right turns only
-        pos1 = [0, 2, 1]
+        pos1 = [0, 3, 1]
         rot1 = [-np.pi/2, 0, -np.pi/2]
         self.goal1 = self.generate_parking_goal(self.tag_tf, pos1, rot1)
 
         # keep moving w/ goal gen until goal1 is in costmap
-        while self.dist_to_goal(self.goal1) > 0.5 * self.costmap_height:
+        while self.dist_to_goal(self.goal1) > 0.4 * self.costmap_height:
             rospy.sleep(0.5)
         self.first_goal_in_costmap = True
 
