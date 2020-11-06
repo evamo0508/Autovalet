@@ -32,8 +32,14 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
   <arg name="kinect_enabled" default="$(optenv HUSKY_KINECT_ENABLED false)"/>
 
   <!-- Launch the file with simulation argument set to true if running on Gazebo -->
-  <arg name="urdf_extras" default="$(find autovalet_description)/urdf/autovalet.urdf.xacro"/>
   <arg name="simulation" default="false"/>
+
+  <!-- Load the URDF based on the simulation argument -->
+  <arg name="urdf_extras" default="$(find autovalet_description)/urdf/autovalet_simulation.urdf.xacro"/>
+
+  <group unless="$(arg simulation)">
+    <arg name="urdf_extras" value="$(find autovalet_description)/urdf/autovalet_hardware.urdf.xacro"/>
+  </group>
 
   <param name="robot_description" command="$(find xacro)/xacro '$(find husky_description)/urdf/husky.urdf.xacro'
     --inorder

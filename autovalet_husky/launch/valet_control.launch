@@ -16,7 +16,9 @@
   </include>
 
   <!-- Load robot description -->
-  <include file="$(find autovalet_description)/launch/autovalet_description.launch" />
+  <include file="$(find autovalet_description)/launch/autovalet_description.launch" >
+    <arg name="simulation" value="false"/>
+  </include>
   
   <!-- Load controller configuration -->
   <rosparam command="load" file="$(find husky_control)/config/control.yaml" />
