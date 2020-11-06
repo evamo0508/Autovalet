@@ -125,7 +125,7 @@ class AutoValet:
                           egoLine_topic,
                           hlsBounds,
                           lineParams,
-                          debug=True)
+                          debug=False)
 
         self.ld_init = True
 
@@ -143,7 +143,6 @@ class AutoValet:
         # if we're not in the PARK state AND the lane detector has been successfully initialized, detect the lane and publish
         if self.current_state != State.PARK and self.ld_init:
             # lane detection algo
-            print("heree***********")
             foo, self.ego_line, temp_parker_line = self.laneDetector.detectLaneRGBD(self.color_img, self.depth_img)
             if temp_parker_line is not None:
                 self.parker.line = temp_parker_line

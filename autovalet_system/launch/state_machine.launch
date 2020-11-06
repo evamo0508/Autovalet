@@ -30,7 +30,7 @@
 
         <!-- STATE MACHINE -->
         <!-- state machine node runs lane detection, goal generation, and parking subsystems, as well as overall system logic -->
-        <node name="STATE_MACHINE" pkg="autovalet_system" type="run_sm.sh" args="$(arg simulation)" />
+        <!-- <node name="STATE_MACHINE" pkg="autovalet_system" type="run_sm.sh" args="$(arg simulation)" /> -->
     </group>
 
 <!--_________________________________________________________________________________________________-->
