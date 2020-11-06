@@ -39,6 +39,11 @@ class parking_spot:
         self.aruco_frame_name = aruco_frame_name
         self.goal_frame_id    = goal_frame_id
         self.husky_frame_id   = husky_frame_id
+
+        # helper const & bool
+        self.costmap_height              = rospy.get_param('/move_base/global_costmap/height')
+        self.first_goal_in_costmap       = False
+        self.first_goal_is_close_meter   = 0.8
         self.debug = debug
 
     def collect_tag_poses(self, tag_pose):
@@ -63,37 +68,41 @@ class parking_spot:
 
     def pub_two_goals(self):
         # current params for right turns only
-        parking = False
-        pos1 = [0, 2, 1]
+        pos1 = [0, 3, 1]
         rot1 = [-np.pi/2, 0, -np.pi/2]
         self.goal1 = self.generate_parking_goal(self.tag_tf, pos1, rot1)
-        while not parking:
+
+        # keep moving w/ goal gen until goal1 is in costmap
+        while self.dist_to_goal(self.goal1) > 0.4 * self.costmap_height:
             rospy.sleep(0.5)
-            # keep publishing the first goal until the robot is close enough
-            if self.dist_to_first_goal(self.goal1) > 0.5:
-                self.pub.publish(self.goal1)
-                if self.debug:
-                    print("first goal published")
-            else:
-                pos2 = [0, 0, 4]
-                rot2 = [0, -np.pi/2, -np.pi/2]
-                self.goal2 = self.generate_parking_goal(self.tag_tf, pos2, rot2)
-                self.pub.publish(self.goal2)
-                if self.debug:
-                    print("second goal published")
-                parking = True
+        self.first_goal_in_costmap = True
+
+        # keep publishing 1st goal until the robot is close enough
+        while self.dist_to_goal(self.goal1) > self.first_goal_is_close_meter:
+            rospy.sleep(0.5)
+            self.pub.publish(self.goal1)
+            if self.debug:
+                print("first goal published")
+
+        # pub 2nd goal once
+        pos2 = [0, 0, 4]
+        rot2 = [0, -np.pi/2, -np.pi/2]
+        self.goal2 = self.generate_parking_goal(self.tag_tf, pos2, rot2)
+        self.pub.publish(self.goal2)
+        if self.debug:
+            print("second goal published")
         return
 
-    def dist_to_first_goal(self, goal1):
+    def dist_to_goal(self, goal):
         base_link_tf = self.tf_buffer.lookup_transform(self.goal_frame_id, # target_frame_id
                                 self.husky_frame_id, #source frame
                                 rospy.Time(0), #get the tf at first available time
                                 rospy.Duration(1.0)) #timeout after 1
         base_link_x = base_link_tf.transform.translation.x
         base_link_y = base_link_tf.transform.translation.y
-        first_goal_x = goal1.pose.position.x
-        first_goal_y = goal1.pose.position.y
-        dist = np.linalg.norm(np.array([base_link_x - first_goal_x, base_link_y - first_goal_y]))
+        goal_x = goal.pose.position.x
+        goal_y = goal.pose.position.y
+        dist = np.linalg.norm(np.array([base_link_x - goal_x, base_link_y - goal_y]))
 
         return dist
 

@@ -17,7 +17,8 @@ import cv2
 import rospy
 
 # ros messages
-from sensor_msgs.msg import CameraInfo, PointCloud2
+from sensor_msgs.msg import CameraInfo, Image, PointCloud2
+from cv_bridge import CvBridge, CvBridgeError
 
 # custom libs
 from utils import publishCloud
@@ -29,6 +30,8 @@ class LaneDetector:
         # Setup publishers
         self.laneCloud_pub = rospy.Publisher(laneCloud_topic, PointCloud2, queue_size=1)
         self.egoLine_pub   = rospy.Publisher(egoLine_topic, PointCloud2, queue_size=1)
+        self.bridge = CvBridge()
+        self.debugLine_pub = rospy.Publisher('/lane/debug', Image, queue_size=1)
 
         # read camera info by looking up only one message
         self.camera        = rospy.wait_for_message(colorInfo_topic, CameraInfo)
@@ -40,8 +43,8 @@ class LaneDetector:
         self.cy = self.camera.K[5]
 
         # define ROI
-        self.ROI_UPPER_Y = 340
-        self.ROI_RIGHT_X = 480
+        self.ROI_UPPER_Y = 300
+        self.ROI_RIGHT_X = 450
 
         # tracker
         self.tracker = None
@@ -111,7 +114,7 @@ class LaneDetector:
         # detect center line
         edges = cv2.Canny(roi, 100, 200, apertureSize=3)
         lines = cv2.HoughLinesP(edges, 1, np.pi/180, 30, np.array([]), self.minLineLength, self.maxLineGap)
-        
+
         # possible scenarios: 0. no line detected 1. new line 2. tracking
         max_len, scenario = 0, 0
         X1, Y1, X2, Y2 = 0, 0, 0, 0
@@ -124,17 +127,14 @@ class LaneDetector:
                     X1, Y1, X2, Y2 = x1, y1, x2, y2
             scenario = 1
             bbox = (X1, Y1, np.abs(X2-X1), np.abs(Y2-Y1))
-        #     self.tracker = cv2.TrackerKCF_create()
-        #     self.tracker.init(rgb, bbox)
-        #     self.lose_track_count = 0
-        # elif self.tracker is not None:
-        #     success, bbox = self.tracker.update(rgb)
-        #     x, y, w, h = [int(v) for v in bbox]
-        #     if success: # 2. tracking
-        #         scenario = 2
-        #         X1, Y1, X2, Y2 = x, y, x+w, y-h
-        #         Y1 = min(Y1, img.shape[0] - 1)
-        if scenario == 0:
+
+        # debug image
+        color = (255, 0, 0) if scenario == 1 else (0, 255, 0)
+        rgb = cv2.line(rgb, (X1, Y1), (X2, Y2), color , thickness=3)
+        rgb = cv2.rectangle(rgb, (0, 480), (self.ROI_RIGHT_X, self.ROI_UPPER_Y), (0, 0, 255), thickness=3)
+        debug_msg = self.bridge.cv2_to_imgmsg(rgb, encoding="rgb8")
+        self.debugLine_pub.publish(debug_msg)
+        if scenario == 0: # No lines detected
             return None
 
         # lines detected, calculate coordinates and slope
@@ -148,6 +148,7 @@ class LaneDetector:
                 coordinates = [[X1+i, int(Y1-i*slope)] for i in range(X2-X1)]
             else:
                 coordinates = [[int(X1+i/slope), Y1-i] for i in range(Y1-Y2)]
+
 
         return np.array(coordinates)
 
