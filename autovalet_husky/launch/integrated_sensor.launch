@@ -39,6 +39,6 @@
     <include file="$(find velodyne_pointcloud)/launch/VLP16_points.launch" />
 
     <!-- RVIZ -->
-    <node type="rviz" name="rviz" pkg="rviz" args="-d $(find autovalet_husky)/rviz/config.rviz" />
+    <node type="rviz" name="rviz" pkg="rviz"/>
     
 </launch>

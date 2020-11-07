@@ -1,12 +1,12 @@
 hlsbounds:
     lowerbound:
-        h: 12.0
+        h: 21.0
         l: 0.18
         s: 0.90
     upperbound:
         h: 30.0
-        l: 1.00
+        l: 0.94 #1.00
         s: 1.00
 lineparams:
-    minLineLength: 130
+    minLineLength: 120
     maxLineGap: 20

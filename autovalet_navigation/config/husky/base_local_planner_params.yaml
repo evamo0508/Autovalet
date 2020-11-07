@@ -30,16 +30,16 @@ TebLocalPlannerROS:
  dt_hysteresis: 0.03 # recommended to be 10% of dt_ref
  global_plan_overwrite_orientation: True
  max_global_plan_lookahead_dist: 3.0
- feasibility_check_no_poses: 0 ####################
+ feasibility_check_no_poses: 0
     
  # Robot
          
- max_vel_x: 0.5 #0.8
- max_vel_x_backwards: 0.06 # needs to be > penalty_epslion
- max_vel_theta: 0.3 #0.2
- acc_lim_x: 0.5
- acc_lim_theta: 0.5
- min_turning_radius: 0.5 #0.0
+ max_vel_x: 0.5
+ max_vel_x_backwards: 0.1 # needs to be > penalty_epslion
+ max_vel_theta: 0.3
+ acc_lim_x: 0.1
+ acc_lim_theta: 0.1
+ min_turning_radius: 3
 
 #### Default footprint model is point model. Point model works best with the planner
 #### minimal jerk.
@@ -52,8 +52,8 @@ TebLocalPlannerROS:
 
  # GoalTolerance
     
- xy_goal_tolerance: 1.0 ##0.2
- yaw_goal_tolerance: 0.4
+ xy_goal_tolerance: 0.4
+ yaw_goal_tolerance: 0.12
  free_goal_vel: False # allow goal to be reached with nonzero speed (useful for traversal waypoints)
     
  # Obstacles
@@ -72,7 +72,7 @@ TebLocalPlannerROS:
  no_outer_iterations: 4
  optimization_activate: True
  optimization_verbose: False
- penalty_epsilon: 0.05
+ penalty_epsilon:  0.05 #-0.01 #0.05
  weight_max_vel_x: 1.0
  weight_max_vel_theta: 1.0
  weight_acc_lim_x: 1.0
