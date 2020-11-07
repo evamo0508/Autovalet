@@ -5,9 +5,9 @@ if [ "$sim" = "true" ]
 then
     if [ "$turn" = "right" ]
     then
-        roslaunch autovalet_gazebo setup_slam_test.launch world_file:=flipped_aruco_rightpark.world x:=-15 y:=-9 1>> $HOME/slam_log.txt 2>&1 #0,6 #-15,-9(start rightside))
+        roslaunch autovalet_gazebo setup_slam_test.launch world_file:=state_machine.world x:=0 y:=6 1>> $HOME/slam_log.txt 2>&1 #0,6 #-15,-9(start rightside)
     else
-        roslaunch autovalet_gazebo setup_slam_test.launch world_file:=state_machine_left.world x:=-6 y:=-9 1>> $HOME/slam_log.txt 2>&1
+        roslaunch autovalet_gazebo setup_slam_test.launch world_file:=state_machine_lturns_lpark.world x:=-6 y:=-9 1>> $HOME/slam_log.txt 2>&1
     fi
 else
     roslaunch autovalet_husky integrated_sensor.launch 1>> $HOME/sensor_log.txt 2>&1

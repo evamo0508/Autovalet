@@ -108,9 +108,7 @@ class LaneDetector:
             xyz.point.y = center_line_cloud[0,1]
             xyz.point.z = center_line_cloud[0,2]                        
             line = do_transform_point(xyz,transf).point 
-
-            # line =None
-            
+                        
             if self.debug:
                 print ("line: ", line)
             

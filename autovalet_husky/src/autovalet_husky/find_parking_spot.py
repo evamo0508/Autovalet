@@ -13,7 +13,7 @@ import numpy as np
 # Include ROS libs
 import rospy
 import tf2_ros
-from tf2_geometry_msgs import do_transform_pose, do_transform_point
+from tf2_geometry_msgs import do_transform_pose
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 
 # Include messages

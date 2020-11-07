@@ -81,7 +81,7 @@ class AutoValet:
         self.goalGenerator      = goal_generator(self.map_frame)
         self.current_goal       = PoseStamped()
         self.empty_line_count   = 0
-        self.empty_line_tol     = 5
+        self.empty_line_tol     = 10
 
         # parking setup ###########################################################
         # tag_topic - name of the topic in which the pose of the marker is being published
