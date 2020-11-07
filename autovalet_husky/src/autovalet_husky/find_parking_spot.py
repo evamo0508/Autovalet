@@ -76,15 +76,16 @@ class parking_spot:
         if self.linecenter.y > self.tag_tf.transform.translation.y:
             rhs = True
             pos1 = [0, 3, 1]
-        else:
+            # rot1 = [0 , np.pi/4, -np.pi/4] #need to switch
+
+        else: #left park
             rhs = False
             pos1 = [0, 1.5, -1]
             # rot1 = [0 , np.pi/4, -np.pi/4]
             print("line center y value : ", self.linecenter.y)
             print("tag y : ", self.tag_tf.transform.translation.y)
         # current params for right turns only
-        # pos1 = [0, 3, 1]
-        rot1 = [0 , np.pi/4, -np.pi/4]
+        rot1 = [0 , np.pi/4, -np.pi/4] 
         self.goal1 = self.generate_parking_goal(self.tag_tf, pos1, rot1)
         
         # keep moving w/ goal gen until goal1 is in costmap
