@@ -1,0 +1,155 @@
+import numpy as np
+
+# Include ROS libs
+import rospy
+import tf2_ros
+from tf2_geometry_msgs import do_transform_pose
+from tf.transformations import euler_from_quaternion, quaternion_from_euler
+
+# Include messages
+from geometry_msgs.msg import PoseStamped, Quaternion, Pose
+from tf.transformations import quaternion_matrix, quaternion_from_matrix
+
+class Parker:
+    def __init__(self, goal_topic, tag_topic, goal_frame_id, husky_frame_id, aruco_frame_name,debug=True):
+        
+        # for accumulating tag poses
+        self.tag_count = 0
+        self.tag_buffer_size = 20
+        self.tfArray = []
+
+        # Setup listeners and talkers
+        self.aruco_subscriber = rospy.Subscriber(tag_topic, PoseStamped, self.collectTagPoses)
+
+        self.tf_buffer        = tf2_ros.Buffer(rospy.Duration(1200.0)) # Length of tf2 buffer (?)
+        self.tf_listener      = tf2_ros.TransformListener(self.tf_buffer)
+        self.aruco_frame_name = aruco_frame_name
+        self.goal_frame_id    = goal_frame_id
+        self.husky_frame_id   = husky_frame_id
+
+        # helper const & bool
+        self.costmap_height              = rospy.get_param('/move_base/global_costmap/height')
+        self.first_goal_in_costmap       = False
+        self.first_goal_is_close_meter   = 0.8
+        self.debug = debug
+
+        # parking goals
+        self.goal1 = PoseStamped()
+        self.goal2 = PoseStamped()
+
+        # ground truth parking goal calculated from Gazebo links
+        self.gt_goal2 = PoseStamped()
+    
+        # flag to know when we are ready to defer to parker's goals
+        self.ready = False
+
+
+    def collectTagPoses(self, tag_pose):
+        '''
+        Take in numOfTags tag poses and do RANSAC in the end to avoid outliers
+        '''
+        if self.tag_count < self.tag_buffer_size: # collect tag poses
+            self.aruco_frame_id = tag_pose.header.frame_id
+
+            tf = self.tf_buffer.lookup_transform(self.goal_frame_id, # target_frame_id
+                                    self.aruco_frame_name, # source frame
+                                    rospy.Time(0), # get the tf at first available time
+                                    rospy.Duration(1.0)) # timeout after 1
+            self.tfArray.append(tf)
+            self.tag_count += 1
+        elif self.tag_count == self.tag_buffer_size: # perform RANSAC on transformArray
+            self.ready = True
+            self.tag_tf = self.tagPoseRANSAC()
+            self.calculateGoals()
+            self.aruco_subscriber.unregister()
+    
+    def isReady(self):
+        return self.ready
+
+    def getParkingPoses(self):
+        return [self.goal1,self.goal2]
+
+    def calculateGoals(self):
+        # current params for right turns only
+        pos1 = [0, 3, 1]
+        rot1 = [-np.pi/2, 0, -np.pi/2]
+        self.goal1 = self.generateParkingGoal(self.tag_tf, pos1, rot1)
+
+        # pub 2nd goal once
+        pos2 = [0, 0, 4]
+        rot2 = [0, -np.pi/2, -np.pi/2]
+        self.goal2 = self.generateParkingGoal(self.tag_tf, pos2, rot2)
+
+        return
+
+    def generateParkingGoal(self, tf, pos, rot):
+        '''
+        waypoint published to movebase
+        '''
+        tag2waypoint = PoseStamped()
+        tag2waypoint.pose.position.x = pos[0]
+        tag2waypoint.pose.position.y = pos[1]
+        tag2waypoint.pose.position.z = pos[2]
+
+        x,y,z,w = quaternion_from_euler(rot[0], rot[1], rot[2])
+        tag2waypoint.pose.orientation.x = x
+        tag2waypoint.pose.orientation.y = y
+        tag2waypoint.pose.orientation.z = z
+        tag2waypoint.pose.orientation.w = w
+
+        # Get the goal in correct frame
+        goal = do_transform_pose(tag2waypoint, tf)
+        goal.pose.position.z = 0 # Enforce 2D nav constraint
+        # Correct the orientation of the tag (enforce roll and pitch zero)
+        goal.pose.orientation = self.orientationCorrection(goal.pose.orientation)
+
+        return goal
+    
+    def orientationCorrection(self, quat):
+        '''
+        Returns a quaternion after forcing the roll and pitch to zero
+        '''
+        roll, pitch, yaw = euler_from_quaternion((quat.x, quat.y, quat.z, quat.w))
+        x, y, z, w = quaternion_from_euler(0, 0, yaw)
+
+        corrected_quat = Quaternion()
+        corrected_quat.x = x
+        corrected_quat.y = y
+        corrected_quat.z = z
+        corrected_quat.w = w
+
+        return corrected_quat
+
+    def distToGoal(self, goal):
+        base_link_tf = self.tf_buffer.lookup_transform(self.goal_frame_id, # target_frame_id
+                                self.husky_frame_id, #source frame
+                                rospy.Time(0), #get the tf at first available time
+                                rospy.Duration(1.0)) #timeout after 1
+        base_link_x = base_link_tf.transform.translation.x
+        base_link_y = base_link_tf.transform.translation.y
+        goal_x = goal.pose.position.x
+        goal_y = goal.pose.position.y
+        dist = np.linalg.norm(np.array([base_link_x - goal_x, base_link_y - goal_y]))
+
+        return dist
+
+    def tagPoseRANSAC(self):
+        '''
+        distance between quaternions is calculated based on the formula here:
+        https://math.stackexchange.com/questions/90081/quaternion-distance
+        '''
+        quatArray = []
+        for i in range(len(self.tfArray)):
+            quat = self.tfArray[i].transform.rotation
+            quatArray.append(np.array([quat.x, quat.y, quat.z, quat.w]))
+        votes = []
+        for i in range(len(quatArray)):
+            vote = 0
+            for j in range(len(quatArray)):
+                diff = np.abs(1 - np.dot(quatArray[i], quatArray[j]) ** 2)
+                vote = vote + 1 if diff < 0.005 else vote
+            votes.append(vote)
+        # pick the pose with the most inliers
+        tf = self.tfArray[votes.index(max(votes))]
+
+        return tf

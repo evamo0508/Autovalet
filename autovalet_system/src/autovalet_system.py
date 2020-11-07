@@ -26,7 +26,7 @@ from message_filters import ApproximateTimeSynchronizer, Subscriber
 # Include autovalet nodes
 from autovalet_lane_detection.LaneDetector import LaneDetector
 from autovalet_navigation.move_base_listener import MoveBaseListener, MoveBaseState
-from autovalet_husky.find_parking_spot import parking_spot
+from autovalet_parking.Parker import Parker
 from autovalet_goal_generation.goal_generator import goal_generator
 
 
@@ -40,6 +40,8 @@ class State:
 
 class AutoValet:
     def __init__(self,sim):
+
+
         # State Machine variables
         self.current_state = State.START
         self.prev_state = None
@@ -47,8 +49,9 @@ class AutoValet:
         self.controller_rate = rospy.Rate(20)
         self.replan_rate = 2 # in seconds
 
-        # moveBaseListener setup #############################
+        # moveBase setup #############################
         self.moveBaseListener = MoveBaseListener(debug=False)
+        self.costmap_height   = rospy.get_param('/move_base/global_costmap/height')
 
         # laneDetector setup ##################################
         self.colorInfo_topic = "/frontCamera/color/camera_info"
@@ -91,13 +94,16 @@ class AutoValet:
         self.husky_frame        = 'base_link'
         self.aruco_frame_name   = 'parking_spot' #'aruco_marker_frame' or 'parking_spot'
                             # (Needs to be same as what is set in aruco launcher)
-        
-        self.parker = parking_spot(self.goal_topic,
+
+        self.parker = Parker(self.goal_topic,
                                    self.tag_topic,
                                    self.map_frame,
                                    self.husky_frame,
                                    self.aruco_frame_name,
                                    debug=False)
+
+        self.parking_goals = None
+        self.parking_thresholds_m = [.2,1]
 
     # helper fxn to load the correct lane detection params and initialize LaneDetector class
     def init_detector(self, colorInfo_topic, laneCloud_topic, egoLine_topic):
@@ -136,8 +142,8 @@ class AutoValet:
 
         self.depth_frame_id = depth_msg.header.frame_id
 
-        # if we're not in the PARK state AND the lane detector has been successfully initialized, detect the lane and publish
-        if self.current_state != State.PARK and self.ld_init:
+        # if we're not in the PARK/FINSIH state AND the lane detector has been successfully initialized, detect the lane and publish
+        if (self.current_state != State.PARK or self.current_state != State.FINISH) and self.ld_init:
             # lane detection algo
             _, self.ego_line, unfiltered_centerline_midpoints = self.laneDetector.detectLaneRGBD(self.color_img, self.depth_img)
             if unfiltered_centerline_midpoints is not None:
@@ -146,24 +152,30 @@ class AutoValet:
         # self.processState()
 
     def sendGoal(self):
-        # generate goal from the egoline
-        if self.ego_line is not None:
-            self.current_goal = self.goalGenerator.generate_goal_from_egoline(self.ego_line, self.depth_frame_id)
+
+        if self.current_state != State.PARK:
+            # generate goal from the egoline
+            if self.ego_line is not None:
+                self.current_goal = self.goalGenerator.generate_goal_from_egoline(self.ego_line, self.depth_frame_id)
+                self.goal_pub.publish(self.current_goal)
+                self.previous_time = rospy.get_time()
+                self.empty_line_count = 0
+                return True
+            # accumlate consecutive frames w/o lines
+            elif self.empty_line_count < self.empty_line_tol:
+                self.empty_line_count += 1
+            # gen a left turn goal
+            elif self.empty_line_count == self.empty_line_tol and self.prev_state != State.START:
+                self.current_goal = self.goalGenerator.generate_goal_for_left_turn(self.husky_frame)
+                self.goal_pub.publish(self.current_goal)
+                self.previous_time = rospy.get_time()
+                self.empty_line_count = 0
+                return True
+            return False
+        
+        else:
+            self.current_goal = self.parking_goals.pop(0)
             self.goal_pub.publish(self.current_goal)
-            self.previous_time = rospy.get_time()
-            self.empty_line_count = 0
-            return True
-        # accumlate consecutive frames w/o lines
-        elif self.empty_line_count < self.empty_line_tol:
-            self.empty_line_count += 1
-        # gen a left turn goal
-        elif self.empty_line_count == self.empty_line_tol and self.prev_state != State.START:
-            self.current_goal = self.goalGenerator.generate_goal_for_left_turn(self.husky_frame)
-            self.goal_pub.publish(self.current_goal)
-            self.previous_time = rospy.get_time()
-            self.empty_line_count = 0
-            return True
-        return False
 
     def processState(self):
         # START state ############################
@@ -186,15 +198,22 @@ class AutoValet:
 
         # PLANNING state #######################
         elif self.current_state == State.PLANNING:
-            # check if we are ready for parking (tag buffer is filled)
+            # check if we are ready for parking (tag buffer is filled and first goal is inside costmap)
             # if so, move to PARK state
-            if self.parker.count >= self.parker.tag_buffer_size and self.parker.first_goal_in_costmap:
-                self.prev_state = self.current_state
-                self.current_state = State.PARK
+            if self.parker.isReady():
+                if self.parking_goals == None:
+                    self.parking_goals = self.parker.getParkingPoses()
+                if self.parker.distToGoal(self.parking_goals[0]) <= 0.45 * self.costmap_height:
+                    self.prev_state = self.current_state
+                    self.current_state = State.PARK
+
+            # if self.parker.count >= self.parker.tag_buffer_size and self.parker.first_goal_in_costmap:
+            #     self.prev_state = self.current_state
+            #     self.current_state = State.PARK
 
             # if it's been 2 secs since last sent goal (allow for processing time) AND we're within 2 m of last goal,
             # move to the SEND_GOAL state
-            elif rospy.get_time() - self.prev_time > self.replan_rate and self.parker.dist_to_goal(self.current_goal) <= 2:
+            elif rospy.get_time() - self.prev_time > self.replan_rate and self.parker.distToGoal(self.current_goal) <= 2:
                 self.prev_state = self.current_state
                 self.current_state = State.SEND_GOAL
 
@@ -212,12 +231,27 @@ class AutoValet:
                 # rospy.ServiceProxy("/move_base/clear_costmaps", {})
                 self.printState()
                 self.prev_state = self.current_state
+                self.substate = State.SEND_GOAL
+
+            if self.substate == State.SEND_GOAL:
+                self.sendGoal()
+                self.substate = State.PLANNING
+            
+            elif self.substate == State.PLANNING:
+                if len(self.parking_goals) == 1:
+                    if self.parker.distToGoal(self.current_goal) <= self.parking_thresholds_m[0]:
+                        self.substate = State.SEND_GOAL
+                if len(self.parking_goals) == 0:
+                    if self.parker.distToGoal(self.current_goal) <= self.parking_thresholds_m[1]:
+                        self.prev_state = self.current_state
+                        self.current_state = State.FINISH
+
 
             # if the moveBaseListener is waiting for a new goal, that means we've reached the last goal we've
             # sent, so we're done!
-            if self.moveBaseListener.getState() == MoveBaseState.Waiting:
-                self.prev_state = self.current_state
-                self.current_state = State.FINISH
+            # if self.moveBaseListener.getState() == MoveBaseState.Waiting:
+            #     self.prev_state = self.current_state
+            #     self.current_state = State.FINISH
 
         # FINISH state #############################
         # TODO - print parking error and time here
