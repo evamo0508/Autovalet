@@ -39,9 +39,8 @@ class parking_spot:
         self.aruco_frame_name = aruco_frame_name
         self.goal_frame_id    = goal_frame_id
         self.husky_frame_id   = husky_frame_id
-        self.first_goal_close = False
         self.debug = debug
-        self.line = None
+        self.centerline_midpt = None
 
         # helper const & bool
         self.costmap_height              = rospy.get_param('/move_base/global_costmap/height')
@@ -71,7 +70,7 @@ class parking_spot:
 
     def pub_two_goals(self):
 
-        if self.line.y > self.tag_tf.transform.translation.y: 
+        if self.centerline_midpt.y > self.tag_tf.transform.translation.y: 
             rhs = True
             pos1 = [0, 3, 1]
             rot1 = [0 , -np.pi/4, -np.pi/4] 
@@ -83,7 +82,7 @@ class parking_spot:
         self.goal1 = self.generate_parking_goal(self.tag_tf, pos1, rot1)
         
         # keep moving w/ goal gen until goal1 is in costmap
-        while self.dist_to_goal(self.goal1) > 0.48 * self.costmap_height:
+        while self.dist_to_goal(self.goal1) > 0.45 * self.costmap_height:
             # rospy.sleep(0.1)
             continue #a=1
         self.first_goal_in_costmap = True
@@ -149,7 +148,7 @@ class parking_spot:
         waypoint published to movebase
         '''
         tag2waypoint = PoseStamped()
-        tag2waypoint.header.frame_id = 'parking_spot'
+        tag2waypoint.header.frame_id = self.aruco_frame_name
         tag2waypoint.pose.position.x = pos[0]
         tag2waypoint.pose.position.y = pos[1]
         tag2waypoint.pose.position.z = pos[2]

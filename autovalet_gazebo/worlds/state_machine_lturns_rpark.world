@@ -338,10 +338,10 @@
       <static>1</static>
     </model>
     <state world_name='default'>
-      <sim_time>2431 914000000</sim_time>
-      <real_time>114 940132266</real_time>
-      <wall_time>1604783880 937638200</wall_time>
-      <iterations>103480</iterations>
+      <sim_time>2726 840000000</sim_time>
+      <real_time>442 329178345</real_time>
+      <wall_time>1604847920 486302313</wall_time>
+      <iterations>294926</iterations>
       <model name='Dumpster'>
         <pose frame=''>-10.1396 -1.79178 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
@@ -427,6 +427,16 @@
         <scale>1 1 1</scale>
         <link name='link'>
           <pose frame=''>-2.58018 -12 0.000917 0 -2e-06 -1.53974</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>-0.000187 0.00603 -5e-06 -0.277514 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -5e-06 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='Dumpster_clone_15_clone'>
+        <pose frame=''>-4.99461 -12.2395 0.000917 0 -2e-06 -1.53974</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>-4.99461 -12.2395 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>-0.000187 0.00603 -5e-06 -0.277514 -0.203817 4e-06</acceleration>
           <wrench>-0.000187 0.00603 -5e-06 0 -0 0</wrench>
@@ -683,16 +693,16 @@
         </link>
       </model>
       <model name='aruco_visual_marker_7'>
-        <pose frame=''>5.23915 8.46244 0 0 0 -0.011548</pose>
+        <pose frame=''>5.45 8.5 0 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='marker'>
-          <pose frame=''>5.23915 8.46244 0.5 3.14159 1.57079 3.13004</pose>
+          <pose frame=''>5.45 8.5 0.5 3.14159 1.57079 3.14159</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='marker_pad'>
-          <pose frame=''>5.23915 8.46244 -1e-05 0 0 -0.011545</pose>
+          <pose frame=''>5.45 8.5 -1e-05 0 -0 5e-06</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -749,13 +759,13 @@
         </link>
       </model>
       <model name='unit_box_0'>
-        <pose frame=''>-12.765 -12.4906 0.499995 0 1e-05 0</pose>
+        <pose frame=''>-12.765 -12.4906 0.499995 1e-05 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-12.765 -12.4906 0.499995 0 1e-05 0</pose>
+          <pose frame=''>-12.765 -12.4906 0.499995 1e-05 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.010615 -0.006191 -9.78231 0.012424 0.021225 1.8e-05</acceleration>
-          <wrench>0.010615 -0.006191 -9.78231 0 -0 0</wrench>
+          <acceleration>-0.004709 -0.011055 -9.78158 0.022108 -0.009414 1e-06</acceleration>
+          <wrench>-0.004709 -0.011055 -9.78158 0 -0 0</wrench>
         </link>
       </model>
       <light name='sun'>
@@ -764,7 +774,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose frame=''>3.51649 10.0769 8.48596 -0 1.12116 -0.349082</pose>
+        <pose frame=''>4.07109 8.52488 16.7191 0 1.52516 -0.021077</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
@@ -2815,6 +2825,61 @@
         <gravity>1</gravity>
       </link>
       <pose frame=''>-9.94714 2.20985 0.000917 0 2e-06 -1.53974</pose>
+    </model>
+    <model name='Dumpster_clone_15_clone'>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://dumpster/meshes/dumpster.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://dumpster/meshes/dumpster.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>model://dumpster/materials/scripts</uri>
+              <uri>model://dumpster/materials/textures</uri>
+              <name>Dumpster/Diffuse</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>-4.99461 -12.2395 0.000917 0 2e-06 -1.53974</pose>
     </model>
   </world>
 </sdf>

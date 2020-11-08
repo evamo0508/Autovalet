@@ -338,10 +338,10 @@
       <static>1</static>
     </model>
     <state world_name='default'>
-      <sim_time>2854 324000000</sim_time>
-      <real_time>406 882007608</real_time>
-      <wall_time>1604785212 587992103</wall_time>
-      <iterations>255030</iterations>
+      <sim_time>3231 28000000</sim_time>
+      <real_time>533 454689085</real_time>
+      <wall_time>1604847071 648195048</wall_time>
+      <iterations>376704</iterations>
       <model name='Dumpster'>
         <pose frame=''>-10.1396 -1.79178 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
@@ -612,6 +612,16 @@
           <wrench>-0.000187 0.00603 -5e-06 0 -0 0</wrench>
         </link>
       </model>
+      <model name='Dumpster_clone_2_clone'>
+        <pose frame=''>-4.93965 -12.2219 0.000917 0 -2e-06 -1.53974</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose frame=''>-4.93965 -12.2219 0.000917 0 -2e-06 -1.53974</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>-0.000187 0.006031 5e-06 -0.277521 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.006031 5e-06 0 -0 0</wrench>
+        </link>
+      </model>
       <model name='Dumpster_clone_3'>
         <pose frame=''>2.69118 -1.97615 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
@@ -683,16 +693,16 @@
         </link>
       </model>
       <model name='aruco_visual_marker_7'>
-        <pose frame=''>2.95506 6.53371 0 0 -0 3.13082</pose>
+        <pose frame=''>2.9 6.5 0 0 -0 3.14</pose>
         <scale>1 1 1</scale>
         <link name='marker'>
-          <pose frame=''>2.95506 6.53371 0.5 3.14159 1.57079 -0.010775</pose>
+          <pose frame=''>2.9 6.5 0.5 3.14159 1.57079 -0.001595</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='marker_pad'>
-          <pose frame=''>2.95506 6.53371 -1e-05 0 -0 3.13083</pose>
+          <pose frame=''>2.9 6.5 -1e-05 0 -0 3.14001</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -764,7 +774,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose frame=''>-5.60471 4.21329 24.6589 -0 1.12116 -0.349082</pose>
+        <pose frame=''>-11.8401 -8.15664 65.6863 -0 1.40516 -0.149073</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
@@ -2815,6 +2825,61 @@
         <gravity>1</gravity>
       </link>
       <pose frame=''>-9.94714 2.20985 0.000917 0 2e-06 -1.53974</pose>
+    </model>
+    <model name='Dumpster_clone_2_clone'>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://dumpster/meshes/dumpster.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://dumpster/meshes/dumpster.dae</uri>
+              <scale>1 1 1</scale>
+            </mesh>
+          </geometry>
+          <material>
+            <script>
+              <uri>model://dumpster/materials/scripts</uri>
+              <uri>model://dumpster/materials/textures</uri>
+              <name>Dumpster/Diffuse</name>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <inertial>
+          <inertia>
+            <ixx>1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>1</iyy>
+            <iyz>0</iyz>
+            <izz>1</izz>
+          </inertia>
+          <mass>1</mass>
+        </inertial>
+        <kinematic>0</kinematic>
+        <gravity>1</gravity>
+      </link>
+      <pose frame=''>-4.93965 -12.2219 0.000917 0 -2e-06 -1.53974</pose>
     </model>
   </world>
 </sdf>

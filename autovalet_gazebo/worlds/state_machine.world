@@ -338,138 +338,138 @@
       <static>1</static>
     </model>
     <state world_name='default'>
-      <sim_time>2244 665000000</sim_time>
-      <real_time>227 836206842</real_time>
-      <wall_time>1603714299 942195929</wall_time>
-      <iterations>116613</iterations>
+      <sim_time>2423 564000000</sim_time>
+      <real_time>313 624892440</real_time>
+      <wall_time>1604845918 16995213</wall_time>
+      <iterations>178899</iterations>
       <model name='Dumpster'>
-        <pose frame=''>-10.1396 -1.79178 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>-10.1396 -1.79178 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-10.1396 -1.79178 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>-10.1396 -1.79178 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone'>
-        <pose frame=''>-7.60615 -1.78702 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>-7.60615 -1.78702 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-7.60615 -1.78702 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>-7.60615 -1.78702 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_0'>
-        <pose frame=''>-5 -2 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>-5 -2 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-5 -2 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>-5 -2 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_10'>
-        <pose frame=''>10.4096 -12.5816 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>10.4096 -12.5816 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>10.4096 -12.5816 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>10.4096 -12.5816 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_11'>
-        <pose frame=''>7.78593 -12.4267 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>7.78593 -12.4267 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>7.78593 -12.4267 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>7.78593 -12.4267 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_12'>
-        <pose frame=''>5.24382 -12.4262 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>5.24382 -12.4262 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>5.24382 -12.4262 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>5.24382 -12.4262 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_13'>
-        <pose frame=''>2.52429 -12.064 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>2.52429 -12.064 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>2.52429 -12.064 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>2.52429 -12.064 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_14'>
-        <pose frame=''>0.143659 -11.944 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>0.143659 -11.944 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>0.143659 -11.944 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>0.143659 -11.944 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_15'>
-        <pose frame=''>-2.58018 -12 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>-2.58018 -12 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-2.58018 -12 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>-2.58018 -12 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_17'>
-        <pose frame=''>-7.39279 -12.0848 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>-7.39279 -12.0848 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-7.39279 -12.0848 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>-7.39279 -12.0848 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_18'>
-        <pose frame=''>-9.97932 -11.9704 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>-9.97932 -11.9704 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-9.97932 -11.9704 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>-9.97932 -11.9704 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_19'>
-        <pose frame=''>2.71277 12.8401 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>2.71277 12.8401 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>2.71277 12.8401 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>2.71277 12.8401 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_19_clone'>
-        <pose frame=''>0.366596 12.3418 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>0.366596 12.3418 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>0.366596 12.3418 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>0.366596 12.3418 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_19_clone_0'>
@@ -478,48 +478,48 @@
         <link name='link'>
           <pose frame=''>5.11655 1.67367 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>-0.000187 0.006031 8e-06 -0.277522 -0.203817 4e-06</acceleration>
-          <wrench>-0.000187 0.006031 8e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_19_clone_1'>
-        <pose frame=''>2.69728 1.67145 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>2.69728 1.67145 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>2.69728 1.67145 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>2.69728 1.67145 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_19_clone_2'>
-        <pose frame=''>0.067985 1.76064 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>0.067985 1.76064 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>0.067985 1.76064 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>0.067985 1.76064 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_19_clone_3'>
-        <pose frame=''>-2.4729 1.84753 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>-2.4729 1.84753 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-2.4729 1.84753 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>-2.4729 1.84753 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_19_clone_4'>
-        <pose frame=''>-2.19346 12.5363 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>-2.19346 12.5363 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-2.19346 12.5363 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>-2.19346 12.5363 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_19_clone_5'>
@@ -528,18 +528,18 @@
         <link name='link'>
           <pose frame=''>-4.9031 12.8375 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>-0.000187 0.006031 8e-06 -0.277522 -0.203817 4e-06</acceleration>
-          <wrench>-0.000187 0.006031 8e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_19_clone_6'>
-        <pose frame=''>-7.66619 12.7015 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>-7.66619 12.7015 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-7.66619 12.7015 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>-7.66619 12.7015 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_19_clone_7'>
@@ -548,18 +548,18 @@
         <link name='link'>
           <pose frame=''>-10 12.4823 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>-0.000187 0.006031 8e-06 -0.277522 -0.203817 4e-06</acceleration>
-          <wrench>-0.000187 0.006031 8e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_19_clone_8'>
-        <pose frame=''>-7.62818 2.06755 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>-7.62818 2.06755 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-7.62818 2.06755 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>-7.62818 2.06755 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_19_clone_9'>
@@ -568,131 +568,131 @@
         <link name='link'>
           <pose frame=''>-9.94714 2.20985 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>-0.000187 0.006031 8e-06 -0.277522 -0.203817 4e-06</acceleration>
-          <wrench>-0.000187 0.006031 8e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_2'>
-        <pose frame=''>0.137927 -1.85493 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>0.137927 -1.85493 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>0.137927 -1.85493 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>0.137927 -1.85493 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_20'>
-        <pose frame=''>5.38878 12.6708 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>5.38878 12.6708 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>5.38878 12.6708 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>5.38878 12.6708 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_21'>
-        <pose frame=''>7.57698 13 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>7.57698 13 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>7.57698 13 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>7.57698 13 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_22'>
-        <pose frame=''>10.3499 12.1963 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>10.3499 12.1963 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>10.3499 12.1963 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>10.3499 12.1963 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_3'>
-        <pose frame=''>2.69118 -1.97615 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>2.69118 -1.97615 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>2.69118 -1.97615 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>2.69118 -1.97615 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_4'>
-        <pose frame=''>5.17183 -1.83024 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>5.17183 -1.83024 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>5.17183 -1.83024 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>5.17183 -1.83024 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_5'>
-        <pose frame=''>7.85276 -1.77633 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>7.85276 -1.77633 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>7.85276 -1.77633 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>7.85276 -1.77633 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_6'>
-        <pose frame=''>10.2677 -1.73415 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>10.2677 -1.73415 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>10.2677 -1.73415 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>10.2677 -1.73415 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_7'>
-        <pose frame=''>-4.86413 2.23613 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>-4.86413 2.23613 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-4.86413 2.23613 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>-4.86413 2.23613 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_8'>
-        <pose frame=''>7.80242 1.79715 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>7.80242 1.79715 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>7.80242 1.79715 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>7.80242 1.79715 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='Dumpster_clone_9'>
-        <pose frame=''>10.4323 2.08056 0.000917 0 2e-06 -1.53974</pose>
+        <pose frame=''>10.4323 2.08056 0.000917 0 -2e-06 -1.53974</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>10.4323 2.08056 0.000917 0 2e-06 -1.53974</pose>
+          <pose frame=''>10.4323 2.08056 0.000917 0 -2e-06 -1.53974</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.000187 -0.006031 9e-06 0.277523 0.203817 -4e-06</acceleration>
-          <wrench>0.000187 -0.006031 9e-06 0 -0 0</wrench>
+          <acceleration>-0.000187 0.00603 -9e-06 -0.277511 -0.203817 4e-06</acceleration>
+          <wrench>-0.000187 0.00603 -9e-06 0 -0 0</wrench>
         </link>
       </model>
       <model name='aruco_visual_marker_7'>
-        <pose frame=''>-2.30362 -6.43628 0 0 0 -3.12384</pose>
+        <pose frame=''>-2.30362 -6.43628 0 0 0 -3.14</pose>
         <scale>1 1 1</scale>
         <link name='marker'>
-          <pose frame=''>-2.30362 -6.43628 0.5 3.14159 1.57079 0.017747</pose>
+          <pose frame=''>-2.30362 -6.43628 0.5 3.14159 1.57079 0.00159</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
         <link name='marker_pad'>
-          <pose frame=''>-2.30362 -6.43628 -1e-05 0 0 -3.12384</pose>
+          <pose frame=''>-2.30362 -6.43628 -1e-05 0 0 -3.14</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -749,13 +749,13 @@
         </link>
       </model>
       <model name='unit_box_0'>
-        <pose frame=''>-12.765 -12.4906 0.5 0 -0 0</pose>
+        <pose frame=''>-12.765 -12.4906 0.499995 1e-05 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose frame=''>-12.765 -12.4906 0.5 0 -0 0</pose>
+          <pose frame=''>-12.765 -12.4906 0.499995 1e-05 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0.004709 -9.78112 9.78158 0.712677 0.009414 4.3e-05</acceleration>
-          <wrench>0.004709 -9.78112 9.78158 0 -0 0</wrench>
+          <acceleration>0.004709 -0.011055 -9.78158 0.022108 0.009414 -1e-06</acceleration>
+          <wrench>0.004709 -0.011055 -9.78158 0 -0 0</wrench>
         </link>
       </model>
       <light name='sun'>
@@ -764,7 +764,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose frame=''>-25.9715 5.55252 56.1507 -0 1.12116 -0.349082</pose>
+        <pose frame=''>-24.4367 -3.89597 45.3038 -0 1.12116 -0.349082</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>

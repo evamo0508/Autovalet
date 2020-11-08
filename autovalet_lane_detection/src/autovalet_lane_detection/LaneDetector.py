@@ -12,7 +12,6 @@ Changelog:
 # python libs
 import numpy as np
 import cv2
-from cv_bridge import CvBridge, CvBridgeError
 
 # roslibs
 import rospy
@@ -89,30 +88,27 @@ class LaneDetector:
             publishCloud(ego_line, self.camera.header.frame_id, self.egoLine_pub)
             # maybe publish center line alone too?
 
-            ## Parking directions
-            if  center_line_coordinates.shape[0] % 2 == 0:
-                index = center_line_coordinates.shape[0] / 2 
-            else:
-                index = (center_line_coordinates.shape[0] + 1)/ 2
+            ## Parking directions            
+            index = int(round((center_line_coordinates.shape[0] + 1) / 2 ))
             center_line_coordinates= center_line_coordinates[index,:]
             
             if center_line_coordinates.shape[0] != 0:
                 center_line_cloud = self.line2cloud(depth_img, center_line_coordinates.reshape(1,-1))    # px3      
 
             transf = self.tf_buffer.lookup_transform(self.target_id, # target_frame_id
-                                        self.source_id, # source frame
-                                        rospy.Time(0), # get the tf at first available time
-                                        rospy.Duration(1.0)) # timeout after 1
-            xyz = PointStamped()
-            xyz.point.x = center_line_cloud[0,0]
-            xyz.point.y = center_line_cloud[0,1]
-            xyz.point.z = center_line_cloud[0,2]                        
-            line = do_transform_point(xyz,transf).point 
-                        
+                                                     self.source_id, # source frame
+                                                     rospy.Time(0), # get the tf at first available time
+                                                     rospy.Duration(1.0)) # timeout after 1
+            tmp_centerline_midpt = PointStamped()
+            tmp_centerline_midpt.point.x = center_line_cloud[0,0]
+            tmp_centerline_midpt.point.y = center_line_cloud[0,1]
+            tmp_centerline_midpt.point.z = center_line_cloud[0,2]                        
+            centerline_midpt = do_transform_point(tmp_centerline_midpt,transf).point 
+
             if self.debug:
-                print ("line: ", line)
+                print ("line: ", centerline_midpt)
             
-            return lane_cloud, ego_line, line
+            return lane_cloud, ego_line, centerline_midpt
 
         except:
             if self.debug:
