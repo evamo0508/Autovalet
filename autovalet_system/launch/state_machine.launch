@@ -2,12 +2,13 @@
 
     <arg name="simulation" default="true"/>
     <arg name="turn" default="right"/>
+    <arg name="park" default="right"/>
 
     <!-- SIMULATION -->
     <group if="$(arg simulation)">
 
         <!-- RTAB -->
-        <node name="SLAM" pkg="autovalet_system" type="slam.sh" args="$(arg simulation) $(arg turn)"/>
+        <node name="SLAM" pkg="autovalet_system" type="slam.sh" args="$(arg simulation) $(arg turn) $(arg park)"/>
 
         <!-- MOVEBASE -->
         <node name="NAVIGATION" pkg="autovalet_system" type="nav.sh" args="$(arg simulation)" />
@@ -30,7 +31,7 @@
 
         <!-- STATE MACHINE -->
         <!-- state machine node runs lane detection, goal generation, and parking subsystems, as well as overall system logic -->
-        <node name="STATE_MACHINE" pkg="autovalet_system" type="run_sm.sh" args="$(arg simulation)" />
+        <!-- <node name="STATE_MACHINE" pkg="autovalet_system" type="run_sm.sh" args="$(arg simulation)" /> -->
     </group>
 
 <!--_________________________________________________________________________________________________-->
