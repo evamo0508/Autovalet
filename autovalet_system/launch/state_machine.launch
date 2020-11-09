@@ -2,12 +2,13 @@
 
     <arg name="simulation" default="true"/>
     <arg name="turn" default="right"/>
+    <arg name="park" default="right"/>
 
     <!-- SIMULATION -->
     <group if="$(arg simulation)">
 
         <!-- RTAB -->
-        <node name="SLAM" pkg="autovalet_system" type="slam.sh" args="$(arg simulation) $(arg turn)"/>
+        <node name="SLAM" pkg="autovalet_system" type="slam.sh" args="$(arg simulation) $(arg turn) $(arg park)"/>
 
         <!-- MOVEBASE -->
         <node name="NAVIGATION" pkg="autovalet_system" type="nav.sh" args="$(arg simulation)" />

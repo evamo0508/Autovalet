@@ -39,6 +39,8 @@ class parking_spot:
         self.aruco_frame_name = aruco_frame_name
         self.goal_frame_id    = goal_frame_id
         self.husky_frame_id   = husky_frame_id
+        self.debug = debug
+        self.centerline_midpt = None
 
         # helper const & bool
         self.costmap_height              = rospy.get_param('/move_base/global_costmap/height')
@@ -67,14 +69,22 @@ class parking_spot:
             self.goal2 = None
 
     def pub_two_goals(self):
-        # current params for right turns only
-        pos1 = [0, 3, 1]
-        rot1 = [-np.pi/2, 0, -np.pi/2]
-        self.goal1 = self.generate_parking_goal(self.tag_tf, pos1, rot1)
 
+        if self.centerline_midpt.y > self.tag_tf.transform.translation.y: 
+            rhs = True
+            pos1 = [0, 3, 1]
+            rot1 = [0 , -np.pi/4, -np.pi/4] 
+
+        else: #left park
+            rhs = False
+            pos1 = [0, 1.5, -1]
+            rot1 = [0 , np.pi/4, -np.pi/4]
+        self.goal1 = self.generate_parking_goal(self.tag_tf, pos1, rot1)
+        
         # keep moving w/ goal gen until goal1 is in costmap
-        while self.dist_to_goal(self.goal1) > 0.4 * self.costmap_height:
-            rospy.sleep(0.5)
+        while self.dist_to_goal(self.goal1) > 0.45 * self.costmap_height:
+            # rospy.sleep(0.1)
+            continue #a=1
         self.first_goal_in_costmap = True
 
         # keep publishing 1st goal until the robot is close enough
@@ -85,12 +95,18 @@ class parking_spot:
                 print("first goal published")
 
         # pub 2nd goal once
-        pos2 = [0, 0, 4]
-        rot2 = [0, -np.pi/2, -np.pi/2]
+        if rhs:
+            pos2 = [0, 0, 4]
+            rot2 = [0, -np.pi/2, -np.pi/2]
+
+        else:
+            pos2 = [0, 0, -4]
+            rot2 = [0, np.pi/2, np.pi/2]
+
         self.goal2 = self.generate_parking_goal(self.tag_tf, pos2, rot2)
         self.pub.publish(self.goal2)
         if self.debug:
-            print("second goal published")
+            print("second goal published")        
         return
 
     def dist_to_goal(self, goal):
@@ -132,6 +148,7 @@ class parking_spot:
         waypoint published to movebase
         '''
         tag2waypoint = PoseStamped()
+        tag2waypoint.header.frame_id = self.aruco_frame_name
         tag2waypoint.pose.position.x = pos[0]
         tag2waypoint.pose.position.y = pos[1]
         tag2waypoint.pose.position.z = pos[2]

@@ -15,10 +15,16 @@ import cv2
 
 # roslibs
 import rospy
+import tf2_ros
+from tf2_geometry_msgs import do_transform_pose, do_transform_point
+from tf.transformations import euler_from_quaternion, quaternion_from_euler
+from message_filters import ApproximateTimeSynchronizer, Subscriber
 
 # ros messages
 from sensor_msgs.msg import CameraInfo, Image, PointCloud2
 from cv_bridge import CvBridge, CvBridgeError
+from geometry_msgs.msg import PoseStamped, Quaternion, Pose, Point, PointStamped
+from tf.transformations import quaternion_matrix, quaternion_from_matrix
 
 # custom libs
 from utils import publishCloud
@@ -59,6 +65,10 @@ class LaneDetector:
         self.lane_width = 3.5
 
         self.debug = debug
+        self.target_id          = 'base_link'
+        self.source_id          = 'frontCamera_color_optical_frame'
+        self.tf_buffer          = tf2_ros.Buffer(rospy.Duration(1200.0)) # Length of tf2 buffer (?)
+        self.tf_listener        = tf2_ros.TransformListener(self.tf_buffer)
 
     def detectLaneRGBD(self, color_img, depth_img):
         # lane detection algo
@@ -78,12 +88,32 @@ class LaneDetector:
             publishCloud(ego_line, self.camera.header.frame_id, self.egoLine_pub)
             # maybe publish center line alone too?
 
-            return lane_cloud, ego_line
+            ## Parking directions            
+            index = int(round((center_line_coordinates.shape[0] + 1) / 2 ))
+            center_line_coordinates= center_line_coordinates[index,:]
+            
+            if center_line_coordinates.shape[0] != 0:
+                center_line_cloud = self.line2cloud(depth_img, center_line_coordinates.reshape(1,-1))    # px3      
+
+            transf = self.tf_buffer.lookup_transform(self.target_id, # target_frame_id
+                                                     self.source_id, # source frame
+                                                     rospy.Time(0), # get the tf at first available time
+                                                     rospy.Duration(1.0)) # timeout after 1
+            tmp_centerline_midpt = PointStamped()
+            tmp_centerline_midpt.point.x = center_line_cloud[0,0]
+            tmp_centerline_midpt.point.y = center_line_cloud[0,1]
+            tmp_centerline_midpt.point.z = center_line_cloud[0,2]                        
+            centerline_midpt = do_transform_point(tmp_centerline_midpt,transf).point 
+
+            if self.debug:
+                print ("line: ", centerline_midpt)
+            
+            return lane_cloud, ego_line, centerline_midpt
 
         except:
             if self.debug:
                 print("empty center line")
-            return None, None
+            return None, None,None
 
     def center_line_detection(self, img):
         # colorspace transformation

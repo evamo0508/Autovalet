@@ -81,7 +81,7 @@ class AutoValet:
         self.goalGenerator      = goal_generator(self.map_frame)
         self.current_goal       = PoseStamped()
         self.empty_line_count   = 0
-        self.empty_line_tol     = 5
+        self.empty_line_tol     = 10
 
         # parking setup ###########################################################
         # tag_topic - name of the topic in which the pose of the marker is being published
@@ -91,7 +91,7 @@ class AutoValet:
         self.husky_frame        = 'base_link'
         self.aruco_frame_name   = 'parking_spot' #'aruco_marker_frame' or 'parking_spot'
                             # (Needs to be same as what is set in aruco launcher)
-
+        
         self.parker = parking_spot(self.goal_topic,
                                    self.tag_topic,
                                    self.map_frame,
@@ -139,7 +139,9 @@ class AutoValet:
         # if we're not in the PARK state AND the lane detector has been successfully initialized, detect the lane and publish
         if self.current_state != State.PARK and self.ld_init:
             # lane detection algo
-            _, self.ego_line = self.laneDetector.detectLaneRGBD(self.color_img, self.depth_img)
+            _, self.ego_line, unfiltered_centerline_midpoints = self.laneDetector.detectLaneRGBD(self.color_img, self.depth_img)
+            if unfiltered_centerline_midpoints is not None:
+                self.parker.centerline_midpt = unfiltered_centerline_midpoints
 
         # self.processState()
 
@@ -235,7 +237,7 @@ class AutoValet:
             rospy.logwarn("  x: %f",self.current_goal.pose.position.x)
             rospy.logwarn("  y: %f",self.current_goal.pose.position.y)
             rospy.logwarn("  z: %f",self.current_goal.pose.position.z)
-            rospy.logwarn("Orientation");
+            rospy.logwarn("Orientation")
             rospy.logwarn("  x: %f",self.current_goal.pose.orientation.x)
             rospy.logwarn("  y: %f",self.current_goal.pose.orientation.y)
             rospy.logwarn("  z: %f",self.current_goal.pose.orientation.z)
