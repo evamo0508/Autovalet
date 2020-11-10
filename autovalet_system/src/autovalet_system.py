@@ -16,7 +16,7 @@ import yaml
 from sensor_msgs.msg import Image, CameraInfo, PointCloud2
 from geometry_msgs.msg import PoseStamped, Quaternion, Pose
 from tf.transformations import quaternion_matrix, quaternion_from_matrix
-from actionlib_msgs.msg import GoalStatusArray
+from actionlib_msgs.msg import GoalStatusArray, GoalID
 
 # Include image helpers
 from PIL import Image as pImage
@@ -52,6 +52,7 @@ class AutoValet:
         # moveBase setup #############################
         self.moveBaseListener = MoveBaseListener(debug=False)
         self.costmap_height   = rospy.get_param('/move_base/global_costmap/height')
+        self.moveBaseKiller   = rospy.Publisher("/move_base/cancel",GoalID)
 
         # laneDetector setup ##################################
         self.colorInfo_topic = "/frontCamera/color/camera_info"
@@ -96,14 +97,15 @@ class AutoValet:
                             # (Needs to be same as what is set in aruco launcher)
 
         self.parker = Parker(self.goal_topic,
-                                   self.tag_topic,
-                                   self.map_frame,
-                                   self.husky_frame,
-                                   self.aruco_frame_name,
-                                   debug=False)
+                            self.tag_topic,
+                            self.map_frame,
+                            self.husky_frame,
+                            self.aruco_frame_name,
+                            debug=False)
 
         self.parking_goals = None
-        self.parking_thresholds_m = [.2,1]
+        self.parking_thresholds_m = [1,.2]
+        
 
     # helper fxn to load the correct lane detection params and initialize LaneDetector class
     def init_detector(self, colorInfo_topic, laneCloud_topic, egoLine_topic):
@@ -133,6 +135,9 @@ class AutoValet:
 
         return LD
 
+    # def published(self):
+
+
     # callback for image messages. this is what keeps the system moving forward, as processState gets
     # called everytime we get a new img
     def registered_image_callback(self, color_msg, depth_msg):
@@ -143,7 +148,7 @@ class AutoValet:
         self.depth_frame_id = depth_msg.header.frame_id
 
         # if we're not in the PARK/FINSIH state AND the lane detector has been successfully initialized, detect the lane and publish
-        if (self.current_state != State.PARK or self.current_state != State.FINISH) and self.ld_init:
+        if (self.current_state != State.PARK and self.current_state != State.FINISH) and self.ld_init:
             # lane detection algo
             _, self.ego_line, unfiltered_centerline_midpoints = self.laneDetector.detectLaneRGBD(self.color_img, self.depth_img)
             if unfiltered_centerline_midpoints is not None:
@@ -198,30 +203,32 @@ class AutoValet:
 
         # PLANNING state #######################
         elif self.current_state == State.PLANNING:
-            # check if we are ready for parking (tag buffer is filled and first goal is inside costmap)
-            # if so, move to PARK state
-            if self.parker.isReady():
-                if self.parking_goals == None:
-                    self.parking_goals = self.parker.getParkingPoses()
-                if self.parker.distToGoal(self.parking_goals[0]) <= 0.45 * self.costmap_height:
-                    self.prev_state = self.current_state
-                    self.current_state = State.PARK
 
-            # if self.parker.count >= self.parker.tag_buffer_size and self.parker.first_goal_in_costmap:
-            #     self.prev_state = self.current_state
-            #     self.current_state = State.PARK
-
-            # if it's been 2 secs since last sent goal (allow for processing time) AND we're within 2 m of last goal,
-            # move to the SEND_GOAL state
-            elif rospy.get_time() - self.prev_time > self.replan_rate and self.parker.distToGoal(self.current_goal) <= 2:
+            if self.prev_state != State.PLANNING:
+                self.printState()
                 self.prev_state = self.current_state
-                self.current_state = State.SEND_GOAL
 
-            # keep planning, only print if it's your first time entering this fxn in the PLANNING state
             else:
-                if self.prev_state != State.PLANNING:
-                    self.printState()
+
+                # if it's been 2 secs since last sent goal (allow for processing time) AND we're within 2 m of last goal,
+                # move to the SEND_GOAL state
+                if rospy.get_time() - self.prev_time > self.replan_rate and self.parker.distToGoal(self.current_goal) <= 2:
                     self.prev_state = self.current_state
+                    self.current_state = State.SEND_GOAL
+
+                # check if we are ready for parking (tag buffer is filled and first goal is inside costmap)
+                # if so, move to PARK state
+                elif self.parker.isReady():
+                    if self.parking_goals == None:
+                        print('parking goals populated')
+                        self.parking_goals = self.parker.getParkingPoses()
+                        # self.publishParkingTFs()
+                    print(self.parker.distToGoal(self.parking_goals[0]), .48 * self.costmap_height)
+                    if self.parker.distToGoal(self.parking_goals[0]) <= 0.48 * self.costmap_height:
+                        print('in costmap')
+                        self.prev_state = self.current_state
+                        self.current_state = State.PARK
+                
 
         # PARK state ############################
         elif self.current_state == State.PARK:
@@ -243,6 +250,7 @@ class AutoValet:
                         self.substate = State.SEND_GOAL
                 if len(self.parking_goals) == 0:
                     if self.parker.distToGoal(self.current_goal) <= self.parking_thresholds_m[1]:
+                        self.moveBaseKiller.publish(GoalID())
                         self.prev_state = self.current_state
                         self.current_state = State.FINISH
 

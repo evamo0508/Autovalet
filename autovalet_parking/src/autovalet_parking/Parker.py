@@ -5,6 +5,8 @@ import rospy
 import tf2_ros
 from tf2_geometry_msgs import do_transform_pose
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
+import tf
+import os
 
 # Include messages
 from geometry_msgs.msg import PoseStamped, Quaternion, Pose
@@ -27,6 +29,11 @@ class Parker:
         self.goal_frame_id    = goal_frame_id
         self.husky_frame_id   = husky_frame_id
 
+        self.parkingBroadcaster = tf.TransformBroadcaster()
+
+        # for comparing tag with centerline position
+        self.centerline_midpt = None
+
         # helper const & bool
         self.costmap_height              = rospy.get_param('/move_base/global_costmap/height')
         self.first_goal_in_costmap       = False
@@ -43,6 +50,8 @@ class Parker:
         # flag to know when we are ready to defer to parker's goals
         self.ready = False
 
+        self.park_direction = None
+
 
     def collectTagPoses(self, tag_pose):
         '''
@@ -51,8 +60,8 @@ class Parker:
         if self.tag_count < self.tag_buffer_size: # collect tag poses
             self.aruco_frame_id = tag_pose.header.frame_id
 
-            tf = self.tf_buffer.lookup_transform(self.goal_frame_id, # target_frame_id
-                                    self.aruco_frame_name, # source frame
+            tf = self.tf_buffer.lookup_transform(self.goal_frame_id, # map 
+                                    self.aruco_frame_name, # parking_spot
                                     rospy.Time(0), # get the tf at first available time
                                     rospy.Duration(1.0)) # timeout after 1
             self.tfArray.append(tf)
@@ -60,32 +69,52 @@ class Parker:
         elif self.tag_count == self.tag_buffer_size: # perform RANSAC on transformArray
             self.ready = True
             self.tag_tf = self.tagPoseRANSAC()
+            self.setParkDirection()
             self.calculateGoals()
-            self.aruco_subscriber.unregister()
+            # self.aruco_subscriber.unregister()
+            # os.system("rosnode kill ARUCO")
     
+    def getTagTF(self):
+        return self.tag_tf
+
     def isReady(self):
         return self.ready
 
     def getParkingPoses(self):
         return [self.goal1,self.goal2]
 
+    def setParkDirection(self):
+        if self.centerline_midpt.y > self.tag_tf.transform.translation.y:
+            self.park_direction = "right"
+        else:
+            self.park_direction = "left"
+
     def calculateGoals(self):
-        # current params for right turns only
-        pos1 = [0, 3, 1]
-        rot1 = [-np.pi/2, 0, -np.pi/2]
-        self.goal1 = self.generateParkingGoal(self.tag_tf, pos1, rot1)
+        # if apriltag is to the right of the line
+        if self.park_direction == "right":
+            pos1 = [0, 3, 1] # position relative to detected tag pose
+            rot1 = [0, -np.pi/4, -np.pi/4]
 
-        # pub 2nd goal once
-        pos2 = [0, 0, 4]
-        rot2 = [0, -np.pi/2, -np.pi/2]
-        self.goal2 = self.generateParkingGoal(self.tag_tf, pos2, rot2)
+            pos2 = [0, 0, 4]
+            rot2 = [0, -np.pi/2, -np.pi/2]
 
-        return
+        # if apriltag is to the left of the line
+        elif self.park_direction == "left":
+            pos1 = [0, 1.5, -1]
+            rot1 = [0, np.pi/4, -np.pi/4]
 
-    def generateParkingGoal(self, tf, pos, rot):
+            pos2 = [0, 0, -4]
+            rot2 = [0, np.pi/2, np.pi/2]
+        
+        self.goal1 = self.generateParkingGoal(self.tag_tf, pos1, rot1, 1)
+        self.goal2 = self.generateParkingGoal(self.tag_tf, pos2, rot2, 2)
+
+    def generateParkingGoal(self, tf, pos, rot, goal_num):
         '''
         waypoint published to movebase
         '''
+
+        name = "parking_goal" + str(goal_num)
         tag2waypoint = PoseStamped()
         tag2waypoint.pose.position.x = pos[0]
         tag2waypoint.pose.position.y = pos[1]
@@ -97,11 +126,25 @@ class Parker:
         tag2waypoint.pose.orientation.z = z
         tag2waypoint.pose.orientation.w = w
 
+        #####################
+        self.parkingBroadcaster.sendTransform((pos[0],pos[1],pos[2]),
+                                               (x,y,z,w),
+                                               rospy.Time.now(),
+                                               name,
+                                               self.aruco_frame_name)
+
         # Get the goal in correct frame
         goal = do_transform_pose(tag2waypoint, tf)
         goal.pose.position.z = 0 # Enforce 2D nav constraint
         # Correct the orientation of the tag (enforce roll and pitch zero)
         goal.pose.orientation = self.orientationCorrection(goal.pose.orientation)
+
+        #########################
+        self.parkingBroadcaster.sendTransform((goal.pose.position.x, goal.pose.position.y, goal.pose.position.z),
+                                               (goal.pose.orientation.x,goal.pose.orientation.y,goal.pose.orientation.z,goal.pose.orientation.w),
+                                               rospy.Time.now(),
+                                               name + "_proj",
+                                               self.goal_frame_id)
 
         return goal
     
