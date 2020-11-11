@@ -216,10 +216,13 @@ class Parker:
         # Error in orientation (yaw) in degrees
         # make sure the orientation is the same in hardware so that the "270" works as well
         yaw_err   = np.abs((self.target_pose[2]*180/3.14 - 270) - self.reached_pose[2]*180/3.14) #comparing the aruco tag (rotated by 270deg) with husky's yaw
+        if yaw_err > 300:
+            yaw_err -= 360
         print "Target pose (x,y,theta): ", self.target_pose[:-1]*100, self.target_pose[2]*180/3.14 - 270
         print "Reached pose (x,y,theta): ", self.reached_pose[:-1]*100, self.reached_pose[2]*180/3.14
         print "Translation error (cms): ", trans_err
         print "Orientation error (deg): ", yaw_err
+        print "Net error (norm of the error)", np.linalg.norm(trans_err)
     
     def get_target_pose(self, gt):
         
@@ -229,7 +232,6 @@ class Parker:
         if self.park_direction == "left":
             compensation = np.array([0.0, np.sign(self.aruco_tag_gt.position.y)*4.0, 0.0])
         aruco_tag_gt_2d = np.array([self.aruco_tag_gt.position.x , self.aruco_tag_gt.position.y, self.quat_to_euler(self.aruco_tag_gt.orientation)[2]]) - compensation
-
         return aruco_tag_gt_2d
 
     def get_reached_pose(self, gt):
