@@ -11,6 +11,7 @@ import os
 # Include messages
 from geometry_msgs.msg import PoseStamped, Quaternion, Pose
 from tf.transformations import quaternion_matrix, quaternion_from_matrix
+from gazebo_msgs.msg import LinkStates
 
 class Parker:
     def __init__(self, goal_topic, tag_topic, goal_frame_id, husky_frame_id, aruco_frame_name,debug=True):
@@ -50,7 +51,13 @@ class Parker:
         # flag to know when we are ready to defer to parker's goals
         self.ready = False
 
+        # Validation data members
         self.park_direction = None
+        self.target_pose    = None
+        self.reached_pose   = None
+        self.aruco_tag_gt = None
+        self.base_link_gt = None
+        self.gt_topic       = '/gazebo/link_states'
 
 
     def collectTagPoses(self, tag_pose):
@@ -196,3 +203,43 @@ class Parker:
         tf = self.tfArray[votes.index(max(votes))]
 
         return tf
+    
+    def calculate_error(self):
+        
+        # Get the ground truth and actual poses
+        gt = rospy.wait_for_message(self.gt_topic, LinkStates)
+        self.target_pose = self.get_target_pose(gt)
+        self.reached_pose = self.get_reached_pose(gt)
+
+        # Error in x and y in cms
+        trans_err = (self.target_pose[:-1] - self.reached_pose[:-1])*100
+        # Error in orientation (yaw) in degrees
+        # make sure the orientation is the same in hardware so that the "270" works as well
+        yaw_err   = np.abs((self.target_pose[2]*180/3.14 - 270) - self.reached_pose[2]*180/3.14) #comparing the aruco tag (rotated by 270deg) with husky's yaw
+        print "Target pose (x,y,theta): ", self.target_pose[:-1]*100, self.target_pose[2]*180/3.14 - 270
+        print "Reached pose (x,y,theta): ", self.reached_pose[:-1]*100, self.reached_pose[2]*180/3.14
+        print "Translation error (cms): ", trans_err
+        print "Orientation error (deg): ", yaw_err
+    
+    def get_target_pose(self, gt):
+        
+        self.aruco_tag_gt    = gt.pose[-18] # name 'aruco_visual_marker_7::marker' <to-do> find the name! Don't HC
+        if self.park_direction == "right":
+            compensation = np.array([0.0, np.sign(self.aruco_tag_gt.position.y)*4.0 ,0.0])
+        if self.park_direction == "left":
+            compensation = np.array([0.0, np.sign(self.aruco_tag_gt.position.y)*4.0, 0.0])
+        aruco_tag_gt_2d = np.array([self.aruco_tag_gt.position.x , self.aruco_tag_gt.position.y, self.quat_to_euler(self.aruco_tag_gt.orientation)[2]]) - compensation
+
+        return aruco_tag_gt_2d
+
+    def get_reached_pose(self, gt):
+        self.base_link_gt    = gt.pose[-5] # base_link w.r.t the gazebo world origin
+        base_link_gt_2d = np.array([self.base_link_gt.position.x, self.base_link_gt.position.y, self.quat_to_euler(self.base_link_gt.orientation)[2]])
+
+        return base_link_gt_2d
+
+    def quat_to_euler(self, q):
+        # euler indexing as RPY
+        quaternion = (q.x, q.y, q.z, q.w)
+        euler = euler_from_quaternion(quaternion)
+        return euler

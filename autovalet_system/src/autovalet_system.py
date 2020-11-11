@@ -290,6 +290,7 @@ class AutoValet:
                 self.printState()
                 self.prev_state = self.current_state
                 self.printTimeElapsed()
+                self.parker.calculate_error()
     
     def printTimeElapsed(self):
         secs = rospy.get_time() - self.start_time
