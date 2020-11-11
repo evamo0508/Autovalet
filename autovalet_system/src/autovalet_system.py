@@ -48,6 +48,7 @@ class AutoValet:
         self.sim = sim
         self.controller_rate = rospy.Rate(20)
         self.replan_rate = 2 # in seconds
+        self.start_time = None
 
         # moveBase setup #############################
         self.moveBaseListener = MoveBaseListener(debug=False)
@@ -162,6 +163,14 @@ class AutoValet:
             # generate goal from the egoline
             if self.ego_line is not None:
                 self.current_goal = self.goalGenerator.generate_goal_from_egoline(self.ego_line, self.depth_frame_id)
+
+                # if the quaternion is all zeros, return false (this happens for the first few iterations of run())
+                if (self.current_goal.pose.orientation.w + 
+                    self.current_goal.pose.orientation.x +
+                    self.current_goal.pose.orientation.y +
+                    self.current_goal.pose.orientation.z) == 0:
+                    return False
+
                 self.goal_pub.publish(self.current_goal)
                 self.previous_time = rospy.get_time()
                 self.empty_line_count = 0
@@ -172,6 +181,14 @@ class AutoValet:
             # gen a left turn goal
             elif self.empty_line_count == self.empty_line_tol and self.prev_state != State.START:
                 self.current_goal = self.goalGenerator.generate_goal_for_left_turn(self.husky_frame)
+
+                # if the quaternion is all zeros, return false (this happens for the first few iterations of run())
+                if (self.current_goal.pose.orientation.w + 
+                    self.current_goal.pose.orientation.x +
+                    self.current_goal.pose.orientation.y +
+                    self.current_goal.pose.orientation.z) == 0:
+                    return False
+
                 self.goal_pub.publish(self.current_goal)
                 self.previous_time = rospy.get_time()
                 self.empty_line_count = 0
@@ -188,15 +205,16 @@ class AutoValet:
             self.printState()
             self.prev_state = State.START
             self.current_state = State.SEND_GOAL
+            self.start_time = rospy.get_time()
 
         # SEND_GOAL state #############################
         elif self.current_state == State.SEND_GOAL:
             # get goal from lane detector and publish
             success = self.sendGoal()
-            self.printState()
 
             # move to PLANNING state
             if success:
+                self.printState()
                 self.prev_state = self.current_state
                 self.current_state = State.PLANNING
             self.prev_time = rospy.get_time()
@@ -209,6 +227,10 @@ class AutoValet:
                 self.prev_state = self.current_state
 
             else:
+                
+                # Check if planning failed, if so replan
+                if self.moveBaseListener.getState() == MoveBaseState.Fail:
+                    self.current_state = State.SEND_GOAL
 
                 # if it's been 2 secs since last sent goal (allow for processing time) AND we're within 2 m of last goal,
                 # move to the SEND_GOAL state
@@ -267,6 +289,17 @@ class AutoValet:
             if self.prev_state != State.FINISH:
                 self.printState()
                 self.prev_state = self.current_state
+                self.printTimeElapsed()
+    
+    def printTimeElapsed(self):
+        secs = rospy.get_time() - self.start_time
+        mins = int(secs // 60)
+        secs = int(np.round(secs % 60))
+        print('\n')
+        print('\n')
+        print('\n')
+        rospy.logwarn("Total Runtime: ")
+        rospy.logwarn("  " + str(mins) + ":" + str(secs))
 
     # fxn to print pretty log msgs (roswarn just cause yellow is easier to read imo)
     def printState(self):

@@ -116,22 +116,27 @@ class MoveBaseListener:
         if status_array_msg.status_list:
             current_status = status_array_msg.status_list[-1]
 
-            if current_status.status != ACTIVE and self.plan_state == MoveBaseState.Waiting:
-                return
+            # Making a primary check for failed move base state used
+            # in state machine to detect goals inside obstacles
+            if current_status.status == ABORTED:
+                self.plan_state = MoveBaseState.Fail
 
-            if current_status.status == ACTIVE:
-                if self.plan_state == MoveBaseState.Waiting:
-                    self.plan_state = MoveBaseState.Planning
+            # if current_status.status != ACTIVE and self.plan_state == MoveBaseState.Waiting:
+            #     return
+
+            # if current_status.status == ACTIVE:
+            #     if self.plan_state == MoveBaseState.Waiting:
+            #         self.plan_state = MoveBaseState.Planning
             
-                elif self.plan_state == MoveBaseState.Planning:
-                    current_pose = getCurrentPose()
+            #     elif self.plan_state == MoveBaseState.Planning:
+            #         current_pose = getCurrentPose()
 
-                    if not arePosesClose(current_pose,self.start_pose):
-                        self.plan_state = MoveBaseState.Executing
-                    else:
-                        return
-                elif self.plan_state == MoveBaseState.Executing:
-                    return
+            #         if not arePosesClose(current_pose,self.start_pose):
+            #             self.plan_state = MoveBaseState.Executing
+            #         else:
+            #             return
+            #     elif self.plan_state == MoveBaseState.Executing:
+            #         return
 
             elif current_status.status == SUCCEEDED:
                 if self.plan_state == MoveBaseState.Waiting:
