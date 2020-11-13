@@ -78,7 +78,7 @@ class Parker:
             self.tag_tf = self.tagPoseRANSAC()
             self.setParkDirection()
             self.calculateGoals()
-            # self.aruco_subscriber.unregister()
+            self.aruco_subscriber.unregister()
             # os.system("rosnode kill ARUCO")
     
     def getTagTF(self):
@@ -91,7 +91,11 @@ class Parker:
         return [self.goal1,self.goal2]
 
     def setParkDirection(self):
-        if self.centerline_midpt.y > self.tag_tf.transform.translation.y:
+        tag_to_base_link = self.tf_buffer.lookup_transform(self.husky_frame_id,
+                                                           self.aruco_frame_name,
+                                                           rospy.Time(0),
+                                                           rospy.Duration(1.0))
+        if self.centerline_midpt.y > tag_to_base_link.transform.translation.y:
             self.park_direction = "right"
         else:
             self.park_direction = "left"
@@ -228,9 +232,9 @@ class Parker:
         
         self.aruco_tag_gt    = gt.pose[-18] # name 'aruco_visual_marker_7::marker' <to-do> find the name! Don't HC
         if self.park_direction == "right":
-            compensation = np.array([0.0, np.sign(self.aruco_tag_gt.position.y)*4.0 ,0.0])
+            compensation = np.array([0.0, -4.0 ,0.0])
         if self.park_direction == "left":
-            compensation = np.array([0.0, np.sign(self.aruco_tag_gt.position.y)*4.0, 0.0])
+            compensation = np.array([0.0, 4.0, 0.0])
         aruco_tag_gt_2d = np.array([self.aruco_tag_gt.position.x , self.aruco_tag_gt.position.y, self.quat_to_euler(self.aruco_tag_gt.orientation)[2]]) - compensation
         return aruco_tag_gt_2d
 

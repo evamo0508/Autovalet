@@ -103,7 +103,7 @@ class LaneDetector:
             tmp_centerline_midpt.point.x = center_line_cloud[0,0]
             tmp_centerline_midpt.point.y = center_line_cloud[0,1]
             tmp_centerline_midpt.point.z = center_line_cloud[0,2]                        
-            centerline_midpt = do_transform_point(tmp_centerline_midpt,transf).point 
+            centerline_midpt = do_transform_point(tmp_centerline_midpt,transf).point
 
             if self.debug:
                 print ("line: ", centerline_midpt)

@@ -49,6 +49,7 @@ class AutoValet:
         self.controller_rate = rospy.Rate(20)
         self.replan_rate = 2 # in seconds
         self.start_time = None
+        self.py_time = None
 
         # moveBase setup #############################
         self.moveBaseListener = MoveBaseListener(debug=False)
@@ -158,7 +159,6 @@ class AutoValet:
         # self.processState()
 
     def sendGoal(self):
-
         if self.current_state != State.PARK:
             # generate goal from the egoline
             if self.ego_line is not None:
@@ -254,7 +254,7 @@ class AutoValet:
 
         # PARK state ############################
         elif self.current_state == State.PARK:
-
+            
             # printState() the first time you enter this state
             if self.prev_state != State.PARK:
                 # rospy.ServiceProxy("/move_base/clear_costmaps", {})
