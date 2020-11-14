@@ -3,7 +3,7 @@ sim=$1
 turn=$2
 park=$3
 
-logfile = $HOME/slam_log.txt
+logfile=$HOME/slam_log.txt
 rm $logfile
 
 if [ "$sim" = "true" ]
