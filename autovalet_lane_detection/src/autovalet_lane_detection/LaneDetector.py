@@ -31,7 +31,7 @@ from utils import publishCloud
 
 class LaneDetector:
 
-    def __init__(self, colorInfo_topic, laneCloud_topic, egoLine_topic, hlsBounds, lineParams,debug=True):
+    def __init__(self, colorInfo_topic, laneCloud_topic, egoLine_topic, hlsBounds, lineParams, sim, debug=True):
 
         # Setup publishers
         self.laneCloud_pub = rospy.Publisher(laneCloud_topic, PointCloud2, queue_size=1)
@@ -72,7 +72,7 @@ class LaneDetector:
 
     def detectLaneRGBD(self, color_img, depth_img):
         # lane detection algo
-        center_line_coordinates = self.center_line_detection(color_img)                # px2
+        center_line_coordinates = self.center_line_detection(color_img)
         try:
             center_line_cloud = self.line2cloud(depth_img, center_line_coordinates)    # px3
             norm_vec          = self.findNormalVectorInCloud(center_line_cloud)
@@ -141,7 +141,6 @@ class LaneDetector:
         # detect center line
         edges = cv2.Canny(roi, 100, 200, apertureSize=3)
         lines = cv2.HoughLinesP(edges, 1, np.pi/180, 30, np.array([]), self.minLineLength, self.maxLineGap)
-
         # possible scenarios: 0. no line detected 1. new line 2. tracking
         max_len, scenario = 0, 0
         X1, Y1, X2, Y2 = 0, 0, 0, 0

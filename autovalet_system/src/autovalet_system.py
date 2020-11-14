@@ -63,6 +63,7 @@ class AutoValet:
         self.color_topic     = "/frontCamera/color/image_raw"
         self.depth_topic     = "/depth_registered/image_rect" if self.sim else \
                                "/frontCamera/aligned_depth_to_color/image_raw"
+        print(self.depth_topic, self.color_topic)
         self.ld_init         = False # flag to make sure lane_detector is initialized before trying to use it in callback
 
         self.laneDetector    = self.init_detector(self.colorInfo_topic,
@@ -88,7 +89,8 @@ class AutoValet:
         self.goalGenerator      = goal_generator(self.map_frame)
         self.current_goal       = PoseStamped()
         self.empty_line_count   = 0
-        self.empty_line_tol     = 10
+        self.empty_line_tol     = 100
+        self.is_left_turn       = False
 
         # parking setup ###########################################################
         # tag_topic - name of the topic in which the pose of the marker is being published
@@ -132,6 +134,7 @@ class AutoValet:
                           egoLine_topic,
                           hlsBounds,
                           lineParams,
+			  self.sim,
                           debug=True)
 
         self.ld_init = True
@@ -173,6 +176,7 @@ class AutoValet:
 
                 self.goal_pub.publish(self.current_goal)
                 self.previous_time = rospy.get_time()
+                self.is_left_turn = False
                 self.empty_line_count = 0
                 return True
             # accumlate consecutive frames w/o lines
@@ -192,6 +196,7 @@ class AutoValet:
 
                 self.goal_pub.publish(self.current_goal)
                 self.previous_time = rospy.get_time()
+                self.is_left_turn = True
                 self.empty_line_count = 0
                 return True
             return False
@@ -235,7 +240,7 @@ class AutoValet:
 
                 # if it's been 2 secs since last sent goal (allow for processing time) AND we're within 2 m of last goal,
                 # move to the SEND_GOAL state
-                if rospy.get_time() - self.prev_time > self.replan_rate and self.parker.distToGoal(self.current_goal) <= 2:
+                if rospy.get_time() - self.prev_time > self.replan_rate and (self.parker.distToGoal(self.current_goal) <= 2 or self.is_left_turn):
                     self.prev_state = self.current_state
                     self.current_state = State.SEND_GOAL
 
