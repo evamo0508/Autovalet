@@ -61,7 +61,8 @@ class AutoValet:
         self.laneCloud_topic = "/lane/pointCloud"
         self.egoLine_topic   = "/lane/egoLine"
         self.color_topic     = "/frontCamera/color/image_raw"
-        self.depth_topic     = "/depth_registered/image_rect"
+        self.depth_topic     = "/depth_registered/image_rect" if self.sim else \
+                               "/frontCamera/aligned_depth_to_color/image_raw"
         self.ld_init         = False # flag to make sure lane_detector is initialized before trying to use it in callback
 
         self.laneDetector    = self.init_detector(self.colorInfo_topic,
@@ -131,7 +132,7 @@ class AutoValet:
                           egoLine_topic,
                           hlsBounds,
                           lineParams,
-                          debug=False)
+                          debug=True)
 
         self.ld_init = True
 
@@ -148,7 +149,6 @@ class AutoValet:
         self.depth_img = self.bridge.imgmsg_to_cv2(depth_msg, desired_encoding="passthrough")
 
         self.depth_frame_id = depth_msg.header.frame_id
-
         # if we're not in the PARK/FINSIH state AND the lane detector has been successfully initialized, detect the lane and publish
         if (self.current_state != State.PARK and self.current_state != State.FINISH) and self.ld_init:
             # lane detection algo
@@ -180,6 +180,7 @@ class AutoValet:
                 self.empty_line_count += 1
             # gen a left turn goal
             elif self.empty_line_count == self.empty_line_tol and self.prev_state != State.START:
+                
                 self.current_goal = self.goalGenerator.generate_goal_for_left_turn(self.husky_frame)
 
                 # if the quaternion is all zeros, return false (this happens for the first few iterations of run())

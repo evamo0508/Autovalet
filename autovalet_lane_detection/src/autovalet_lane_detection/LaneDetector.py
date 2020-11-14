@@ -76,13 +76,11 @@ class LaneDetector:
         try:
             center_line_cloud = self.line2cloud(depth_img, center_line_coordinates)    # px3
             norm_vec          = self.findNormalVectorInCloud(center_line_cloud)
-
             # Generate the right line for enforcing costmap constraints
             right_line        = self.interpolateLine(center_line_cloud, norm_vec, self.lane_width)
             lane_cloud        = np.vstack((center_line_cloud, right_line)) # 2px3
             # Generate the ego line for goal generation
             ego_line          = self.interpolateLine(center_line_cloud, norm_vec, self.lane_width/2) # px3
-
             # Publish all our computed clouds
             publishCloud(lane_cloud, self.camera.header.frame_id, self.laneCloud_pub)
             publishCloud(ego_line, self.camera.header.frame_id, self.egoLine_pub)
@@ -91,7 +89,6 @@ class LaneDetector:
             ## Parking directions            
             index = int(round((center_line_coordinates.shape[0] + 1) / 2 ))
             center_line_coordinates= center_line_coordinates[index,:]
-            
             if center_line_coordinates.shape[0] != 0:
                 center_line_cloud = self.line2cloud(depth_img, center_line_coordinates.reshape(1,-1))    # px3      
 
