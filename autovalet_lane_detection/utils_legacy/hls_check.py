@@ -21,7 +21,7 @@ cv2.createTrackbar('s2', 'result',0,255,nothing)
 
 while(1):
 
-    frame = cv2.imread(os.environ.get('HOME') + '/Pictures/simturn.png')
+    frame = cv2.imread(os.environ.get('HOME') + '/Pictures/lot2.png')
 
     #converting to HSV
     hls = cv2.cvtColor(frame,cv2.COLOR_BGR2HLS)

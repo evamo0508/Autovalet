@@ -171,11 +171,11 @@ class LaneDetector:
             # assuming slope being positive, might have bug
             # sign of slope is flipped here b/c origin is at top-left corner of image
             if slope > 1:
-                #coordinates = [[X1+i, int(Y1-i*slope)] for i in range(X2-X1)]
-                coordinates = [[int(X1+i/slope), Y1-i] for i in range(Y1-Y2)]
-            else:
-                #coordinates = [[int(X1+i/slope), Y1-i] for i in range(Y1-Y2)]
                 coordinates = [[X1+i, int(Y1-i*slope)] for i in range(X2-X1)]
+                # coordinates = [[int(X1+i/slope), Y1-i] for i in range(Y1-Y2)]
+            else:
+                coordinates = [[int(X1+i/slope), Y1-i] for i in range(Y1-Y2)]
+                # coordinates = [[X1+i, int(Y1-i*slope)] for i in range(X2-X1)]
         return np.array(coordinates)
 
     def line2cloud(self, depth, coordinates):

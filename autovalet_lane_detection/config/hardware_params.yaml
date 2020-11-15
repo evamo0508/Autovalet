@@ -5,7 +5,7 @@ hlsbounds:
         s: 0.90
     upperbound:
         h: 30.0
-        l: 1.00
+        l: 0.94 #1.00
         s: 1.00
 lineparams:
     minLineLength: 100
