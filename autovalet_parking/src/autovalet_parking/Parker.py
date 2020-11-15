@@ -79,7 +79,6 @@ class Parker:
             self.setParkDirection()
             self.calculateGoals()
             self.aruco_subscriber.unregister()
-            # os.system("rosnode kill ARUCO")
     
     def getTagTF(self):
         return self.tag_tf
@@ -221,7 +220,7 @@ class Parker:
         # make sure the orientation is the same in hardware so that the "270" works as well
         yaw_err   = np.abs((self.target_pose[2]*180/3.14 - 270) - self.reached_pose[2]*180/3.14) #comparing the aruco tag (rotated by 270deg) with husky's yaw
         if yaw_err > 300:
-            yaw_err -= 360
+            yaw_err -= np.pi
         print "Target pose (x,y,theta): ", self.target_pose[:-1]*100, self.target_pose[2]*180/3.14 - 270
         print "Reached pose (x,y,theta): ", self.reached_pose[:-1]*100, self.reached_pose[2]*180/3.14
         print "Translation error (cms): ", trans_err
@@ -229,8 +228,9 @@ class Parker:
         print "Net error (norm of the error)", np.linalg.norm(trans_err)
     
     def get_target_pose(self, gt):
-        
-        self.aruco_tag_gt    = gt.pose[-18] # name 'aruco_visual_marker_7::marker' <to-do> find the name! Don't HC
+        for index, name in enumerate(gt.name):
+            if name == "aruco_visual_marker_7::marker":
+                self.aruco_tag_gt    = gt.pose[index]
         if self.park_direction == "right":
             compensation = np.array([0.0, -4.0 ,0.0])
         if self.park_direction == "left":
@@ -239,7 +239,9 @@ class Parker:
         return aruco_tag_gt_2d
 
     def get_reached_pose(self, gt):
-        self.base_link_gt    = gt.pose[-5] # base_link w.r.t the gazebo world origin
+        for index, name in enumerate(gt.name):
+            if name == "base_link":
+                self.base_link_gt    = gt.pose[index] # base_link w.r.t the gazebo world origin
         base_link_gt_2d = np.array([self.base_link_gt.position.x, self.base_link_gt.position.y, self.quat_to_euler(self.base_link_gt.orientation)[2]])
 
         return base_link_gt_2d

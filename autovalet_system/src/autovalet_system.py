@@ -137,9 +137,6 @@ class AutoValet:
 
         return LD
 
-    # def published(self):
-
-
     # callback for image messages. this is what keeps the system moving forward, as processState gets
     # called everytime we get a new img
     def registered_image_callback(self, color_msg, depth_msg):
@@ -245,8 +242,8 @@ class AutoValet:
                         print('parking goals populated')
                         self.parking_goals = self.parker.getParkingPoses()
                         # self.publishParkingTFs()
-                    print(self.parker.distToGoal(self.parking_goals[0]), .48 * self.costmap_height)
-                    if self.parker.distToGoal(self.parking_goals[0]) <= 0.48 * self.costmap_height:
+                    print(self.parker.distToGoal(self.parking_goals[0]), .44 * self.costmap_height)
+                    if self.parker.distToGoal(self.parking_goals[0]) <= 0.44 * self.costmap_height:
                         print('in costmap')
                         self.prev_state = self.current_state
                         self.current_state = State.PARK
@@ -275,13 +272,6 @@ class AutoValet:
                         self.moveBaseKiller.publish(GoalID())
                         self.prev_state = self.current_state
                         self.current_state = State.FINISH
-
-
-            # if the moveBaseListener is waiting for a new goal, that means we've reached the last goal we've
-            # sent, so we're done!
-            # if self.moveBaseListener.getState() == MoveBaseState.Waiting:
-            #     self.prev_state = self.current_state
-            #     self.current_state = State.FINISH
 
         # FINISH state #############################
         # TODO - print parking error and time here
