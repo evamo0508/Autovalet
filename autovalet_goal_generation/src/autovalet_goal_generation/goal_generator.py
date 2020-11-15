@@ -57,9 +57,12 @@ class goal_generator:
         line_direction = np.sign(line_direction[-1])*line_direction
 
         # generate target pos
-        dist_to_costmap  = egoline_midpoint[2] - 0.5 * self.costmap_height
+        dist_to_costmap  = egoline_midpoint[2] - 0.5 * (0.8) * self.costmap_height
         dist_to_costmap  = max(0, dist_to_costmap)
+        print("dist", dist_to_costmap)
         target_point     = egoline_midpoint - 1.2 * line_direction * dist_to_costmap
+        print("tp", target_point)
+        print("cmap ht", self.costmap_height)
 
         # Convert the direction vector to quaternion
         line_quaternion = direction_vector_to_quaternion(line_direction)

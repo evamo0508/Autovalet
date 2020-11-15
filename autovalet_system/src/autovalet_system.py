@@ -134,8 +134,8 @@ class AutoValet:
                           egoLine_topic,
                           hlsBounds,
                           lineParams,
-			  self.sim,
-                          debug=True)
+                          self.sim,
+                          debug=False)
 
         self.ld_init = True
 
@@ -179,6 +179,7 @@ class AutoValet:
                 self.is_left_turn = False
                 self.empty_line_count = 0
                 return True
+            """
             # accumlate consecutive frames w/o lines
             elif self.empty_line_count < self.empty_line_tol:
                 self.empty_line_count += 1
@@ -199,6 +200,7 @@ class AutoValet:
                 self.is_left_turn = True
                 self.empty_line_count = 0
                 return True
+            """
             return False
         
         else:
