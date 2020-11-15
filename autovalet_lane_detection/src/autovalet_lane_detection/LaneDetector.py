@@ -176,7 +176,6 @@ class LaneDetector:
             else:
                 #coordinates = [[int(X1+i/slope), Y1-i] for i in range(Y1-Y2)]
                 coordinates = [[X1+i, int(Y1-i*slope)] for i in range(X2-X1)]
-
         return np.array(coordinates)
 
     def line2cloud(self, depth, coordinates):
