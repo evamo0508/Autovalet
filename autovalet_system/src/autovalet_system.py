@@ -107,8 +107,9 @@ class AutoValet:
                             debug=False)
 
         self.parking_goals = None
-        self.parking_thresholds_m = [1,.2]
-        self.angle_threshold_rad = 0.26 # 15 deg
+        self.parking_thresholds_m = [1,.3]
+        self.angle_threshold_rad = 0.35 # 15 deg
+        self.orientation_hit = False
 
     # helper fxn to load the correct lane detection params and initialize LaneDetector class
     def init_detector(self, colorInfo_topic, laneCloud_topic, egoLine_topic):
@@ -273,7 +274,10 @@ class AutoValet:
                         self.substate = State.SEND_GOAL
                 if len(self.parking_goals) == 0:
                     dist_to_goal, angle_to_goal = self.parker.distToGoal(self.current_goal)
-                    if dist_to_goal <= self.parking_thresholds_m[1] and angle_to_goal <= self.angle_threshold_rad:
+                    print(dist_to_goal,self.parking_thresholds_m[1])
+                    print('')
+                    print(angle_to_goal,self.angle_threshold_rad)
+                    if angle_to_goal <= self.angle_threshold_rad and dist_to_goal <= self.parking_thresholds_m[1]:
                         self.moveBaseKiller.publish(GoalID())
                         self.prev_state = self.current_state
                         self.current_state = State.FINISH
