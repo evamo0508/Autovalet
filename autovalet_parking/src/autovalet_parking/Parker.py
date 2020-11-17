@@ -186,9 +186,14 @@ class Parker:
         base_link_y = base_link_tf.transform.translation.y
         goal_x = goal.pose.position.x
         goal_y = goal.pose.position.y
-        dist = np.linalg.norm(np.array([base_link_x - goal_x, base_link_y - goal_y]))
+        xy_dist = np.linalg.norm(np.array([base_link_x - goal_x, base_link_y - goal_y]))
 
-        return dist
+        base_link_euler = self.quat_to_euler(base_link_tf.transform.rotation)
+        goal_euler = self.quat_to_euler(goal.pose.orientation)
+
+        yaw_dist = abs(base_link_euler[-1] - goal_euler[-1])
+
+        return xy_dist, yaw_dist
 
     def tagPoseRANSAC(self):
         '''
@@ -234,11 +239,11 @@ class Parker:
         if yaw_err > 360:
             yaw_err -= 360
 
-        print "Target pose (x,y,theta): ", self.target_pose[:-1]*100, self.target_pose[2]*180/3.14 - 270
-        print "Reached pose (x,y,theta): ", self.reached_pose[:-1]*100, self.reached_pose[2]*180/3.14
+        print "Parking spot in gazebo (x,y,theta): ", self.target_pose[:-1]*100, self.target_pose[2]*180/3.14 - 270
+        print "Final Robot in gazebo (x,y,theta): ", self.reached_pose[:-1]*100, self.reached_pose[2]*180/3.14
         print "Translation error (cms): ", trans_err
         print "Orientation error (deg): ", yaw_err
-        print "Net error (norm of the error)", np.linalg.norm(trans_err)
+        print "Net distance error (norm x,y error)", np.linalg.norm(trans_err)
     
     def get_target_pose(self, gt):
         for index, name in enumerate(gt.name):

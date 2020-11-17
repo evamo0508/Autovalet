@@ -53,7 +53,7 @@ TebLocalPlannerROS:
  # GoalTolerance
     
  xy_goal_tolerance: 0.2
- yaw_goal_tolerance: 0.4
+ yaw_goal_tolerance: 0.26
  free_goal_vel: False # allow goal to be reached with nonzero speed (useful for traversal waypoints)
     
  # Obstacles

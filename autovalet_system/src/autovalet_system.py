@@ -107,6 +107,7 @@ class AutoValet:
 
         self.parking_goals = None
         self.parking_thresholds_m = [1,.2]
+        self.angle_threshold_rad = 0.26 # 15 deg
         
 
     # helper fxn to load the correct lane detection params and initialize LaneDetector class
@@ -231,7 +232,9 @@ class AutoValet:
 
                 # if it's been 2 secs since last sent goal (allow for processing time) AND we're within 2 m of last goal,
                 # move to the SEND_GOAL state
-                if rospy.get_time() - self.prev_time > self.replan_rate and self.parker.distToGoal(self.current_goal) <= 2:
+                dist_to_goal,_ = self.parker.distToGoal(self.current_goal)
+
+                if rospy.get_time() - self.prev_time > self.replan_rate and dist_to_goal <= 2:
                     self.prev_state = self.current_state
                     self.current_state = State.SEND_GOAL
 
@@ -239,12 +242,10 @@ class AutoValet:
                 # if so, move to PARK state
                 elif self.parker.isReady():
                     if self.parking_goals == None:
-                        print('parking goals populated')
                         self.parking_goals = self.parker.getParkingPoses()
                         # self.publishParkingTFs()
-                    print(self.parker.distToGoal(self.parking_goals[0]), .44 * self.costmap_height)
-                    if self.parker.distToGoal(self.parking_goals[0]) <= 0.44 * self.costmap_height:
-                        print('in costmap')
+                    dist_to_goal, _ = self.parker.distToGoal(self.parking_goals[0])
+                    if dist_to_goal <= 0.44 * self.costmap_height:
                         self.prev_state = self.current_state
                         self.current_state = State.PARK
                 
@@ -265,10 +266,12 @@ class AutoValet:
             
             elif self.substate == State.PLANNING:
                 if len(self.parking_goals) == 1:
-                    if self.parker.distToGoal(self.current_goal) <= self.parking_thresholds_m[0]:
+                    dist_to_goal, _ = self.parker.distToGoal(self.current_goal)
+                    if dist_to_goal <= self.parking_thresholds_m[0]:
                         self.substate = State.SEND_GOAL
                 if len(self.parking_goals) == 0:
-                    if self.parker.distToGoal(self.current_goal) <= self.parking_thresholds_m[1]:
+                    dist_to_goal, angle_to_goal = self.parker.distToGoal(self.current_goal)
+                    if dist_to_goal <= self.parking_thresholds_m[1] and angle_to_goal <= self.angle_threshold_rad:
                         self.moveBaseKiller.publish(GoalID())
                         self.prev_state = self.current_state
                         self.current_state = State.FINISH
@@ -289,6 +292,9 @@ class AutoValet:
         print('\n')
         print('\n')
         print('\n')
+        print('-------------------------')
+        print('RESULTS')
+        print('-------------------------')
         rospy.logwarn("Total Runtime: ")
         rospy.logwarn("  " + str(mins) + ":" + str(secs))
 
