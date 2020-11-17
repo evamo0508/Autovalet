@@ -26,8 +26,8 @@ then
         else
             # left turns, left park
             roslaunch autovalet_gazebo setup_slam_test.launch world_file:=state_machine_lturns_lpark.world x:=-6 y:=-9 joystick:=true 1>> $logfile 2>&1
-        fi  
-    fi 
+        fi
+    fi
 else
     roslaunch autovalet_husky full_system.launch 1>> $logfile 2>&1
 fi
