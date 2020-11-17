@@ -16,15 +16,13 @@ then
             roslaunch autovalet_gazebo setup_slam_test.launch world_file:=state_machine_rturns_rpark.world x:=0 y:=6 joystick:=true 1>> $logfile 2>&1
         else
             # right turns, left park
-            roslaunch autovalet_gazebo setup_slam_test.launch world_file:=right_right_left.world x:=0 y:=6 joystick:=true 1>> $logfile 2>&1
+            roslaunch autovalet_gazebo setup_slam_test.launch world_file:=state_machine_rturns_lpark.world x:=0 y:=6 joystick:=true 1>> $logfile 2>&1
         fi
     else
         if [ "$park" = "right" ]
         then
             # left turns, right park
-            roslaunch autovalet_gazebo setup_slam_test.launch world_file:=left_left_right.world x:=-6 y:=-9 joystick:=true 1>> $logfile 2>&1
-            # roslaunch autovalet_gazebo setup_slam_test.launch world_file:=left_left_right.world x:=17.6 y:=-1.5 theta:=1.57 joystick:=true 1>> $logfile 2>&1
-            # roslaunch autovalet_gazebo setup_slam_test.launch world_file:=left_left_right.world x:=11 y:=9 theta:=3.14 joystick:=true 1>> $logfile 2>&1
+            roslaunch autovalet_gazebo setup_slam_test.launch world_file:=state_machine_lturns_rpark.world x:=-6 y:=-9 joystick:=true 1>> $logfile 2>&1
         else
             # left turns, left park
             roslaunch autovalet_gazebo setup_slam_test.launch world_file:=state_machine_lturns_lpark.world x:=-6 y:=-9 joystick:=true 1>> $logfile 2>&1
