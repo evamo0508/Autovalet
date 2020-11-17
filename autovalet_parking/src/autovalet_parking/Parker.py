@@ -17,7 +17,7 @@ class Parker:
     def __init__(self, goal_topic, tag_topic, goal_frame_id, husky_frame_id, aruco_frame_name,debug=True):
 
         # for accumulating tag poses
-        self.tag_dist_tol = 6.0
+        self.tag_dist_tol = 4.0
         self.num_tag_to_ransac = 10
         self.tfArray = []
 
@@ -65,14 +65,15 @@ class Parker:
         Take in numOfTags tag poses and do RANSAC in the end to avoid outliers
         '''
         dist2tag = np.linalg.norm(np.array([tag_pose.pose.position.x, tag_pose.pose.position.y]))
-        print tag_pose.pose.position
+        print dist2tag
+        # print tag_pose.pose.position
         if dist2tag > self.tag_dist_tol or len(self.tfArray) < self.num_tag_to_ransac: # collect tag poses
             tf = self.tf_buffer.lookup_transform(self.goal_frame_id, # map
                                     self.aruco_frame_name, # parking_spot
                                     rospy.Time(0), # get the tf at first available time
                                     rospy.Duration(1.0)) # timeout after 1
             self.tfArray.append(tf)
-        elif self.tag_count == self.tag_buffer_size: # perform RANSAC on transformArray
+        elif not self.ready: # perform RANSAC on transformArray
             self.tag_tf = self.tagPoseRANSAC()
             self.setParkDirection()
             self.calculateGoals()
@@ -110,10 +111,10 @@ class Parker:
 
         # if apriltag is to the left of the line
         elif self.park_direction == "left":
-            pos1 = [0, 1.5, -1]
+            pos1 = [0, 1.0, -0.5]
             rot1 = [0, np.pi/4, -np.pi/4]
 
-            pos2 = [0, 0.5, -6]
+            pos2 = [0, 0.5, -5]
             rot2 = [0, np.pi/2, np.pi/2]
 
         self.goal1 = self.generateParkingGoal(self.tag_tf, pos1, rot1, 1)
