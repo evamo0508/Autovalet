@@ -105,7 +105,7 @@ class Parker:
             pos1 = [0, 3, 1] # position relative to detected tag pose
             rot1 = [0, -np.pi/4, -np.pi/4]
 
-            pos2 = [0, 0.5, 4]
+            pos2 = [0, 0.5, 4.5]
             rot2 = [0, -np.pi/2, -np.pi/2]
 
         # if apriltag is to the left of the line
@@ -113,7 +113,7 @@ class Parker:
             pos1 = [0, 1.5, -1]
             rot1 = [0, np.pi/4, -np.pi/4]
 
-            pos2 = [0, 0.5, -5]
+            pos2 = [0, 0.5, -6]
             rot2 = [0, np.pi/2, np.pi/2]
 
         self.goal1 = self.generateParkingGoal(self.tag_tf, pos1, rot1, 1)
