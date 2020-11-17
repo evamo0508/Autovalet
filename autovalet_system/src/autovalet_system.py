@@ -110,7 +110,7 @@ class AutoValet:
 
         self.parking_goals = None
         self.parking_thresholds_m = [1,.2]
-        
+
 
     # helper fxn to load the correct lane detection params and initialize LaneDetector class
     def init_detector(self, colorInfo_topic, laneCloud_topic, egoLine_topic):
@@ -168,7 +168,7 @@ class AutoValet:
                 self.current_goal = self.goalGenerator.generate_goal_from_egoline(self.ego_line, self.depth_frame_id)
 
                 # if the quaternion is all zeros, return false (this happens for the first few iterations of run())
-                if (self.current_goal.pose.orientation.w + 
+                if (self.current_goal.pose.orientation.w +
                     self.current_goal.pose.orientation.x +
                     self.current_goal.pose.orientation.y +
                     self.current_goal.pose.orientation.z) == 0:
@@ -185,11 +185,11 @@ class AutoValet:
                 self.empty_line_count += 1
             # gen a left turn goal
             elif self.empty_line_count == self.empty_line_tol and self.prev_state != State.START:
-                
+
                 self.current_goal = self.goalGenerator.generate_goal_for_left_turn(self.husky_frame)
 
                 # if the quaternion is all zeros, return false (this happens for the first few iterations of run())
-                if (self.current_goal.pose.orientation.w + 
+                if (self.current_goal.pose.orientation.w +
                     self.current_goal.pose.orientation.x +
                     self.current_goal.pose.orientation.y +
                     self.current_goal.pose.orientation.z) == 0:
@@ -202,7 +202,7 @@ class AutoValet:
                 return True
             """
             return False
-        
+
         else:
             self.current_goal = self.parking_goals.pop(0)
             self.goal_pub.publish(self.current_goal)
@@ -235,7 +235,7 @@ class AutoValet:
                 self.prev_state = self.current_state
 
             else:
-                
+
                 # Check if planning failed, if so replan
                 if self.moveBaseListener.getState() == MoveBaseState.Fail:
                     self.current_state = State.SEND_GOAL
@@ -253,16 +253,16 @@ class AutoValet:
                         print('parking goals populated')
                         self.parking_goals = self.parker.getParkingPoses()
                         # self.publishParkingTFs()
-                    print(self.parker.distToGoal(self.parking_goals[0]), .48 * self.costmap_height)
-                    if self.parker.distToGoal(self.parking_goals[0]) <= 0.48 * self.costmap_height:
+                    print(self.parker.distToGoal(self.parking_goals[0]), .44 * self.costmap_height)
+                    if self.parker.distToGoal(self.parking_goals[0]) <= 0.44 * self.costmap_height:
                         print('in costmap')
                         self.prev_state = self.current_state
                         self.current_state = State.PARK
-                
+
 
         # PARK state ############################
         elif self.current_state == State.PARK:
-            
+
             # printState() the first time you enter this state
             if self.prev_state != State.PARK:
                 # rospy.ServiceProxy("/move_base/clear_costmaps", {})
@@ -273,7 +273,7 @@ class AutoValet:
             if self.substate == State.SEND_GOAL:
                 self.sendGoal()
                 self.substate = State.PLANNING
-            
+
             elif self.substate == State.PLANNING:
                 if len(self.parking_goals) == 1:
                     if self.parker.distToGoal(self.current_goal) <= self.parking_thresholds_m[0]:
@@ -299,7 +299,7 @@ class AutoValet:
                 self.prev_state = self.current_state
                 self.printTimeElapsed()
                 self.parker.calculate_error()
-    
+
     def printTimeElapsed(self):
         secs = rospy.get_time() - self.start_time
         mins = int(secs // 60)
