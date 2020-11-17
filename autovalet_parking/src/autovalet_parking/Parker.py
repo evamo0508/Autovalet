@@ -19,6 +19,7 @@ class Parker:
         # for accumulating tag poses
         self.tag_count = 0
         self.tag_buffer_size = 20
+        # self.tag_buffer_size = 50
         self.tfArray = []
 
         # Setup listeners and talkers
@@ -94,10 +95,13 @@ class Parker:
                                                            self.aruco_frame_name,
                                                            rospy.Time(0),
                                                            rospy.Duration(1.0))
+        # print("center line", self.centerline_midpt)
+        # print("tag to base", tag_to_base_link)
         if self.centerline_midpt.y > tag_to_base_link.transform.translation.y:
             self.park_direction = "right"
         else:
             self.park_direction = "left"
+        # print("park_direction", self.park_direction)
 
     def calculateGoals(self):
         # if apriltag is to the right of the line
@@ -218,9 +222,18 @@ class Parker:
         trans_err = (self.target_pose[:-1] - self.reached_pose[:-1])*100
         # Error in orientation (yaw) in degrees
         # make sure the orientation is the same in hardware so that the "270" works as well
-        yaw_err   = np.abs((self.target_pose[2]*180/3.14 - 270) - self.reached_pose[2]*180/3.14) #comparing the aruco tag (rotated by 270deg) with husky's yaw
-        if yaw_err > 300:
-            yaw_err -= np.pi
+
+        align_tag_to_goal = 0
+        if self.park_direction == "left":
+            align_tag_to_goal = -90
+        elif self.park_direction == "right":
+            align_tag_to_goal = 90
+        yaw_err   = np.abs((self.target_pose[2]*180/3.14 + align_tag_to_goal) - self.reached_pose[2]*180/3.14) #comparing the aruco tag (rotated by 270deg) with husky's yaw
+        if yaw_err>180:
+                yaw_err -=180
+        if yaw_err > 360:
+            yaw_err -= 360
+
         print "Target pose (x,y,theta): ", self.target_pose[:-1]*100, self.target_pose[2]*180/3.14 - 270
         print "Reached pose (x,y,theta): ", self.reached_pose[:-1]*100, self.reached_pose[2]*180/3.14
         print "Translation error (cms): ", trans_err
@@ -240,7 +253,7 @@ class Parker:
 
     def get_reached_pose(self, gt):
         for index, name in enumerate(gt.name):
-            if name == "base_link":
+            if name == "/::base_link":
                 self.base_link_gt    = gt.pose[index] # base_link w.r.t the gazebo world origin
         base_link_gt_2d = np.array([self.base_link_gt.position.x, self.base_link_gt.position.y, self.quat_to_euler(self.base_link_gt.orientation)[2]])
 
