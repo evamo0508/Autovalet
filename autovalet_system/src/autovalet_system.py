@@ -109,7 +109,7 @@ class AutoValet:
                             debug=False)
 
         self.parking_goals = None
-        self.parking_thresholds_m = [1,.2]
+        self.parking_thresholds_m = [2,.2]
 
 
     # helper fxn to load the correct lane detection params and initialize LaneDetector class

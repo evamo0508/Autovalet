@@ -103,10 +103,10 @@ class Parker:
     def calculateGoals(self):
         # if apriltag is to the right of the line
         if self.park_direction == "right":
-            pos1 = [0, 3, 1] # position relative to detected tag pose
+            pos1 = [0, 0, 3.0] # position relative to detected tag pose
             rot1 = [0, -np.pi/4, -np.pi/4]
 
-            pos2 = [0, 0.5, 4.5]
+            pos2 = [0, 0.5, 6.3]
             rot2 = [0, -np.pi/2, -np.pi/2]
 
         # if apriltag is to the left of the line
