@@ -142,17 +142,18 @@ class LaneDetector:
         edges = cv2.Canny(roi, 100, 200, apertureSize=3)
         lines = cv2.HoughLinesP(edges, 1, np.pi/180, 30, np.array([]), self.minLineLength, self.maxLineGap)
         # possible scenarios: 0. no line detected 1. new line 2. tracking
-        max_len, scenario = 0, 0
+        self.max_len, scenario = 0, 0
         X1, Y1, X2, Y2 = 0, 0, 0, 0
         if lines is not None: # 1. new line
             for line in lines:
                 x1, y1, x2, y2 = line[0]
                 line_len = np.sqrt((x2-x1)**2 + (y2-y1)**2)
-                if max_len < line_len:
-                    max_len = line_len
+                if self.max_len < line_len:
+                    self.max_len = line_len
                     X1, Y1, X2, Y2 = x1, y1, x2, y2
             scenario = 1
             bbox = (X1, Y1, np.abs(X2-X1), np.abs(Y2-Y1))
+            
 
         # debug image
         color = (255, 0, 0) if scenario == 1 else (0, 255, 0)

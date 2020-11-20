@@ -166,7 +166,7 @@ class AutoValet:
             # generate goal from the egoline
             if self.ego_line is not None:
                 self.current_goal = self.goalGenerator.generate_goal_from_egoline(self.ego_line, self.depth_frame_id)
-
+                print "line length: ", self.laneDetector.max_len
                 # if the quaternion is all zeros, return false (this happens for the first few iterations of run())
                 if (self.current_goal.pose.orientation.w +
                     self.current_goal.pose.orientation.x +
