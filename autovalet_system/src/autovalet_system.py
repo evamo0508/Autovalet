@@ -242,7 +242,7 @@ class AutoValet:
 
                 # if it's been 2 secs since last sent goal (allow for processing time) AND we're within 2 m of last goal,
                 # move to the SEND_GOAL state
-                if rospy.get_time() - self.prev_time > self.replan_rate: # and (self.parker.distToGoal(self.current_goal) <= 2 or self.is_left_turn):
+                if rospy.get_time() - self.prev_time > self.replan_rate or (self.parker.distToGoal(self.current_goal) <= 2): #or self.is_left_turn):
                     self.prev_state = self.current_state
                     self.current_state = State.SEND_GOAL
 
