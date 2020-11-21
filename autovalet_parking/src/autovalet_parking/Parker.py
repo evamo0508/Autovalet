@@ -17,7 +17,7 @@ class Parker:
     def __init__(self, goal_topic, tag_topic, goal_frame_id, husky_frame_id, aruco_frame_name,debug=True):
 
         # for accumulating tag poses
-        self.tag_dist_tol = 5.0
+        self.tag_dist_tol = 5.5 #5 for right
         self.num_tag_to_ransac = 10
         self.tfArray = []
 
@@ -63,7 +63,8 @@ class Parker:
         '''
         Take in numOfTags tag poses and do RANSAC in the end to avoid outliers
         '''
-        dist2tag = np.linalg.norm(np.array([tag_pose.pose.position.x, tag_pose.pose.position.y]))
+        #dist2tag = np.linalg.norm(np.array([tag_pose.pose.position.x, tag_pose.pose.position.y]))
+        dist2tag = np.abs(tag_pose.pose.position.x)
         print dist2tag
         # print tag_pose.pose.position
         if dist2tag > self.tag_dist_tol or len(self.tfArray) < self.num_tag_to_ransac: # collect tag poses
@@ -113,12 +114,12 @@ class Parker:
 
         # if apriltag is to the left of the line
         elif self.park_direction == "left":
-            pos = [[0, 0.5, -1.0]
-                   [0, 0.5, -1.0],
-                   [0, 0.5, 5.5]]
+            pos = [[0, 2.0, -0.5],
+                   [0, 0.0, -2.5],
+                   [0, 0.0, -5.5]]
                      
             rot = [[0, np.pi/4, -np.pi/4],
-                   [0, np.pi/4, -np.pi/4],
+                   [0, 3*np.pi/8, -3*np.pi/8],
                    [0, np.pi/2, np.pi/2]]
 
         for i in range(3):
