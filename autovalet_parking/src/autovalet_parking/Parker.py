@@ -17,7 +17,7 @@ class Parker:
     def __init__(self, goal_topic, tag_topic, goal_frame_id, husky_frame_id, aruco_frame_name,debug=True):
 
         # for accumulating tag poses
-        self.tag_dist_tol = 4.0
+        self.tag_dist_tol = 5.0
         self.num_tag_to_ransac = 10
         self.tfArray = []
 
@@ -41,9 +41,8 @@ class Parker:
         self.first_goal_is_close_meter   = 0.8
         self.debug = debug
 
-        # parking goals
-        self.goal1 = PoseStamped()
-        self.goal2 = PoseStamped()
+        # parking goals (3 waypoints)
+        self.goal = [PoseStamped(), PoseStamped(), PoseStamped()]
 
         # ground truth parking goal calculated from Gazebo links
         self.gt_goal2 = PoseStamped()
@@ -88,7 +87,7 @@ class Parker:
         return self.ready
 
     def getParkingPoses(self):
-        return [self.goal1,self.goal2]
+        return self.goal
 
     def setParkDirection(self):
         tag_to_base_link = self.tf_buffer.lookup_transform(self.husky_frame_id,
@@ -103,23 +102,27 @@ class Parker:
     def calculateGoals(self):
         # if apriltag is to the right of the line
         if self.park_direction == "right":
-            pos1 = [0, 0.5, 3.0] # position relative to detected tag pose
-            # rot1 = [0, -np.pi/4, -np.pi/4]
-            rot1 = [0, -np.pi/2, -np.pi/2]
-
-            pos2 = [0, 0.5, 5.5]
-            rot2 = [0, -np.pi/2, -np.pi/2]
+            # position relative to detected tag pose
+            pos = [[0, 2.0, 1.0],
+                   [0, 1.0, 3.0],
+                   [0, 0.5, 5.5]]
+                        
+            rot = [[0, -np.pi/4, -np.pi/4],
+                   [0, -3*np.pi/8, -3*np.pi/8],
+                   [0, -np.pi/2, -np.pi/2]]
 
         # if apriltag is to the left of the line
         elif self.park_direction == "left":
-            pos1 = [0, 0.5, -1.0]
-            rot1 = [0, np.pi/4, -np.pi/4]
+            pos = [[0, 0.5, -1.0]
+                   [0, 0.5, -1.0],
+                   [0, 0.5, 5.5]]
+                     
+            rot = [[0, np.pi/4, -np.pi/4],
+                   [0, np.pi/4, -np.pi/4],
+                   [0, np.pi/2, np.pi/2]]
 
-            pos2 = [0, 0.5, -5]
-            rot2 = [0, np.pi/2, np.pi/2]
-
-        self.goal1 = self.generateParkingGoal(self.tag_tf, pos1, rot1, 1)
-        self.goal2 = self.generateParkingGoal(self.tag_tf, pos2, rot2, 2)
+        for i in range(3):
+            self.goal[i] = self.generateParkingGoal(self.tag_tf, pos[i], rot[i], i)
 
     def generateParkingGoal(self, tf, pos, rot, goal_num):
         '''

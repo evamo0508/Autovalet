@@ -112,7 +112,7 @@ class AutoValet:
                             debug=False)
 
         self.parking_goals = None
-        self.parking_thresholds_m = [2,.2]
+        self.parking_thresholds_m = [2.0, 2.0, .2]
 
 
     # helper fxn to load the correct lane detection params and initialize LaneDetector class
@@ -287,11 +287,14 @@ class AutoValet:
                 self.substate = State.PLANNING
 
             elif self.substate == State.PLANNING:
-                if len(self.parking_goals) == 1:
+                if len(self.parking_goals) == 2:
                     if self.parker.distToGoal(self.current_goal) <= self.parking_thresholds_m[0]:
                         self.substate = State.SEND_GOAL
-                if len(self.parking_goals) == 0:
+                if len(self.parking_goals) == 1:
                     if self.parker.distToGoal(self.current_goal) <= self.parking_thresholds_m[1]:
+                        self.substate = State.SEND_GOAL
+                if len(self.parking_goals) == 0:
+                    if self.parker.distToGoal(self.current_goal) <= self.parking_thresholds_m[2]:
                         self.moveBaseKiller.publish(GoalID())
                         self.prev_state = self.current_state
                         self.current_state = State.FINISH
