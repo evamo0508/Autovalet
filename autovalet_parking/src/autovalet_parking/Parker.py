@@ -104,7 +104,8 @@ class Parker:
         # if apriltag is to the right of the line
         if self.park_direction == "right":
             pos1 = [0, 0.5, 3.0] # position relative to detected tag pose
-            rot1 = [0, -np.pi/4, -np.pi/4]
+            # rot1 = [0, -np.pi/4, -np.pi/4]
+            rot1 = [0, -np.pi/2, -np.pi/2]
 
             pos2 = [0, 0.5, 5.5]
             rot2 = [0, -np.pi/2, -np.pi/2]
