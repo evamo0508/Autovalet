@@ -2,6 +2,7 @@
 
 import numpy as np
 import sys
+import os
 
 # Include ROS libs
 import rospy
@@ -240,8 +241,10 @@ class AutoValet:
 
                 # Check if planning failed, if so replan
                 if self.moveBaseListener.getState() == MoveBaseState.Fail:
-                    clear_costmaps = rospy.ServiceProxy("/move_base/clear_costmaps", Empty)
-                    foo = clear_costmaps()
+                    #clear_costmaps = rospy.ServiceProxy("/move_base/clear_costmaps", Empty)
+                    #foo = clear_costmaps()
+                    for i in range(5):
+                        os.system("rosservice call /move_base/clear_costmaps")                    
                     self.current_state = State.SEND_GOAL
 
                 # if it's been 2 secs since last sent goal (allow for processing time) AND we're within 2 m of last goal,
@@ -270,6 +273,11 @@ class AutoValet:
             # printState() the first time you enter this state
             if self.prev_state != State.PARK:
                 # rospy.ServiceProxy("/move_base/clear_costmaps", {})
+                
+                # clear_costmaps = rospy.ServiceProxy("/move_base/clear_costmaps", Empty)
+                # foo = clear_costmaps()
+                for i in range(5):
+                    os.system("rosservice call /move_base/clear_costmaps")
                 self.printState()
                 self.prev_state = self.current_state
                 self.substate = State.SEND_GOAL
