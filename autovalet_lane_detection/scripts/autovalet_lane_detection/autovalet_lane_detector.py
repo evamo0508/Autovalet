@@ -73,7 +73,7 @@ if __name__ == "__main__":
     rospy.init_node('lane_detector_node')
 
     color_topic     = "/frontCamera/color/image_raw"
-    depth_topic     = "/frontCamera/aligned_depth_to_color/image_raw"
+    depth_topic     = "/depth_registered/image_rect"
     colorInfo_topic = "/frontCamera/color/camera_info"
     laneCloud_topic = "/lane/pointCloud"
     egoLine_topic   = "/lane/egoLine"

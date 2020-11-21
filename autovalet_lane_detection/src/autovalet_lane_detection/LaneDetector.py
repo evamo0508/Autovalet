@@ -75,6 +75,7 @@ class LaneDetector:
         center_line_coordinates = self.center_line_detection(color_img)
         try:
             center_line_cloud = self.line2cloud(depth_img, center_line_coordinates)    # px3
+            center_line_cloud = self.createSmoothLineCloud(center_line_cloud,5) # px3, clean up cloud using svd
             norm_vec          = self.findNormalVectorInCloud(center_line_cloud)
             # Generate the right line for enforcing costmap constraints
             right_line        = self.interpolateLine(center_line_cloud, norm_vec, self.lane_width)
@@ -230,3 +231,20 @@ class LaneDetector:
         moved_line_cloud = np.hstack((x.reshape(-1, 1), y.reshape(-1, 1), z.reshape(-1, 1)))
 
         return moved_line_cloud
+
+    def createSmoothLineCloud(self,line_cloud,len):
+        midpoint = line_cloud.mean(axis=0)
+        _, _, Vt         = np.linalg.svd(line_cloud - midpoint)
+        line_direction   = Vt[0]    # The principal direction of the distribution. Line direction here
+
+        # Correct sign to ensure that the direction is always away from the robot
+        # The fix is to ensure the z-direction is always positive which means direction away from the robot
+        line_direction = np.sign(line_direction[-1])*line_direction
+
+        new_cloud = []
+        for i in np.linspace(0,len,100):
+            new_cloud.append(midpoint + i*line_direction)
+
+        new_cloud = np.vstack(new_cloud)
+        return new_cloud
+

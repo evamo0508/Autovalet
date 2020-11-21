@@ -18,6 +18,8 @@ from geometry_msgs.msg import PoseStamped, Quaternion, Pose
 from tf.transformations import quaternion_matrix, quaternion_from_matrix
 from actionlib_msgs.msg import GoalStatusArray, GoalID
 
+from std_srvs.srv import Empty
+
 # Include image helpers
 from PIL import Image as pImage
 from cv_bridge import CvBridge, CvBridgeError
@@ -238,6 +240,8 @@ class AutoValet:
 
                 # Check if planning failed, if so replan
                 if self.moveBaseListener.getState() == MoveBaseState.Fail:
+                    clear_costmaps = rospy.ServiceProxy("/move_base/clear_costmaps", Empty)
+                    foo = clear_costmaps()
                     self.current_state = State.SEND_GOAL
 
                 # if it's been 2 secs since last sent goal (allow for processing time) AND we're within 2 m of last goal,
@@ -334,9 +338,15 @@ class AutoValet:
             rospy.logwarn("Parking maneuver completed!")
 
     def run(self):
+        i = 0
         while not rospy.is_shutdown():
+            i += 1
             self.processState()
             self.controller_rate.sleep()
+            # if i % 100 == 0:
+            #     clear_costmaps = rospy.ServiceProxy("/move_base/clear_costmaps", Empty)
+            #     foo = clear_costmaps()
+            #     print("RESET")
 
 if __name__ == '__main__':
 
