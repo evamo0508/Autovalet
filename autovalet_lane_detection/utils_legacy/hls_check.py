@@ -8,8 +8,8 @@ def nothing(x):
 cv2.namedWindow('result', cv2.WINDOW_NORMAL)
 
 # Starting with 100's to prevent error while masking
-h1,l1,s1 = 0,0,0
-h2,l2,s2 = 180,255,255
+h1,l1,s1 = 21,46,230
+h2,l2,s2 = 155,240,255
 
 # Creating track bar
 cv2.createTrackbar('h1', 'result',0,180,nothing)
@@ -21,7 +21,7 @@ cv2.createTrackbar('s2', 'result',0,255,nothing)
 
 while(1):
 
-    frame = cv2.imread(os.environ.get('HOME') + '/Pictures/lot2.png')
+    frame = cv2.imread(os.environ.get('HOME') + '/Pictures/arrow.png')
 
     #converting to HSV
     hls = cv2.cvtColor(frame,cv2.COLOR_BGR2HLS)
@@ -36,6 +36,9 @@ while(1):
 
     # Normal masking algorithm
     #lower_yellow = np.array([15,51, 230])
+    h1,l1,s1 = 17,46,230
+    h2,l2,s2 = 30,240,255
+
     lower_yellow = np.array([h1,l1,s1])
     upper_yellow = np.array([h2,l2,s2])
 
