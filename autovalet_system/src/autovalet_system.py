@@ -3,6 +3,7 @@
 import numpy as np
 import sys
 import os
+import rosnode
 
 # Include ROS libs
 import rospy
@@ -44,6 +45,8 @@ class State:
 
 class AutoValet:
     def __init__(self,sim):
+        self.flag = False
+
 
         self.global_costmap_sub = rospy.Subscriber("/move_base/global_costmap/costmap",OccupancyGrid,self.saveGlobalCostmap)
         self.global_costmap_header = None
@@ -184,21 +187,20 @@ class AutoValet:
             # for i in range(5):
             #     os.system("rosservice call /move_base/clear_costmaps")
 
-        flag = False
         if (self.current_state != State.PARK and self.current_state != State.FINISH) and self.ld_init:
             # lane detection algo
             _, self.ego_line, unfiltered_centerline_midpoints = self.laneDetector.detectLaneRGBD(self.color_img, self.depth_img)
             if unfiltered_centerline_midpoints is not None:
                 self.parker.centerline_midpt = unfiltered_centerline_midpoints
 
-        else:
-            if not flag:
+        # else:
+        #     if not self.flag:
+        #         rosnode.kill_nodes(['/move_base'])
+        #         # for i in range(10):
+        #         #     self.laneDetector.publishEmptyCloud()
+        #         #     os.system("rosservice call /move_base/clear_costmaps") 
                 
-                for i in range(10):
-                    self.laneDetector.publishEmptyCloud()
-                    os.system("rosservice call /move_base/clear_costmaps") 
-                
-                flag = True
+        #         self.flag = True
         # self.processState()
 
     def sendGoal(self):
@@ -306,7 +308,7 @@ class AutoValet:
 
         # PARK state ############################
         elif self.current_state == State.PARK:
-            self.resetGlobalCostmap()
+            # self.resetGlobalCostmap()
 
             # printState() the first time you enter this state
             if self.prev_state != State.PARK:
@@ -316,6 +318,9 @@ class AutoValet:
                 # foo = clear_costmaps()
                 # for i in range(20):
                 #     os.system("rosservice call /move_base/clear_costmaps")
+                # rosnode.kill_nodes(['/move_base'])
+                
+
                 self.printState()
                 self.prev_state = self.current_state
                 self.substate = State.SEND_GOAL
