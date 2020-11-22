@@ -70,6 +70,9 @@ class LaneDetector:
         self.tf_buffer          = tf2_ros.Buffer(rospy.Duration(1200.0)) # Length of tf2 buffer (?)
         self.tf_listener        = tf2_ros.TransformListener(self.tf_buffer)
 
+    def publishEmptyCloud(self):
+        self.laneCloud_pub.publish(PointCloud2())
+
     def detectLaneRGBD(self, color_img, depth_img):
         # lane detection algo
         center_line_coordinates = self.center_line_detection(color_img)

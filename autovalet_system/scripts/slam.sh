@@ -13,7 +13,7 @@ then
         if [ "$park" = "right" ]
         then
             # right turns, right park
-            roslaunch autovalet_gazebo setup_slam_test.launch world_file:=state_machine_rturns_rpark.world x:=0 y:=6 1>> $logfile 2>&1
+            roslaunch autovalet_gazebo setup_slam_test.launch world_file:=state_machine_rturns_rpark.world x:=10 y:=-6 theta:=3.14 1>> $logfile 2>&1
         else
             # right turns, left park
             roslaunch autovalet_gazebo setup_slam_test.launch world_file:=right_right_left.world x:=0 y:=6 1>> $logfile 2>&1

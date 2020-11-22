@@ -18,6 +18,7 @@ from sensor_msgs.msg import Image, CameraInfo, PointCloud2
 from geometry_msgs.msg import PoseStamped, Quaternion, Pose
 from tf.transformations import quaternion_matrix, quaternion_from_matrix
 from actionlib_msgs.msg import GoalStatusArray, GoalID
+from nav_msgs.msg import OccupancyGrid
 
 from std_srvs.srv import Empty
 
@@ -44,6 +45,12 @@ class State:
 class AutoValet:
     def __init__(self,sim):
 
+        self.global_costmap_sub = rospy.Subscriber("/move_base/global_costmap/costmap",OccupancyGrid,self.saveGlobalCostmap)
+        self.global_costmap_header = None
+        self.global_costmap_meta = None
+        self.global_costmap_size = None
+        self.global_costmap_pub = rospy.Publisher("/move_base/global_costmap/costmap",OccupancyGrid,queue_size=1)
+
 
         # State Machine variables
         self.current_state = State.START
@@ -67,6 +74,7 @@ class AutoValet:
         self.depth_topic     = "/depth_registered/image_rect" if self.sim else \
                                "/frontCamera/aligned_depth_to_color/image_raw"
         print(self.depth_topic, self.color_topic)
+        self.frame_count     = 0
         self.ld_init         = False # flag to make sure lane_detector is initialized before trying to use it in callback
 
         self.laneDetector    = self.init_detector(self.colorInfo_topic,
@@ -114,6 +122,19 @@ class AutoValet:
         self.parking_goals = None
         self.parking_thresholds_m = [2.0, 2.0, .2]
 
+    def saveGlobalCostmap(self,msg):
+        self.global_costmap_header = msg.header
+        self.global_costmap_meta = msg.info 
+        self.global_costmap_size = len(msg.data)
+
+    def resetGlobalCostmap(self):
+        og = OccupancyGrid()
+        og.header = self.global_costmap_header
+        og.header.stamp = rospy.Time.now()
+        og.info = self.global_costmap_meta
+        og.data = np.zeros(self.global_costmap_size)
+
+        self.global_costmap_pub.publish(og)
 
     # helper fxn to load the correct lane detection params and initialize LaneDetector class
     def init_detector(self, colorInfo_topic, laneCloud_topic, egoLine_topic):
@@ -150,18 +171,34 @@ class AutoValet:
     # callback for image messages. this is what keeps the system moving forward, as processState gets
     # called everytime we get a new img
     def registered_image_callback(self, color_msg, depth_msg):
+        self.frame_count += 1
+
         # cvBridge image
         self.color_img = self.bridge.imgmsg_to_cv2(color_msg, desired_encoding="bgr8")
         self.depth_img = self.bridge.imgmsg_to_cv2(depth_msg, desired_encoding="passthrough")
 
         self.depth_frame_id = depth_msg.header.frame_id
         # if we're not in the PARK/FINSIH state AND the lane detector has been successfully initialized, detect the lane and publish
+        
+        # if self.frame_count % 10 == 0:
+            # for i in range(5):
+            #     os.system("rosservice call /move_base/clear_costmaps")
+
+        flag = False
         if (self.current_state != State.PARK and self.current_state != State.FINISH) and self.ld_init:
             # lane detection algo
             _, self.ego_line, unfiltered_centerline_midpoints = self.laneDetector.detectLaneRGBD(self.color_img, self.depth_img)
             if unfiltered_centerline_midpoints is not None:
                 self.parker.centerline_midpt = unfiltered_centerline_midpoints
 
+        else:
+            if not flag:
+                
+                for i in range(10):
+                    self.laneDetector.publishEmptyCloud()
+                    os.system("rosservice call /move_base/clear_costmaps") 
+                
+                flag = True
         # self.processState()
 
     def sendGoal(self):
@@ -243,8 +280,8 @@ class AutoValet:
                 if self.moveBaseListener.getState() == MoveBaseState.Fail:
                     #clear_costmaps = rospy.ServiceProxy("/move_base/clear_costmaps", Empty)
                     #foo = clear_costmaps()
-                    for i in range(5):
-                        os.system("rosservice call /move_base/clear_costmaps")                    
+                    # for i in range(5):
+                    #     os.system("rosservice call /move_base/clear_costmaps")                    
                     self.current_state = State.SEND_GOAL
 
                 # if it's been 2 secs since last sent goal (allow for processing time) AND we're within 2 m of last goal,
@@ -269,6 +306,7 @@ class AutoValet:
 
         # PARK state ############################
         elif self.current_state == State.PARK:
+            self.resetGlobalCostmap()
 
             # printState() the first time you enter this state
             if self.prev_state != State.PARK:
@@ -276,8 +314,8 @@ class AutoValet:
                 
                 # clear_costmaps = rospy.ServiceProxy("/move_base/clear_costmaps", Empty)
                 # foo = clear_costmaps()
-                for i in range(20):
-                    os.system("rosservice call /move_base/clear_costmaps")
+                # for i in range(20):
+                #     os.system("rosservice call /move_base/clear_costmaps")
                 self.printState()
                 self.prev_state = self.current_state
                 self.substate = State.SEND_GOAL
@@ -354,9 +392,10 @@ class AutoValet:
             i += 1
             self.processState()
             self.controller_rate.sleep()
-            # if i % 100 == 0:
-            #     clear_costmaps = rospy.ServiceProxy("/move_base/clear_costmaps", Empty)
-            #     foo = clear_costmaps()
+            # if i % 10 == 0:
+            #     # clear_costmaps = rospy.ServiceProxy("/move_base/clear_costmaps", Empty)
+            #     # foo = clear_costmaps()
+            #     self.resetGlobalCostmap()
             #     print("RESET")
 
 if __name__ == '__main__':
