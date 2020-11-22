@@ -75,7 +75,8 @@ class Parker:
             self.tfArray.append(tf)
         elif not self.ready: # perform RANSAC on transformArray
             self.tag_tf = self.tagPoseRANSAC()
-            self.setParkDirection()
+            #self.setParkDirection()
+            self.park_direction = "right"
             self.calculateGoals()
             self.ready = True
             self.aruco_subscriber.unregister()
