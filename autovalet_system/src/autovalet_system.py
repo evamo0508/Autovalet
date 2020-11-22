@@ -276,7 +276,7 @@ class AutoValet:
                 
                 # clear_costmaps = rospy.ServiceProxy("/move_base/clear_costmaps", Empty)
                 # foo = clear_costmaps()
-                for i in range(5):
+                for i in range(20):
                     os.system("rosservice call /move_base/clear_costmaps")
                 self.printState()
                 self.prev_state = self.current_state

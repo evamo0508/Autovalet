@@ -75,7 +75,7 @@ class LaneDetector:
         center_line_coordinates = self.center_line_detection(color_img)
         try:
             center_line_cloud = self.line2cloud(depth_img, center_line_coordinates)    # px3
-            center_line_cloud = self.createSmoothLineCloud(center_line_cloud,5) # px3, clean up cloud using svd
+            # center_line_cloud = self.createSmoothLineCloud(center_line_cloud,5) # px3, clean up cloud using svd
             norm_vec          = self.findNormalVectorInCloud(center_line_cloud)
             # Generate the right line for enforcing costmap constraints
             right_line        = self.interpolateLine(center_line_cloud, norm_vec, self.lane_width)
@@ -175,9 +175,11 @@ class LaneDetector:
             if slope > 1:
                 # coordinates = [[X1+i, int(Y1-i*slope)] for i in range(X2-X1)]
                 coordinates = [[int(X1+i/slope), Y1-i] for i in range(Y1-Y2)]
-            else:
+            elif 0 < slope and slope <= 1:
+                print("slope", slope)
                 # coordinates = [[int(X1+i/slope), Y1-i] for i in range(Y1-Y2)]
                 coordinates = [[X1+i, int(Y1-i*slope)] for i in range(X2-X1)]
+                print("coords", coordinates)
         return np.array(coordinates)
 
     def line2cloud(self, depth, coordinates):
@@ -209,6 +211,7 @@ class LaneDetector:
         # vh[-1] corresponds to the normal vector of the center line, but not unique since this is a 3D world.
         # taking (z, -x) s.t. taking inner product with (x, z) = 0
         _, _, vh = np.linalg.svd(center_line_cloud - center_mean)
+        # principle_dir = np.sign(vh[0][2])*vh[0]
         orth_vec = np.sign(vh[0][2]) * np.array([vh[0][2], -vh[0][0]])
         norm_vec = orth_vec / np.linalg.norm(orth_vec)
 
