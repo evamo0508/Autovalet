@@ -4,8 +4,10 @@ global_costmap:
 
   lane:
     observation_sources: fake_lane_sensor
-    fake_lane_sensor: {data_type: PointCloud2, sensor_frame: frontCamera_color_optical_frame, clearing: true, marking: true, topic: /lane/pointCloud}
-  
+    fake_lane_sensor: {data_type: PointCloud2, sensor_frame: frontCamera_color_optical_frame, clearing: true, marking: true, topic: /lane/pointCloud, observation_persistence: 0.5, expected_update_rate: 0.5}
+    # observation_persistence: 0.5
+    # expected_update_rate
+
   global_frame: map
   robot_base_frame: base_link
   update_frequency: 5.0 #  Hz

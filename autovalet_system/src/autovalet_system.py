@@ -48,11 +48,15 @@ class AutoValet:
         self.flag = False
 
 
+        # self.global_costmap_sub = rospy.Subscriber("/move_base/global_costmap/costmap",OccupancyGrid,self.saveGlobalCostmap)
+        # self.global_costmap_header = None
+        # self.global_costmap_meta = None
+        # self.global_costmap_size = None
+        # self.global_costmap_pub = rospy.Publisher("/move_base/global_costmap/costmap",OccupancyGrid,queue_size=1)
+        # self.global_costmap_data = None
+
         self.global_costmap_sub = rospy.Subscriber("/move_base/global_costmap/costmap",OccupancyGrid,self.saveGlobalCostmap)
-        self.global_costmap_header = None
-        self.global_costmap_meta = None
-        self.global_costmap_size = None
-        self.global_costmap_pub = rospy.Publisher("/move_base/global_costmap/costmap",OccupancyGrid,queue_size=1)
+        self.global_costmap_data = None
 
 
         # State Machine variables
@@ -129,6 +133,7 @@ class AutoValet:
         self.global_costmap_header = msg.header
         self.global_costmap_meta = msg.info 
         self.global_costmap_size = len(msg.data)
+        self.global_costmap_data = msg.data
 
     def resetGlobalCostmap(self):
         og = OccupancyGrid()
@@ -196,8 +201,8 @@ class AutoValet:
         # else:
         #     if not self.flag:
         #         rosnode.kill_nodes(['/move_base'])
-        #         # for i in range(10):
-        #         #     self.laneDetector.publishEmptyCloud()
+            # for i in range(10):
+            #     self.laneDetector.publishEmptyCloud()
         #         #     os.system("rosservice call /move_base/clear_costmaps") 
                 
         #         self.flag = True
@@ -314,10 +319,9 @@ class AutoValet:
             if self.prev_state != State.PARK:
                 # rospy.ServiceProxy("/move_base/clear_costmaps", {})
                 
-                # clear_costmaps = rospy.ServiceProxy("/move_base/clear_costmaps", Empty)
-                # foo = clear_costmaps()
-                # for i in range(20):
-                #     os.system("rosservice call /move_base/clear_costmaps")
+                clear_costmaps = rospy.ServiceProxy("/move_base/clear_costmaps", Empty)
+                while max(self.global_costmap_data) > 0:
+                    clear_costmaps()
                 # rosnode.kill_nodes(['/move_base'])
                 
 
