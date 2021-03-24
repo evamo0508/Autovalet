@@ -54,7 +54,6 @@ class parking_pose_validation:
         euler = euler_from_quaternion(quaternion)
         return euler
 
-
 def main():
     np.set_printoptions(suppress=True, precision=4)
 

@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <launch>
 
+	<arg name="joystick" default="false"/>
 	<arg name="world_file" default="slam_val_dumpster.world"/>
 	<arg name="x" default="-18"/>
 	<arg name="y" default="-9"/>
+	<arg name="theta" default= "0"/>
 
   	<include file="$(find autovalet_gazebo)/launch/parking_lot.launch">
-  		<arg name="joystick" value="false"/> 
+  		<arg name="joystick" value="$(arg joystick)"/> 
   		<arg name="world_file" value="$(arg world_file)"/>
 		<arg name="x" value="$(arg x)"/>
 		<arg name="y" value="$(arg y)"/>
+		<arg name="yaw" value= "$(arg theta)"/>
   	</include>
 
   	<include file="$(find autovalet_gazebo)/launch/valet_rtab_sim.launch"/>

@@ -35,7 +35,7 @@ TebLocalPlannerROS:
  # Robot
          
  max_vel_x: 0.8
- max_vel_x_backwards: 0.06 # needs to be > penalty_epslion
+ max_vel_x_backwards: 0.2 # needs to be > penalty_epslion
  max_vel_theta: 0.2
  acc_lim_x: 0.5
  acc_lim_theta: 0.5
@@ -52,8 +52,8 @@ TebLocalPlannerROS:
 
  # GoalTolerance
     
- xy_goal_tolerance: 0.2
- yaw_goal_tolerance: 0.4
+ xy_goal_tolerance: 0.3
+ yaw_goal_tolerance: 0.35
  free_goal_vel: False # allow goal to be reached with nonzero speed (useful for traversal waypoints)
     
  # Obstacles
