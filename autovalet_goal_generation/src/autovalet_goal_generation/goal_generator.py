@@ -47,7 +47,6 @@ class goal_generator:
 
         # ref: https://stackoverflow.com/questions/2298390/fitting-a-line-in-3d/2333251#2333251
         ego_line         = ego_line[ego_line[:, 2].argsort()]
-        #target_point     = ego_line[int(ego_line.shape[0]/4)]
         egoline_midpoint = ego_line.mean(axis=0)
         _, _, Vt         = np.linalg.svd(ego_line - egoline_midpoint)
         line_direction   = Vt[0]    # The principal direction of the distribution. Line direction here
@@ -56,13 +55,11 @@ class goal_generator:
         # The fix is to ensure the z-direction is always positive which means direction away from the robot
         line_direction = np.sign(line_direction[-1])*line_direction
 
-        # generate target pos
-        dist_to_costmap  = egoline_midpoint[2] - 0.5 * (0.8) * self.costmap_height
+        # generate target pos by first considering the distance that egoline_midpoint is outside of the costmap, make the point back in the target point by subtracting the distance.
+        # constants such as 0.8 and 1.2 are for soft margin buffering
+        dist_to_costmap  = egoline_midpoint[2] - 0.5 * (0.8) * self.costmap_height #
         dist_to_costmap  = max(0, dist_to_costmap)
-        print("dist", dist_to_costmap)
         target_point     = egoline_midpoint - 1.2 * line_direction * dist_to_costmap
-        print("tp", target_point)
-        print("cmap ht", self.costmap_height)
 
         # Convert the direction vector to quaternion
         line_quaternion = direction_vector_to_quaternion(line_direction)

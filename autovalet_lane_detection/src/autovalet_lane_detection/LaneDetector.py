@@ -31,7 +31,7 @@ from utils import publishCloud
 
 class LaneDetector:
 
-    def __init__(self, colorInfo_topic, laneCloud_topic, egoLine_topic, hlsBounds, lineParams, sim, debug=True):
+    def __init__(self, colorInfo_topic, laneCloud_topic, egoLine_topic, hlsBounds, lineParams, sim, debug=False):
 
         # Setup publishers
         self.laneCloud_pub = rospy.Publisher(laneCloud_topic, PointCloud2, queue_size=1)
@@ -40,7 +40,7 @@ class LaneDetector:
         self.debugLine_pub = rospy.Publisher('/lane/debug', Image, queue_size=1)
 
         # read camera info by looking up only one message
-        self.camera        = rospy.wait_for_message(colorInfo_topic, CameraInfo)
+        self.camera = rospy.wait_for_message(colorInfo_topic, CameraInfo)
 
         # Define the camera matrix individual values for projection
         self.fx = self.camera.K[0]
@@ -64,11 +64,11 @@ class LaneDetector:
         self.maxLineGap = lineParams['maxLineGap']
         self.lane_width = 3.75
 
-        self.debug = debug
-        self.target_id          = 'base_link'
-        self.source_id          = 'frontCamera_color_optical_frame'
-        self.tf_buffer          = tf2_ros.Buffer(rospy.Duration(1200.0)) # Length of tf2 buffer (?)
-        self.tf_listener        = tf2_ros.TransformListener(self.tf_buffer)
+        self.debug       = debug
+        self.target_id   = 'base_link'
+        self.source_id   = 'frontCamera_color_optical_frame'
+        self.tf_buffer   = tf2_ros.Buffer(rospy.Duration(1200.0)) # Length of tf2 buffer (?)
+        self.tf_listener = tf2_ros.TransformListener(self.tf_buffer)
 
     def publishEmptyCloud(self):
         self.laneCloud_pub.publish(PointCloud2())
@@ -114,7 +114,7 @@ class LaneDetector:
         except:
             if self.debug:
                 print("empty center line")
-            return None, None,None
+            return None, None, None
 
     def center_line_detection(self, img):
         # colorspace transformation
@@ -125,10 +125,10 @@ class LaneDetector:
         lower = np.array([self.lower_h, self.lower_l*255, self.lower_s*255], dtype=np.uint8)
         upper = np.array([self.upper_h, self.upper_l*255, self.upper_s*255], dtype=np.uint8)
 
-        mask  = cv2.inRange(hls, lower, upper)
+        mask = cv2.inRange(hls, lower, upper)
 
         # hls thresholding
-        th    = cv2.bitwise_and(rgb, rgb, mask=mask).astype(np.uint8)
+        th = cv2.bitwise_and(rgb, rgb, mask=mask).astype(np.uint8)
 
         # post-filtering to remove noise
         th    = cv2.cvtColor(th, cv2.COLOR_HLS2RGB)
@@ -158,7 +158,6 @@ class LaneDetector:
             scenario = 1
             bbox = (X1, Y1, np.abs(X2-X1), np.abs(Y2-Y1))
 
-
         # debug image
         color = (255, 0, 0) if scenario == 1 else (0, 255, 0)
         rgb = cv2.line(rgb, (X1, Y1), (X2, Y2), color , thickness=3)
@@ -173,13 +172,10 @@ class LaneDetector:
             coordinates = [[X1, i] for i in range(Y2, Y1+1)]
         else:
             slope = 1.0 * (Y2 - Y1) / (X1 - X2)
-            # assuming slope being positive, might have bug
             # sign of slope is flipped here b/c origin is at top-left corner of image
             if slope > 1:
-                # coordinates = [[X1+i, int(Y1-i*slope)] for i in range(X2-X1)]
                 coordinates = [[int(X1+i/slope), Y1-i] for i in range(Y1-Y2)]
             else:
-                # coordinates = [[int(X1+i/slope), Y1-i] for i in range(Y1-Y2)]
                 coordinates = [[X1+i, int(Y1-i*slope)] for i in range(X2-X1)]
         return np.array(coordinates)
 
@@ -212,8 +208,6 @@ class LaneDetector:
         # vh[-1] corresponds to the normal vector of the center line, but not unique since this is a 3D world.
         # taking (z, -x) s.t. taking inner product with (x, z) = 0
         _, _, vh = np.linalg.svd(center_line_cloud - center_mean)
-        # principle_dir = np.sign(vh[0][2])*vh[0]
-        #orth_vec = np.sign(vh[0][2] + np.sin(np.pi/4)) * np.array([vh[0][2], -vh[0][0]])
         orth_vec = np.array([vh[0][2], -vh[0][0]])
         orth_vec = np.sign(orth_vec[0]) * orth_vec
         norm_vec = orth_vec / np.linalg.norm(orth_vec)

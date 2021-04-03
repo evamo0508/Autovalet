@@ -73,7 +73,6 @@ class Parker:
         elif not self.ready: # perform RANSAC on transformArray
             self.tag_tf = self.tagPoseRANSAC()
             self.setParkDirection()
-            # self.park_direction = "right"
             self.calculateGoals()
             self.ready = True
             self.aruco_subscriber.unregister()
@@ -100,7 +99,7 @@ class Parker:
     def calculateGoals(self):
         # if apriltag is to the right of the line
         if self.park_direction == "right":
-            # position relative to detected tag pose
+            # position relative to detected tag pose (x, y, z)
             pos = [[0, 2.0, 1.0],
                    [0, 1.0, 3.0],
                    [0, 0.5, 5.5]]
@@ -209,7 +208,6 @@ class Parker:
         return tf
 
     def calculate_error(self):
-
         # Get the ground truth and actual poses
         gt = rospy.wait_for_message(self.gt_topic, LinkStates)
         self.target_pose = self.get_target_pose(gt)
@@ -220,7 +218,7 @@ class Parker:
         # Error in orientation (yaw) in degrees
         # make sure the orientation is the same in hardware so that the "270" works as well
         align_tag_to_goal = -90 if self.park_direction == "left" else 90
-        yaw_err   = np.abs((self.target_pose[2]*180/3.14 + align_tag_to_goal) - self.reached_pose[2]*180/3.14) #comparing the aruco tag (rotated by 270deg) with husky's yaw
+        yaw_err = np.abs((self.target_pose[2]*180/3.14 + align_tag_to_goal) - self.reached_pose[2]*180/3.14) #comparing the aruco tag (rotated by 270deg) with husky's yaw
         print 'yaw err b4 wrapping', yaw_err
         if yaw_err > 180:
             yaw_err -= 180
@@ -233,13 +231,13 @@ class Parker:
         print "Net error (norm of the error)", np.linalg.norm(trans_err)
 
     def get_target_pose(self, gt):
-
-        self.aruco_tag_gt    = gt.pose[-18] # name 'aruco_visual_marker_7::marker' <to-do> find the name! Don't HC
+        self.aruco_tag_gt = gt.pose[-18]
         if self.park_direction == "right":
             compensation = np.array([0.0, -4.0 ,0.0])
         if self.park_direction == "left":
             compensation = np.array([0.0, 4.0, 0.0])
         aruco_tag_gt_2d = np.array([self.aruco_tag_gt.position.x , self.aruco_tag_gt.position.y, self.quat_to_euler(self.aruco_tag_gt.orientation)[2]]) - compensation
+
         return aruco_tag_gt_2d
 
     def get_reached_pose(self, gt):
@@ -252,4 +250,5 @@ class Parker:
         # euler indexing as RPY
         quaternion = (q.x, q.y, q.z, q.w)
         euler = euler_from_quaternion(quaternion)
+
         return euler

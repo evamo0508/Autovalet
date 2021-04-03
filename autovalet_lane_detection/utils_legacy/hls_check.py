@@ -35,7 +35,6 @@ while(1):
     s2 = cv2.getTrackbarPos('s2','result')
 
     # Normal masking algorithm
-    #lower_yellow = np.array([15,51, 230])
     h1,l1,s1 = 17,46,230
     h2,l2,s2 = 30,240,255
 

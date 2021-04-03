@@ -70,7 +70,6 @@ class AutoValet:
         self.color_topic     = "/frontCamera/color/image_raw"
         self.depth_topic     = "/depth_registered/image_rect" if self.sim else \
                                "/frontCamera/aligned_depth_to_color/image_raw"
-        print(self.depth_topic, self.color_topic)
         self.frame_count     = 0
         self.ld_init         = False # flag to make sure lane_detector is initialized before trying to use it in callback
 
@@ -97,7 +96,7 @@ class AutoValet:
         self.goalGenerator      = goal_generator(self.map_frame)
         self.current_goal       = PoseStamped()
         self.empty_line_count   = 0
-        self.empty_line_tol     = 100 # prev value: 10
+        self.empty_line_tol     = 100
         self.is_left_turn       = False
 
         # parking setup ###########################################################
@@ -107,7 +106,7 @@ class AutoValet:
         self.tag_topic          = '/ARUCO/pose'
         self.husky_frame        = 'base_link'
         self.aruco_frame_name   = 'parking_spot' #'aruco_marker_frame' or 'parking_spot'
-                            # (Needs to be same as what is set in aruco launcher)
+        # (Needs to be same as what is set in aruco launcher)
 
         self.parker = Parker(self.goal_topic,
                             self.tag_topic,
@@ -151,9 +150,6 @@ class AutoValet:
 
         return LD
 
-    # def published(self):
-
-
     # callback for image messages. this is what keeps the system moving forward, as processState gets
     # called everytime we get a new img
     def registered_image_callback(self, color_msg, depth_msg):
@@ -164,16 +160,13 @@ class AutoValet:
         self.depth_img = self.bridge.imgmsg_to_cv2(depth_msg, desired_encoding="passthrough")
 
         self.depth_frame_id = depth_msg.header.frame_id
-        # if we're not in the PARK/FINSIH state AND the lane detector has been successfully initialized, detect the lane and publish
-
         flag = False
+        # if we're not in the PARK/FINSIH state AND the lane detector has been successfully initialized, detect the lane and publish
         if (self.current_state != State.PARK and self.current_state != State.FINISH) and self.ld_init:
             # lane detection algo
             _, self.ego_line, unfiltered_centerline_midpoints = self.laneDetector.detectLaneRGBD(self.color_img, self.depth_img)
             if unfiltered_centerline_midpoints is not None:
                 self.parker.centerline_midpt = unfiltered_centerline_midpoints
-
-        # self.processState()
 
     def sendGoal(self):
         if self.current_state != State.PARK:
@@ -295,15 +288,7 @@ class AutoValet:
                         self.prev_state = self.current_state
                         self.current_state = State.FINISH
 
-
-            # if the moveBaseListener is waiting for a new goal, that means we've reached the last goal we've
-            # sent, so we're done!
-            # if self.moveBaseListener.getState() == MoveBaseState.Waiting:
-            #     self.prev_state = self.current_state
-            #     self.current_state = State.FINISH
-
         # FINISH state #############################
-        # TODO - print parking error and time here
         elif self.current_state == State.FINISH:
             if self.prev_state != State.FINISH:
                 self.printState()
