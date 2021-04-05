@@ -30,6 +30,7 @@ from autovalet_lane_detection.LaneDetector import LaneDetector
 class lane_detection_node:
 
     def __init__(self, color_topic, depth_topic, colorInfo_topic, laneCloud_topic, egoLine_topic, hlsBounds, lineParams):
+        self.lane_det_initialized = False
         self.bridge    = CvBridge()
 
         # Setup subscribers
@@ -48,7 +49,9 @@ class lane_detection_node:
         self.previous_time = rospy.get_time()
 
         # Create a lane detector object
-        self.lane_detector = LaneDetector(colorInfo_topic, laneCloud_topic, egoLine_topic, hlsBounds, lineParams)
+        self.lane_detector = LaneDetector(colorInfo_topic, laneCloud_topic, egoLine_topic, hlsBounds, lineParams, sim=False, debug=False)
+
+        self.lane_det_initialized = True
 
     def registered_image_callback(self, color_msg, depth_msg):
         # cvBridge image
@@ -56,7 +59,9 @@ class lane_detection_node:
         depth_img = self.bridge.imgmsg_to_cv2(depth_msg, desired_encoding="passthrough")
 
         # lane detection algo
-        _, ego_line = self.lane_detector.detectLaneRGBD(color_img, depth_img)
+        if self.lane_det_initialized:
+            _, ego_line, _ = self.lane_detector.detectLaneRGBD(color_img, depth_img)
+
 
         # generate goal from the egoline
         if((rospy.get_time() - self.previous_time) > 2 and ego_line is not None):
@@ -68,7 +73,7 @@ if __name__ == "__main__":
     rospy.init_node('lane_detector_node')
 
     color_topic     = "/frontCamera/color/image_raw"
-    depth_topic     = "/depth_registered/image_rect"
+    depth_topic     = "/frontCamera/aligned_depth_to_color/image_raw"
     colorInfo_topic = "/frontCamera/color/camera_info"
     laneCloud_topic = "/lane/pointCloud"
     egoLine_topic   = "/lane/egoLine"

@@ -38,12 +38,11 @@ class Parker:
         # helper const & bool
         self.costmap_height              = rospy.get_param('/move_base/global_costmap/height')
         self.first_goal_in_costmap       = False
-        self.first_goal_is_close_meter   = 1.0
-        self.debug                       = debug
+        self.first_goal_is_close_meter   = 0.8
+        self.debug = debug
 
-        # parking goals
-        self.goal1 = PoseStamped()
-        self.goal2 = PoseStamped()
+        # parking goals (3 waypoints)
+        self.goal = [PoseStamped(), PoseStamped(), PoseStamped()]
 
         # ground truth parking goal calculated from Gazebo links
         self.gt_goal2 = PoseStamped()
@@ -64,15 +63,14 @@ class Parker:
         '''
         Take in numOfTags tag poses and do RANSAC in the end to avoid outliers
         '''
-        dist2tag = np.linalg.norm(np.array([tag_pose.pose.position.x, tag_pose.pose.position.y]))
+        dist2tag = np.abs(tag_pose.pose.position.x)
         if dist2tag > self.tag_dist_tol or len(self.tfArray) < self.num_tag_to_ransac: # collect tag poses
             tf = self.tf_buffer.lookup_transform(self.goal_frame_id, # map
-                                                 self.aruco_frame_name, # parking_spot
-                                                 rospy.Time(0), # get the tf at first available time
-                                                 rospy.Duration(1.0)) # timeout after 1
+                                    self.aruco_frame_name, # parking_spot
+                                    rospy.Time(0), # get the tf at first available time
+                                    rospy.Duration(1.0)) # timeout after 1
             self.tfArray.append(tf)
         elif not self.ready: # perform RANSAC on transformArray
-            print "tags collected: ", len(self.tfArray)
             self.tag_tf = self.tagPoseRANSAC()
             self.setParkDirection()
             self.calculateGoals()
@@ -86,40 +84,42 @@ class Parker:
         return self.ready
 
     def getParkingPoses(self):
-        return [self.goal1, self.goal2]
+        return self.goal
 
     def setParkDirection(self):
         tag_to_base_link = self.tf_buffer.lookup_transform(self.husky_frame_id,
                                                            self.aruco_frame_name,
                                                            rospy.Time(0),
                                                            rospy.Duration(1.0))
-        # print("center line", self.centerline_midpt)
-        # print("tag to base", tag_to_base_link)
         if self.centerline_midpt.y > tag_to_base_link.transform.translation.y:
             self.park_direction = "right"
         else:
             self.park_direction = "left"
-        # print("park_direction", self.park_direction)
 
     def calculateGoals(self):
         # if apriltag is to the right of the line
         if self.park_direction == "right":
-            pos1 = [0, 3, 1] # position relative to detected tag pose
-            rot1 = [0, -np.pi/4, -np.pi/4]
+            # position relative to detected tag pose (x, y, z)
+            pos = [[0, 2.0, 1.0],
+                   [0, 1.0, 3.0],
+                   [0, 0.5, 5.5]]
 
-            pos2 = [0, 0.5, 4]
-            rot2 = [0, -np.pi/2, -np.pi/2]
+            rot = [[0, -np.pi/4, -np.pi/4],
+                   [0, -3*np.pi/8, -3*np.pi/8],
+                   [0, -np.pi/2, -np.pi/2]]
 
         # if apriltag is to the left of the line
         elif self.park_direction == "left":
-            pos1 = [0, 1.5, 0]
-            rot1 = [0, np.pi/4, -np.pi/4]
+            pos = [[0, 2.0, -0.5],
+                   [0, 0.0, -2.5],
+                   [0, 0.0, -5.5]]
 
-            pos2 = [0, 0.5, -4]
-            rot2 = [0, np.pi/2, np.pi/2]
+            rot = [[0, np.pi/4, -np.pi/4],
+                   [0, 3*np.pi/8, -3*np.pi/8],
+                   [0, np.pi/2, np.pi/2]]
 
-        self.goal1 = self.generateParkingGoal(self.tag_tf, pos1, rot1, 1)
-        self.goal2 = self.generateParkingGoal(self.tag_tf, pos2, rot2, 2)
+        for i in range(3):
+            self.goal[i] = self.generateParkingGoal(self.tag_tf, pos[i], rot[i], i)
 
     def generateParkingGoal(self, tf, pos, rot, goal_num):
         '''
@@ -181,14 +181,9 @@ class Parker:
         base_link_y = base_link_tf.transform.translation.y
         goal_x = goal.pose.position.x
         goal_y = goal.pose.position.y
-        xy_dist = np.linalg.norm(np.array([base_link_x - goal_x, base_link_y - goal_y]))
+        dist = np.linalg.norm(np.array([base_link_x - goal_x, base_link_y - goal_y]))
 
-        base_link_euler = self.quat_to_euler(base_link_tf.transform.rotation)
-        goal_euler = self.quat_to_euler(goal.pose.orientation)
-
-        yaw_dist = abs(base_link_euler[-1] - goal_euler[-1])
-
-        return xy_dist, yaw_dist
+        return dist
 
     def tagPoseRANSAC(self):
         '''
@@ -205,7 +200,7 @@ class Parker:
             vote = 0
             for j in range(len(quatArray)):
                 diff = np.abs(1 - np.dot(quatArray[i], quatArray[j]) ** 2)
-                vote = vote + 1 if diff < 1e-5 else vote
+                vote = vote + 1 if diff < 1e-3 else vote
             votes.append(vote)
         # pick the pose with the most inliers
         tf = self.tfArray[votes.index(max(votes))]
@@ -213,7 +208,6 @@ class Parker:
         return tf
 
     def calculate_error(self):
-
         # Get the ground truth and actual poses
         gt = rospy.wait_for_message(self.gt_topic, LinkStates)
         self.target_pose = self.get_target_pose(gt)
@@ -223,40 +217,31 @@ class Parker:
         trans_err = (self.target_pose[:-1] - self.reached_pose[:-1])*100
         # Error in orientation (yaw) in degrees
         # make sure the orientation is the same in hardware so that the "270" works as well
-
-        align_tag_to_goal = 0
-        if self.park_direction == "left":
-            align_tag_to_goal = -90
-        elif self.park_direction == "right":
-            align_tag_to_goal = 90
-        yaw_err   = np.abs((self.target_pose[2]*180/3.14 + align_tag_to_goal) - self.reached_pose[2]*180/3.14) #comparing the aruco tag (rotated by 270deg) with husky's yaw
-        if yaw_err>180:
-                yaw_err -=180
-        if yaw_err > 360:
+        align_tag_to_goal = -90 if self.park_direction == "left" else 90
+        yaw_err = np.abs((self.target_pose[2]*180/3.14 + align_tag_to_goal) - self.reached_pose[2]*180/3.14) #comparing the aruco tag (rotated by 270deg) with husky's yaw
+        print 'yaw err b4 wrapping', yaw_err
+        if yaw_err > 180:
+            yaw_err -= 180
+        if yaw_err > 300:
             yaw_err -= 360
-
         print "Target pose (x,y,theta): ", self.target_pose[:-1]*100, self.target_pose[2]*180/3.14 + align_tag_to_goal
         print "Reached pose (x,y,theta): ", self.reached_pose[:-1]*100, self.reached_pose[2]*180/3.14
         print "Translation error (cms): ", trans_err
-        print "================================"
-        print "Net error (norm of the error)", np.linalg.norm(trans_err)
         print "Orientation error (deg): ", yaw_err
+        print "Net error (norm of the error)", np.linalg.norm(trans_err)
 
     def get_target_pose(self, gt):
-        for index, name in enumerate(gt.name):
-            if name == "aruco_visual_marker_7::marker":
-                self.aruco_tag_gt    = gt.pose[index]
+        self.aruco_tag_gt = gt.pose[-18]
         if self.park_direction == "right":
             compensation = np.array([0.0, -4.0 ,0.0])
         if self.park_direction == "left":
             compensation = np.array([0.0, 4.0, 0.0])
         aruco_tag_gt_2d = np.array([self.aruco_tag_gt.position.x , self.aruco_tag_gt.position.y, self.quat_to_euler(self.aruco_tag_gt.orientation)[2]]) - compensation
+
         return aruco_tag_gt_2d
 
     def get_reached_pose(self, gt):
-        for index, name in enumerate(gt.name):
-            if name == "/::base_link":
-                self.base_link_gt    = gt.pose[index] # base_link w.r.t the gazebo world origin
+        self.base_link_gt = gt.pose[-5] # base_link w.r.t the gazebo world origin
         base_link_gt_2d = np.array([self.base_link_gt.position.x, self.base_link_gt.position.y, self.quat_to_euler(self.base_link_gt.orientation)[2]])
 
         return base_link_gt_2d
@@ -265,4 +250,5 @@ class Parker:
         # euler indexing as RPY
         quaternion = (q.x, q.y, q.z, q.w)
         euler = euler_from_quaternion(quaternion)
+
         return euler
